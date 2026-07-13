@@ -1,0 +1,433 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{array}
+\usepackage{fancyhdr}
+\usepackage{url}
+
+\urlstyle{tt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{VS Code MSSQL Updates}
+\rhead{dev/query design inventory}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\begin{document}
+
+\begin{center}
+	{\LARGE\bfseries VS Code MSSQL Updates: Design Document Outline}\\[0.35em]
+	{\large Working inventory for \code{dev/query} across \code{vscode-mssql}, \code{sqltoolsservice}, and \code{perftest}}\\[0.35em]
+	{\normalsize \today}
+\end{center}
+
+\begin{abstract}
+This paper should become the consolidated design and usage document for the \code{dev/query} branch family.  It should explain how the STS2 refactor, SQL Data Plane, metadata substrate, Query Studio, native language service, AI completions, Debug Console, central observability, and perftest CLI fit together.  The immediate goal of this draft is an outline plus a source-material index: each section names the existing Markdown, TeX diagrams, code areas, and screenshot folders that should be copied in, edited, or used as figures later.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Scope and Current Branch Inventory}
+
+This document is scoped to the current \code{dev/query} branches under \path{C:/repos/test}.  The inventory below is based on diffs against \code{main} and a targeted read of the design packs, Markdown docs, TeX visual packs, and screenshot folders in the sibling repositories.
+
+\begin{center}
+\begin{tabular}{>{\bfseries}p{0.18\linewidth}p{0.20\linewidth}p{0.52\linewidth}}
+Repository & Diff size vs. \code{main} & High-signal change areas \\
+\hline
+\code{vscode-mssql} & 301 files, 111262 insertions, 33 deletions & SQL Data Plane and STS2 binding; Query Studio custom editor; MetadataStore and cache; native TypeScript T-SQL language service and scripting; AI completions and SDK model providers; Debug Console; central upload; Object Explorer v2; shared observability contracts and perf hooks. \\
+\code{sqltoolsservice} & 298 files, 28783 insertions, 82 deletions & In-process STS2 service core, runtime, multiplexer, hosting, drivers, journaling, replay, redaction, observability sinks, generated docs, review pack, verification scripts, scenarios, and tests. \\
+\code{perftest} & 54 files, 10815 insertions, 33 deletions & Central observability contract/store, \code{perftest push}, central report, head-to-head comparison, Query Studio scenario support, Grafana dashboard, generated event docs, CLI docs, and central-store tests. \\
+\end{tabular}
+\end{center}
+
+\subsection{Minimum Topic Set}
+
+The first complete draft should cover these topics explicitly:
+
+\begin{itemize}
+	\item STS2 refactor and the service-side v2 contract.
+	\item VS Code metadata service, MetadataStore, server catalog, cache, and metadata consumers.
+	\item New native TypeScript language service and scripting/definition support.
+	\item Query Studio and the SQL Data Plane endpoint adapters.
+	\item AI completions, schema-context construction, SDK plugins, and replay.
+	\item Debug Console, session diagnostics, feature capture, and central observability.
+	\item perftest CLI, scenario authoring, local reports, head-to-head comparisons, central push, and how to operate it.
+\end{itemize}
+
+\subsection{Additional Inventory to Decide In or Out}
+
+The branch also contains adjacent work that may deserve sections or appendices, depending on what survives review:
+
+\begin{itemize}
+	\item Object Explorer v2 preview over the MetadataStore.
+	\item Metadata persistent cache and offline mode.
+	\item Central observability upload from the product and central read-provider plans.
+	\item Query Studio Replay Lab and shared feature-capture framework.
+	\item Inline Completion Debug viewer and completion replay matrix.
+	\item MCP bridge and other endpoint-adapter experiments, if they remain in scope.
+	\item Data API Builder, schema/table designer touch points, and other extension surfaces if they changed materially on this branch.
+\end{itemize}
+
+\section{Proposed Paper Structure}
+
+\subsection{1. Executive Summary}
+
+Explain the integrated story in two pages: the branch moves SQL execution onto STS2 through a SQL Data Plane, builds Query Studio as the first major product consumer, centralizes metadata for language features and OE v2, exposes diagnostics through the Debug Console, and uses perftest/central observability to measure and share evidence.  This section should also state what is experimental, what is preview-ready, and what might be removed.
+
+\noindent\textit{Source material:} \path{../coding-docs/remaining_tasks.md}, \path{../coding-docs/settings.md}, \path{../coding-docs/observability-docs/07-phase2-query-studio-branch-guide.md}
+
+\subsection{2. System Architecture Overview}
+
+Give the reader one mental model before diving into components:
+
+\begin{itemize}
+	\item VS Code UI surfaces and controllers.
+	\item SQL Data Plane domain API and backend bindings.
+	\item STS2 service-side v2 core and legacy side-by-side hosting.
+	\item MetadataStore as the shared substrate for Query Studio, language service, AI completions, and OE v2.
+	\item Diagnostics, replay, perftest, and central store as a shared evidence pipeline.
+\end{itemize}
+
+Candidate figure: a synthesized architecture diagram using the visual language from the existing STS2, metadata, and central observability TeX packs.
+
+\section{STS2 Refactor}
+
+\subsection{Purpose and Boundaries}
+
+Document STS2 as a minimal in-process v2 subsystem inside SqlToolsService: connectivity, query execution, diagnostics, journaling, replay, and redacted export.  State the non-goals clearly: no v2.0 language service, Object Explorer, scripting, edit data, notebooks, profiling, server-side batch splitting, or random-access grid cache.
+
+\subsection{Implementation Design}
+
+Cover the project map and call graph:
+
+\begin{itemize}
+	\item \code{Contracts}: wire constants, methods, stable errors, defaults.
+	\item \code{Core}: pure reducer, immutable state, connection/query state machines.
+	\item \code{Runtime}: coordinator pump, write-ahead journal, effects, replay, redaction, observability sinks.
+	\item \code{Multiplexer}: one stdio channel, legacy and v2 routing, ID rewrite, lifecycle mirroring.
+	\item \code{Hosting} and \code{Bootstrap}: the thin seam into the existing service process.
+	\item \code{Drivers.SqlClient}, \code{Drivers.Sqlite}, and \code{Testing}: production driver, portable real-I/O driver, fake driver, YAML scenarios, simulator, invariant checker.
+\end{itemize}
+
+\subsection{Journaling, Replay, Redaction, and Observability}
+
+This should be one of the detailed design chapters.  Explain envelopes, sequence order, write-ahead journaling, strict replay, capture elision, secret side tables, \code{IEnvelopeSink}, live tail, metrics sink, and export bundles.
+
+\subsection{Validation and Remaining Gates}
+
+Summarize generated docs, scenarios, invariant tests, replay tests, mutation tests, SQL Server container coverage, and the M7 preview tag / human-review gate.
+
+\noindent\textit{Primary sources:} \path{../sqltoolsservice/docs/sts2/SPEC.md}, \path{../sqltoolsservice/docs/sts2/CONTRACT.md}, \path{../sqltoolsservice/refactor_docs/what_was_built.md}, \path{../sqltoolsservice/refactor_docs/STS2_REVIEW_PACKAGE/03_TARGET_DESIGN.md}
+
+\noindent\textit{Diagram candidates:} \path{../sqltoolsservice/refactor_docs/design_diagrams.tex}, \path{../sqltoolsservice/refactor_docs/STS2_REVIEW_PACKAGE/diagrams/STS2_DESIGN_VISUALS_V2.tex}
+
+\section{SQL Data Plane and Endpoint Adapters}
+
+Explain that product code imports SQL session/query semantics, not STS2 wire DTOs.  The domain API is the contract for Query Studio, metadata, replay, and future hosted/web backends; STS2 JSON-RPC is the first binding.
+
+\subsection{Adapter Contract}
+
+Cover session identity, one-active-query semantics, ordered events, terminal completion, backpressure, cancellation, close semantics, capability honesty, data classification, and error normalization.
+
+\subsection{Backends}
+
+Describe the current STS2 JSON-RPC backend and fake backend.  Reserve a subsection for future STS2 HTTP/WebSocket or hosted REST-style adapters, because the docs deliberately separate backend semantics from byte transport.
+
+\subsection{Settings and Operational Status}
+
+Include the user-facing switches \path{mssql.sqlDataPlane.enabled} and \path{mssql.sqlDataPlane.backend}, plus the data-plane status command.  State that there are no separate \path{mssql.sts2.*} client settings.
+
+\noindent\textit{Primary sources:} \path{../coding-docs/ssms-query-docs/03-sts2-client-adapter-design.reviewed.md}, \path{../coding-docs/ssms-query-docs/query-studio-design-addendum.md}, \path{../vscode-mssql/extensions/mssql/src/services/sqlDataPlane/}, \path{../vscode-mssql/extensions/mssql/src/services/sts2/}
+
+\section{Metadata Substrate}
+
+\subsection{CatalogModel, MetadataService, and MetadataStore}
+
+Document the three-layer stack:
+
+\begin{itemize}
+	\item \code{CatalogModel}: pure immutable snapshots, structure-of-arrays storage, interned strings, section readiness, collation-aware name resolution.
+	\item \code{MetadataService}: per-database engine, dedicated session, hydration H0--H7, generation bumping, DDL sniffing, digest polling, explicit refresh, lazy module-definition reads.
+	\item \code{MetadataStore}: process singleton, server/database keys, leases, key-correct acquisition, warm idle TTL, LRU, server catalog, and shared consumer adapters.
+\end{itemize}
+
+\subsection{Consumers and Readiness Honesty}
+
+Explain how Query Studio, native language service, AI completions, scripting, and Object Explorer v2 consume pinned snapshots or leases.  Emphasize the two load-bearing rules: pin once per response, and failure is never rendered as emptiness.
+
+\subsection{Cache and Freshness}
+
+Cover the metadata cache codec/coordinator/manifest/store/freshness files, settings, offline mode, and what still needs real large-catalog data before cache and metadata perf gates are meaningful.
+
+\noindent\textit{Primary sources:} \path{../coding-docs/metadata-docs/metadata-substrate-design.md}, \path{../coding-docs/metadata-docs/README.md}, \path{../coding-docs/oe-docs/metadata_service_oe_v2_design.md}, \path{../vscode-mssql/extensions/mssql/src/services/metadata/}
+
+\noindent\textit{Diagram candidates:} \path{../coding-docs/metadata-docs/METADATA_DESIGN_VISUALS.tex}
+
+\section{Query Studio}
+
+\subsection{Product Scope}
+
+Describe Query Studio as a custom text editor for \code{.sql}: embedded Monaco editor, toolbar, connection/database controls, execution/cancel/parse/plan commands, results/messages/plan tabs, reused grid work, status bar integration, AI inline completions, metadata-backed schema context, replay, and perftest hooks.
+
+\subsection{Host Architecture}
+
+Cover the document model and webview split:
+
+\begin{itemize}
+	\item One \code{QueryStudioDocumentModel} per URI, with multiple panels attached to the same model.
+	\item Text sync protocol, hashes, coalescing, resync safety valve, and custom-editor save/hot-exit behavior.
+	\item \code{DocumentSessionBinding}, \code{ExecutionOrchestrator}, \code{RowStore}, result serializers, message log, status interop, and replay capture.
+	\item Webview React shell, Monaco setup, toolbar, results layout, grid operations, and lazy tabs.
+\end{itemize}
+
+\subsection{Execution and Result Semantics}
+
+Include batch splitting, selection/error-line mapping, SET wrappers for plans/parse, cancel and partial result truth, RowStore memory/spill privacy, compact row payloads, grid virtualization, XML/JSON links, NULL styling, filter/sort, timer, USE tracking, and transaction badge/guard.
+
+\subsection{Open Query Studio Decisions}
+
+Track plan tab rendering, grid convergence, Ctrl+R/keybinding parity, wide/blob perf scenarios, Save-As testing, and any SQLCMD/results-to-file/export scope decisions.
+
+\noindent\textit{Primary sources:} \path{../coding-docs/ssms-query-docs/04-query-studio-master-design.reviewed.md}, \path{../coding-docs/ssms-query-docs/query-studio-design-addendum.md}, \path{../coding-docs/ssms-query-docs/grid-convergence-decision.md}, \path{../vscode-mssql/extensions/mssql/src/queryStudio/}, \path{../vscode-mssql/extensions/mssql/src/webviews/pages/QueryStudio/}
+
+\noindent\textit{Screenshot candidates:} \path{../coding-docs/ux captures/}, \path{../coding-docs/ssms-query-docs/mockup1.png}, \path{../coding-docs/ssms-query-docs/mockup2.png}
+
+\section{Native TypeScript T-SQL Language Service}
+
+\subsection{Architecture}
+
+Document the native engine as an extension-host TypeScript service behind a feature router.  The core should be described as rehostable and metadata-provider based: lexer, segmenter, sketch parser, overlay, binder, feature modules, provider adapters, scheduler, native engine, and STS v1 bridge.
+
+\subsection{Features}
+
+Cover non-AI completions, FK-aware joins, star expansion, INSERT/EXEC scaffolds, diagnostics with suppression ladder, hover, signature help, definition/peek, scripting emitters, document symbols, folding, and future semantic tokens/code actions.
+
+\subsection{Migration and Evidence}
+
+Explain the setting \path{mssql.queryStudio.languageService.engine}, native-vs-bridge routing, warm completion latency evidence, fourslash corpus, head-to-head scenario plans, and the eventual shadow-v1 retirement decision.
+
+\noindent\textit{Primary sources:} \path{../coding-docs/language-service-docs/05-tsql-language-service-design.md}, \path{../coding-docs/language-service-docs/PROGRESS.md}, \path{../vscode-mssql/extensions/mssql/src/sqlLanguage/}, \path{../vscode-mssql/extensions/mssql/src/sqlScripting/}
+
+\section{AI Completions, SDK Providers, and Replay}
+
+\subsection{Schema Context and Inline Provider}
+
+Explain the ported schema-context pipeline: \code{catalogSchemaContextPayload}, \code{completionSchemaContextCore}, \code{completionSchemaContextService}, system-object catalog, deterministic rendering, budget profiles, and privacy boundaries around prompt material.
+
+\subsection{Model Providers}
+
+Document provider selection across GitHub Copilot, Anthropic, OpenAI, and xAI SDK providers; API key resolution; vendor allow lists; model catalogs; continuation model selection; and settings.
+
+\subsection{Debugging and Replay}
+
+Cover Inline Completion Debug, trace serialization/persistence/loading, replay cart, replay matrix, persisted Sessions tab, and how this connects to the broader feature-capture framework.
+
+\noindent\textit{Primary sources:} \path{../vscode-mssql/extensions/mssql/src/copilot/}, \path{../vscode-mssql/extensions/mssql/src/copilot/inlineCompletionDebug/}, \path{../vscode-mssql/extensions/mssql/src/diagnostics/featureCapture/}, \path{../coding-docs/settings.md}
+
+\section{Debug Console and In-Product Diagnostics}
+
+\subsection{Diagnostics Core}
+
+Describe the event model, classification/redaction, sink routing, live-tail ring, Session Diag store, export bundle, rich collection, perf history providers, central upload, and self-test service.
+
+\subsection{Debug Console UI}
+
+Outline the pages: Overview, Consolidated Trace, Waterfall, Perf Test History, Session History, SQL Activity, Connections, Query \& Results, Object Explorer, Completions, Exports, Settings, and Self-Test.
+
+\subsection{Replay and STS2 Stage Gates}
+
+Explain Stage A/B as extension-side diagnostics and shared renderers, Stage C as live STS2 source gated on STS2 preview tag and \code{IEnvelopeSink}, and Stage D as feature replay/replay-drive growth.
+
+\noindent\textit{Primary sources:} \path{../coding-docs/debug-docs/MSSQL_Debug_Console_Technical_Design.md}, \path{../coding-docs/debug-docs/MSSQL_Debug_Console_UX_Spec.md}, \path{../coding-docs/observability-docs/02-debug-console.md}, \path{../vscode-mssql/extensions/mssql/src/diagnostics/}, \path{../vscode-mssql/extensions/mssql/src/webviews/pages/DebugConsole/}
+
+\noindent\textit{Screenshot candidates:} \path{../coding-docs/debug-docs/screen1.png} through \path{../coding-docs/debug-docs/screen11.png}
+
+\section{Central Observability}
+
+\subsection{One Store, Two Writers}
+
+Document the central SQL Server store as one shared schema with two ingestion paths: Debug Console uploads for ad-hoc sessions/imported runs, and \code{perftest push} for CI/local perf runs.  Include the upload ledger, natural keys, content digest, upload policies, fixture conformance, and why files remain ground truth.
+
+\subsection{Privacy, Identity, Retention, and Readers}
+
+Cover upload preview, dropped/digested fields, no-secret rule, uploader identity, database roles, retention defaults, canned SQL views, Perf History central provider, Grafana, and future Bencher/OTLP projections.
+
+\noindent\textit{Primary sources:} \path{../coding-docs/observability-docs/central_observability_design.md}, \path{../coding-docs/observability-docs/options_for_central_tracing.md}, \path{../perftest/packages/perf-contracts/src/central/}, \path{../vscode-mssql/extensions/mssql/src/diagnostics/centralUpload.ts}
+
+\noindent\textit{Diagram candidates:} \path{../coding-docs/observability-docs/CENTRAL_OBSERVABILITY_VISUALS.tex}
+
+\section{perftest CLI and Harness}
+
+\subsection{User Guide}
+
+This section should become the practical ``what do I type'' chapter.  Pull heavily from the existing guide:
+
+\begin{itemize}
+	\item \code{perftest doctor}, \code{scenarios list}, \code{run}, \code{report}, \code{history}, \code{trend}, \code{compare}, \code{diff}, \code{head-to-head}, \code{baseline}, \code{tag}, \code{cleanup}.
+	\item Config files, run directories, reports, exit codes, official-vs-diagnostic metric rules, and environment-hash comparability.
+	\item Central commands: \code{central init}, \code{central check}, \code{central health}, \code{central cleanup}, \code{central report}, \code{push}, and \code{push --dry-run}.
+\end{itemize}
+
+\subsection{Implementation Design}
+
+Cover the CLI package, scenario engine, product driver extension, marker sink, result normalizer, SQLite store, diagnostic collectors, SQL provisioning, reports, central projection, and head-to-head report generation.
+
+\subsection{Scenarios and Gates}
+
+Document classic \code{query-10k-results}, Query Studio \code{querystudio-query-10k}, metadata/cache probes, central upload round-trip probes, SQL diagnostics, and maturity levels.
+
+\noindent\textit{Primary sources:} \path{../coding-docs/how_to_use_perftest.md}, \path{../perftest/docs/CLI.md}, \path{../perftest/docs/ARCHITECTURE.md}, \path{../perftest/docs/SCENARIO_AUTHORING.md}, \path{../perftest/docs/REGRESSION_MODEL.md}, \path{../perftest/docs/REPORTS.md}, \path{../perftest/PROGRESS.md}
+
+\noindent\textit{Visual candidates:} \path{../coding-docs/perftest-docs/PerfTest-Infographic.png}, \path{../coding-docs/perftest-docs/VS_Code_MSSQL_Performance_Harness.pdf}, \path{../perftest/grafana/central-observability-dashboard.json}
+
+\section{Object Explorer v2}
+
+Object Explorer v2 is not in the user's minimum list, but it is a major branch consumer of the metadata substrate and appears in the \code{vscode-mssql} diff.  Treat it as either a full section or an appendix.
+
+\subsection{Design Topics}
+
+Cover MetadataStore-backed server/database browsing, key-correct leases, readiness nodes, v2 tree controller, native commands, table preview, scripting handoff, classic handoff policy, settings, and preview/default-flip criteria.
+
+\noindent\textit{Primary sources:} \path{../coding-docs/oe-docs/metadata_service_oe_v2_design.md}, \path{../coding-docs/oe-docs/oe_view_design.md}, \path{../coding-docs/oe-docs/EXECUTION_PLAN.md}, \path{../vscode-mssql/extensions/mssql/src/objectExplorer/v2/}
+
+\section{Cross-Cutting Design Rules}
+
+The paper should keep these rules visible rather than burying them in individual chapters:
+
+\begin{itemize}
+	\item New product features depend on SQL Data Plane semantics, not STS2 wire types.
+	\item STS v1 is a temporary bridge or legacy handoff, not the substrate for new execution paths.
+	\item Privacy is mechanical: classify fields, digest/drop at boundaries, never emit secrets, SQL text, rows, prompt text, or raw connection strings by default.
+	\item Official metrics and diagnostic evidence stay separate.
+	\item Readiness honesty: failed/loading/permission-denied/stale states are distinct from ready-empty.
+	\item Contracts move through registry/generation/vendor-sync before producers emit new vocabulary.
+	\item Replay traces and replayed spans must be identified so replay evidence never pollutes live evidence.
+\end{itemize}
+
+\section{Screenshot and Figure Plan}
+
+\subsection{Figures to Reuse from Existing TeX}
+
+\begin{itemize}
+	\item STS2 process architecture, event-capture seam, pump lifecycle, journal overlay, live tail, runtime config, and core state machines from \path{../sqltoolsservice/refactor_docs/design_diagrams.tex}.
+	\item STS2 reviewed target design pages from \path{../sqltoolsservice/refactor_docs/STS2_REVIEW_PACKAGE/diagrams/STS2_DESIGN_VISUALS_V2.tex}.
+	\item Metadata stack, identity/key-correctness, hydration/generation, readiness, and consumer diagrams from \path{../coding-docs/metadata-docs/METADATA_DESIGN_VISUALS.tex}.
+	\item Central observability system landscape, ingest spine, policy preview, writer flows, and reader dashboards from \path{../coding-docs/observability-docs/CENTRAL_OBSERVABILITY_VISUALS.tex}.
+\end{itemize}
+
+\subsection{Screenshots to Capture or Reuse}
+
+\begin{itemize}
+	\item Query Studio: editor shell, connection/database controls, execution toolbar, results grid, messages, plan handling, Replay Lab, language-service status, transaction badge, XML/JSON cell links, filter/sort, and wide/blob cases.
+	\item Debug Console: overview, consolidated trace, waterfall, perf history, run analysis, completions page, exports/upload preview, self-test, SQL Activity, and settings.
+	\item Inline Completion Debug: event grid, detail pane, toolbar, replay trace builder, replay cart, and Sessions tab.
+	\item Object Explorer v2: server/database tree, readiness/failure nodes, table preview, script-as, legacy handoff confirmation.
+	\item perftest: run \code{index.html}, report, trend, compare, head-to-head, central report, and Grafana dashboard.
+\end{itemize}
+
+\section{Operator and User Workflows}
+
+This chapter should be concise but practical.  Use \path{../coding-docs/settings.md} and \path{../coding-docs/how_to_use_perftest.md} as the starting point.
+
+\subsection{Suggested Workflows}
+
+\begin{itemize}
+	\item Turn on SQL Data Plane and Query Studio.
+	\item Test native language service and inspect Language Service Status.
+	\item Enable metadata cache, test warm acquire, and test offline mode.
+	\item Switch Object Explorer to v2 preview and test table browse/preview/script commands.
+	\item Enable AI completions, choose providers, capture traces, and replay completion requests.
+	\item Open Debug Console, enable Session Diagnostics, elevate capture briefly, export, and upload to central.
+	\item Run perftest locally, compare, generate head-to-head reports, push to central, and read the central report.
+\end{itemize}
+
+\section{Validation Evidence and Test Matrix}
+
+Use one section to avoid scattering test claims across the paper.  Group evidence by subsystem: STS2 unit/scenario/replay/invariant/mutation tests, Query Studio unit and perftest gates, metadata key-correctness/cache/freshness tests, language service fourslash and latency tests, AI completion replay tests, Debug Console/central upload tests, and perftest workspace tests.
+
+\section{Open Questions, Risks, and Possible Axe List}
+
+Keep this honest and easy to prune:
+
+\begin{itemize}
+	\item STS2 M7 preview tag and capture effective-mode echo.
+	\item Service-side \code{maxCellBytes} honoring.
+	\item Query Studio plan tab rendering and grid convergence.
+	\item Language service B14 default-flip and shadow-v1 retirement.
+	\item Object Explorer v2 preview/default path and legacy handoff boundaries.
+	\item Central observability hosting, ownership, retention, and support-bundle policy decisions.
+	\item SDK provider shipping policy, API-key UX, and remote model privacy boundary.
+	\item Hosted REST / web endpoint adapters and whether they are real product requirements or reserved architecture.
+	\item MCP, DAB, and adjacent feature work: include only if the diff materially changes design or user workflows.
+\end{itemize}
+
+\appendix
+
+\section{Source Index}
+
+\subsection{Cross-Repo State and Settings}
+\begin{itemize}
+	\item \path{../coding-docs/remaining_tasks.md}
+	\item \path{../coding-docs/settings.md}
+	\item \path{../coding-docs/observability-docs/07-phase2-query-studio-branch-guide.md}
+\end{itemize}
+
+\subsection{STS2}
+\begin{itemize}
+	\item \path{../sqltoolsservice/docs/sts2/SPEC.md}
+	\item \path{../sqltoolsservice/docs/sts2/CONTRACT.md}
+	\item \path{../sqltoolsservice/docs/sts2/OBSERVABILITY.md}
+	\item \path{../sqltoolsservice/docs/sts2/SCENARIO-MATRIX.md}
+	\item \path{../sqltoolsservice/refactor_docs/what_was_built.md}
+	\item \path{../sqltoolsservice/refactor_docs/STS2_REVIEW_PACKAGE/}
+\end{itemize}
+
+\subsection{Query Studio, Metadata, Language Service, and OE v2}
+\begin{itemize}
+	\item \path{../coding-docs/ssms-query-docs/04-query-studio-master-design.reviewed.md}
+	\item \path{../coding-docs/ssms-query-docs/03-sts2-client-adapter-design.reviewed.md}
+	\item \path{../coding-docs/ssms-query-docs/query-studio-design-addendum.md}
+	\item \path{../coding-docs/metadata-docs/metadata-substrate-design.md}
+	\item \path{../coding-docs/language-service-docs/05-tsql-language-service-design.md}
+	\item \path{../coding-docs/oe-docs/metadata_service_oe_v2_design.md}
+\end{itemize}
+
+\subsection{Diagnostics, Observability, and perftest}
+\begin{itemize}
+	\item \path{../coding-docs/debug-docs/MSSQL_Debug_Console_Technical_Design.md}
+	\item \path{../coding-docs/debug-docs/MSSQL_Debug_Console_UX_Spec.md}
+	\item \path{../coding-docs/observability-docs/central_observability_design.md}
+	\item \path{../coding-docs/how_to_use_perftest.md}
+	\item \path{../perftest/docs/CLI.md}
+	\item \path{../perftest/docs/ARCHITECTURE.md}
+	\item \path{../perftest/docs/REPORTS.md}
+	\item \path{../perftest/PROGRESS.md}
+\end{itemize}
+
+\section{Initial Code Map}
+
+\begin{itemize}
+	\item \path{../vscode-mssql/extensions/mssql/src/services/sqlDataPlane/}
+	\item \path{../vscode-mssql/extensions/mssql/src/services/sts2/}
+	\item \path{../vscode-mssql/extensions/mssql/src/services/metadata/}
+	\item \path{../vscode-mssql/extensions/mssql/src/queryStudio/}
+	\item \path{../vscode-mssql/extensions/mssql/src/sqlLanguage/}
+	\item \path{../vscode-mssql/extensions/mssql/src/sqlScripting/}
+	\item \path{../vscode-mssql/extensions/mssql/src/copilot/}
+	\item \path{../vscode-mssql/extensions/mssql/src/diagnostics/}
+	\item \path{../vscode-mssql/extensions/mssql/src/objectExplorer/v2/}
+	\item \path{../sqltoolsservice/src/sts2/}
+	\item \path{../sqltoolsservice/test/sts2/}
+	\item \path{../perftest/packages/perftest-cli/}
+	\item \path{../perftest/packages/perf-contracts/}
+\end{itemize}
+
+\end{document}

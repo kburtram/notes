@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DB Agent Diagnostics · easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001 · bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1</title>
+  <style>
+:root {
+  color-scheme: light;
+  --bg: #f6f8fb;
+  --panel: #ffffff;
+  --panel-alt: #f2f5f9;
+  --line: #d9e0ea;
+  --grid: #e2e8f0;
+  --text: #172033;
+  --muted: #64748b;
+  --ok: #087f5b;
+  --warn: #b45309;
+  --fail: #b42318;
+  --info: #2563eb;
+  --shadow: 0 4px 14px rgba(15, 23, 42, .05);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.4 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+header.top-bar { padding: 14px 22px 12px; background: linear-gradient(180deg, #fff 0%, #f8fafc 100%); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+header.top-bar h1 { margin: 0; font-size: 22px; letter-spacing: 0; }
+header.top-bar .sub { margin-top: 4px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+header.top-bar .top-status { display: inline-flex; gap: 6px; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 12px; }
+header.top-bar .top-status.ok { background: #ecfdf5; color: var(--ok); border: 1px solid rgba(8,127,91,.25); }
+header.top-bar .top-status.warn { background: #fffbeb; color: var(--warn); border: 1px solid rgba(180,83,9,.25); }
+header.top-bar .top-status.fail { background: #fff1f2; color: var(--fail); border: 1px solid rgba(180,35,24,.25); }
+main { padding: 14px 22px 30px; }
+h2 { margin: 0; font-size: 15px; letter-spacing: 0; }
+h3 { margin: 0 0 6px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+.muted { color: var(--muted); }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+a { color: var(--info); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.grid { display: grid; gap: 10px; }
+.spacer { height: 10px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 11px; box-shadow: var(--shadow); min-width: 0; }
+.panel.section { padding: 0; overflow: hidden; }
+.panel.section > summary { padding: 11px 13px; cursor: pointer; list-style: none; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-weight: 600; }
+.panel.section > summary::-webkit-details-marker { display: none; }
+.panel.section > summary::before { content: "▸"; font-size: 11px; color: var(--muted); margin-right: 2px; transform-origin: center; transition: transform .12s; }
+.panel.section[open] > summary::before { transform: rotate(90deg); }
+.panel.section > summary .section-title { font-size: 15px; }
+.panel.section > summary .section-subtitle { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 6px; }
+.section-body { padding: 0 13px 13px; }
+.badge { display: inline-flex; min-height: 18px; padding: 1px 7px; border: 1px solid var(--line); border-radius: 999px; font-size: 11px; white-space: nowrap; background: var(--panel-alt); }
+.badge.ok { color: var(--ok); border-color: rgba(8,127,91,.35); background: #ecfdf5; }
+.badge.warn { color: var(--warn); border-color: rgba(180,83,9,.35); background: #fffbeb; }
+.badge.fail { color: var(--fail); border-color: rgba(180,35,24,.35); background: #fff1f2; }
+.kpis { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; box-shadow: var(--shadow); }
+.kpi .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+.kpi .value { font-size: 20px; font-weight: 700; margin-top: 3px; white-space: nowrap; }
+.kpi .note { color: var(--muted); font-size: 11px; margin-top: 1px; }
+.kpi.ok .value { color: var(--ok); }
+.kpi.warn .value { color: var(--warn); }
+.kpi.fail .value { color: var(--fail); }
+.chart-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.chart-grid .chart { background: var(--panel); border: 1px solid var(--line); border-radius: 7px; padding: 9px 9px 6px; min-width: 0; }
+.chart-grid .chart h3 { margin-bottom: 4px; }
+.chart-svg { display: block; width: 100%; height: auto; }
+.chart-caption { color: var(--muted); font-size: 11px; margin-top: 4px; }
+.table-wrap { width: 100%; overflow-x: auto; }
+table.compact { width: 100%; border-collapse: collapse; min-width: 0; }
+table.compact th, table.compact td { border-bottom: 1px solid var(--line); padding: 5px 7px; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+table.compact th { color: var(--muted); font-size: 11px; text-transform: uppercase; font-weight: 700; }
+table.compact tr:last-child td { border-bottom: 0; }
+table.compact tr.fail-row td { background: rgba(180,35,24,.04); }
+table.compact tr.expand-row td { background: var(--panel-alt); padding: 0; }
+table.compact tr.expand-row .expand-body { padding: 8px 10px; }
+table.compact tr.expandable td:first-child { cursor: pointer; }
+.filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.filters input, .filters select { border: 1px solid var(--line); border-radius: 6px; background: #fff; color: var(--text); padding: 5px 8px; font: inherit; }
+.filters input[type="search"] { min-width: 200px; }
+.filters .filter-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; margin-right: 4px; }
+.error-rows { display: grid; gap: 6px; }
+.error-row { display: grid; grid-template-columns: 160px 170px minmax(0, 1fr) auto; gap: 14px; padding: 7px 12px; background: #fff7f7; border: 1px solid rgba(180,35,24,.35); border-radius: 7px; align-items: start; }
+.error-row.warn { background: #fffbeb; border-color: rgba(180,83,9,.35); }
+.error-row.info { background: #eff6ff; border-color: rgba(37,99,235,.35); }
+.error-row .err-type { font-size: 11px; text-transform: uppercase; letter-spacing: .03em; color: var(--fail); font-weight: 700; white-space: nowrap; padding-top: 1px; }
+.error-row.warn .err-type { color: var(--warn); }
+.error-row.info .err-type { color: var(--info); }
+.error-row .err-target { color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; overflow-wrap: anywhere; padding-top: 1px; }
+.error-row .err-msg { overflow-wrap: anywhere; }
+.error-row .err-link { white-space: nowrap; }
+.error-row .err-link a { white-space: nowrap; }
+@media (max-width: 900px) {
+  .error-row { grid-template-columns: 1fr; }
+  .error-row .err-link { justify-self: start; }
+}
+.empty { color: var(--muted); padding: 10px; }
+.notes { display: grid; gap: 6px; margin-top: 8px; }
+.note-ok { color: var(--ok); }
+.note-warn { color: var(--warn); }
+.note-fail { color: var(--fail); }
+pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; background: #f8fafc; border: 1px solid var(--line); border-radius: 7px; padding: 10px; max-height: 420px; overflow: auto; }
+@media (max-width: 1050px) {
+  .chart-grid { grid-template-columns: 1fr; }
+}
+@media print {
+  body { background: #fff; color: #111827; }
+  header.top-bar { background: #fff; }
+  main { padding: 12px; }
+  .panel { box-shadow: none; break-inside: avoid; }
+  .chart-grid { grid-template-columns: 1fr; }
+}
+
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 10px; }
+.metric { background: var(--panel-alt); border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; min-width: 0; }
+.metric .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+.metric .value { font-size: 17px; font-weight: 700; margin-top: 2px; }
+.metric .muted { font-size: 11px; }
+.summary-cols { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(280px, .8fr); gap: 10px; }
+.summary-cols > * { min-width: 0; }
+.files-table .file-link { display: inline-flex; align-items: center; gap: 6px; }
+.files-table .file-icon { display: inline-flex; color: var(--muted); }
+.files-table .file-download { display: inline-flex; color: var(--info); }
+.compact-llm { min-width: 1080px; table-layout: auto; }
+.compact-llm th, .compact-llm td { padding: 5px 8px; }
+.compact-llm td.num { white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
+.compact-llm th.num { text-align: right; }
+.compact-llm td.finish { white-space: nowrap; }
+.compact-llm td.excerpt { max-width: 360px; overflow-wrap: anywhere; }
+.trace { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 7px; background: #fff; }
+.trace-grid { min-width: 1040px; display: grid; grid-template-columns: 300px 130px minmax(520px, 1fr) 78px 62px; }
+.trace-cell { min-height: 28px; border-bottom: 1px solid var(--line); padding: 4px 8px; display: flex; align-items: center; min-width: 0; overflow-wrap: anywhere; }
+.trace-head { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; background: #f8fafc; }
+.trace-name { gap: 8px; font-weight: 600; }
+.trace-icon { width: 8px; height: 18px; border-radius: 6px; background: var(--muted); flex: 0 0 auto; }
+.trace-icon.llm, .trace-bar.llm { background: var(--info); }
+.trace-icon.tool, .trace-bar.tool { background: #7c3aed; }
+.trace-icon.terminal, .trace-bar.terminal { background: var(--warn); }
+.trace-icon.step, .trace-bar.step { background: #0f766e; }
+.trace-icon.run, .trace-bar.run { background: #334155; }
+.trace-icon.overhead, .trace-bar.overhead { background: #94a3b8; }
+.trace-bar.fail, .trace-icon.fail { background: var(--fail); }
+.trace-lane { position: relative; height: 28px; min-width: 0;
+  background:
+    linear-gradient(to right, transparent 24.9%, rgba(100,116,139,.16) 25%, transparent 25.2%),
+    linear-gradient(to right, transparent 49.9%, rgba(100,116,139,.16) 50%, transparent 50.2%),
+    linear-gradient(to right, transparent 74.9%, rgba(100,116,139,.16) 75%, transparent 75.2%);
+}
+.trace-bar { position: absolute; top: 7px; height: 14px; min-width: 2px; border-radius: 5px; opacity: .92; box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
+.trace-axis { min-width: 1040px; display: grid; grid-template-columns: 300px 130px minmax(520px, 1fr) 78px 62px; color: var(--muted); font-size: 11px; }
+.trace-ticks { position: relative; height: 22px; border-bottom: 1px solid var(--line); }
+.trace-ticks span { position: absolute; top: 2px; transform: translateX(-50%); white-space: nowrap; }
+.trace-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(220px, .4fr); gap: 12px; }
+.trace-sidebar { background: var(--panel-alt); border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; min-width: 0; }
+.trace-sidebar table { width: 100%; }
+.trace-sidebar td { border-bottom: 1px dashed var(--line); padding: 4px 4px; vertical-align: top; }
+.trace-sidebar tr:last-child td { border-bottom: 0; font-weight: 700; }
+@media (max-width: 1100px) { .summary-cols, .trace-layout { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <header class="top-bar">
+    <div>
+      <h1>DB Agent Diagnostics</h1>
+      <div class="sub">easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001 · bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1</div>
+    </div>
+    <div class="top-status fail">status <strong>&nbsp;needs_human_review</strong> · health blocked</div>
+  </header>
+  <main><section class="kpis"><div class="kpi fail"><div class="label">Health</div><div class="value">blocked</div><div class="note"></div></div>
+<div class="kpi "><div class="label">Status</div><div class="value">needs_human_review</div><div class="note"></div></div>
+<div class="kpi "><div class="label">Steps</div><div class="value">1</div><div class="note">1 tool calls</div></div>
+<div class="kpi "><div class="label">Tool errors</div><div class="value">0</div><div class="note">non-ok results</div></div>
+<div class="kpi "><div class="label">Quality</div><div class="value">0 err / 0 warn</div><div class="note">gate findings</div></div>
+<div class="kpi "><div class="label">Elapsed</div><div class="value">919.6ms</div><div class="note">server 873.0ms</div></div>
+<div class="kpi "><div class="label">LLM wait</div><div class="value">873.0ms</div><div class="note">queue 0.0ms</div></div>
+<div class="kpi "><div class="label">Output rate</div><div class="value">0.0 tok/s</div><div class="note">0 out tok</div></div>
+<div class="kpi "><div class="label">Parse/Cap</div><div class="value">0 miss · 0 cap</div><div class="note">0 terminal rejects</div></div></section><div class="spacer"></div><details class="panel section " id="section-errors" open><summary><span class="section-title">Errors &amp; Rescues</span> <span class="badge ok">1 info</span> <span class="section-subtitle">failures, quality-gate findings, parse misses, capped outputs, and rescue events</span></summary><div class="section-body"><div class="error-rows"><div class="error-row info"><div class="err-type">forced_rescue</div><div class="err-target">1 forced terminal(s)</div><div class="err-msg">runner emitted a status report or human-review request after exhausting model retries</div><div class="err-link"></div></div></div></div></details><div class="spacer"></div><details class="panel section " id="section-performance" open><summary><span class="section-title">Performance</span> <span class="section-subtitle">elapsed 919.6ms · llm 873.0ms · tool 42.5ms</span></summary><div class="section-body">
+<div class="metric-grid"><div class="metric"><div class="label">Elapsed</div><div class="value">919.6ms</div><div class="muted">agent 4.1ms overhead</div></div><div class="metric"><div class="label">LLM wait (client)</div><div class="value">873.0ms</div><div class="muted">94.9% of run</div></div><div class="metric"><div class="label">Server service</div><div class="value">873.0ms</div><div class="muted">queue 0.0ms</div></div><div class="metric"><div class="label">Tool time</div><div class="value">42.5ms</div><div class="muted">4.6% of run</div></div><div class="metric"><div class="label">Output rate</div><div class="value">0.0 tok/s</div><div class="muted">0 tokens out</div></div><div class="metric"><div class="label">Rescues</div><div class="value">0 reject · 1 forced</div><div class="muted">0 no-parse</div></div></div>
+<div class="chart-grid">
+  <div class="chart"><h3>Per-step LLM time (stacked: queue + service + client overhead)</h3><svg viewBox="0 0 640 220" role="img" class="chart-svg"><line x1="56" y1="170" x2="628" y2="170" stroke="#d9e0ea"/><line x1="56" y1="16" x2="56" y2="170" stroke="#d9e0ea"/><line x1="56" y1="170.0" x2="628" y2="170.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="56" y1="131.5" x2="628" y2="131.5" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="56" y1="93.0" x2="628" y2="93.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="56" y1="54.5" x2="628" y2="54.5" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="56" y1="16.0" x2="628" y2="16.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><text x="52" y="173.0" text-anchor="end" fill="#64748b" font-size="10">0.0ms</text><text x="52" y="134.5" text-anchor="end" fill="#64748b" font-size="10">250.0ms</text><text x="52" y="96.0" text-anchor="end" fill="#64748b" font-size="10">500.0ms</text><text x="52" y="57.5" text-anchor="end" fill="#64748b" font-size="10">750.0ms</text><text x="52" y="19.0" text-anchor="end" fill="#64748b" font-size="10">1.00s</text><rect x="324.0" y="35.6" width="36.0" height="134.4" fill="#2563eb"><title>#0: queue=0.0ms service=0.0ms client=873.0ms</title></rect><rect x="56" y="198" width="10" height="10" fill="#f59e0b"/><text x="70" y="207" fill="#64748b" font-size="11">queue</text><rect x="120.5" y="198" width="10" height="10" fill="#7c3aed"/><text x="134.5" y="207" fill="#64748b" font-size="11">service</text><rect x="198.0" y="198" width="10" height="10" fill="#2563eb"/><text x="212.0" y="207" fill="#64748b" font-size="11">client</text><text x="342.0" y="216" text-anchor="middle" fill="#64748b" font-size="10">agent step</text><text x="10" y="93.0" fill="#64748b" font-size="10" transform="rotate(-90 10 93.0)" text-anchor="middle">ms</text></svg></div>
+  <div class="chart"><h3>Decode rate per step</h3><svg viewBox="0 0 620 200" role="img" class="chart-svg"><line x1="50" y1="162" x2="606" y2="162" stroke="#d9e0ea"/><line x1="50" y1="16" x2="50" y2="162" stroke="#d9e0ea"/><line x1="50" y1="162.0" x2="606" y2="162.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="125.5" x2="606" y2="125.5" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="89.0" x2="606" y2="89.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="52.5" x2="606" y2="52.5" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="16.0" x2="606" y2="16.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><text x="46" y="165.0" text-anchor="end" fill="#64748b" font-size="10">0</text><text x="46" y="128.5" text-anchor="end" fill="#64748b" font-size="10">0.2</text><text x="46" y="92.0" text-anchor="end" fill="#64748b" font-size="10">0.5</text><text x="46" y="55.5" text-anchor="end" fill="#64748b" font-size="10">0.8</text><text x="46" y="19.0" text-anchor="end" fill="#64748b" font-size="10">1</text><rect x="314.0" y="162.0" width="28.0" height="0.0" rx="2" fill="#2563eb"><title>step 0 0 tok 873.0ms: 0.0/s</title></rect><text x="50" y="182" fill="#64748b" font-size="10">#0</text><text x="606" y="182" text-anchor="end" fill="#64748b" font-size="10">#0</text><text x="328.0" y="196" text-anchor="middle" fill="#64748b" font-size="10">agent step</text><text x="10" y="89.0" fill="#64748b" font-size="10" transform="rotate(-90 10 89.0)" text-anchor="middle">tok/s</text></svg></div>
+  <div class="chart"><h3>Prompt size per step</h3><svg viewBox="0 0 620 200" role="img" class="chart-svg"><line x1="50" y1="162" x2="606" y2="162" stroke="#d9e0ea"/><line x1="50" y1="16" x2="50" y2="162" stroke="#d9e0ea"/><line x1="50" y1="162.0" x2="606" y2="162.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="125.5" x2="606" y2="125.5" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="89.0" x2="606" y2="89.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="52.5" x2="606" y2="52.5" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="16.0" x2="606" y2="16.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><text x="46" y="165.0" text-anchor="end" fill="#64748b" font-size="10">0</text><text x="46" y="128.5" text-anchor="end" fill="#64748b" font-size="10">1.2k</text><text x="46" y="92.0" text-anchor="end" fill="#64748b" font-size="10">2.5k</text><text x="46" y="55.5" text-anchor="end" fill="#64748b" font-size="10">3.8k</text><text x="46" y="19.0" text-anchor="end" fill="#64748b" font-size="10">5.0k</text><polyline points="50.0,55.1" fill="none" stroke="#2563eb" stroke-width="2"/><circle cx="50.0" cy="55.1" r="3" fill="#2563eb"><title>step 0: 3661.0 tokens</title></circle><text x="50" y="182" fill="#64748b" font-size="10">#0</text><text x="606" y="182" text-anchor="end" fill="#64748b" font-size="10">#0</text><text x="328.0" y="196" text-anchor="middle" fill="#64748b" font-size="10">agent step</text><text x="10" y="89.0" fill="#64748b" font-size="10" transform="rotate(-90 10 89.0)" text-anchor="middle">tokens</text></svg></div>
+  <div class="chart"><h3>Output tokens per step</h3><svg viewBox="0 0 620 200" role="img" class="chart-svg"><line x1="50" y1="162" x2="606" y2="162" stroke="#d9e0ea"/><line x1="50" y1="16" x2="50" y2="162" stroke="#d9e0ea"/><line x1="50" y1="162.0" x2="606" y2="162.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="125.5" x2="606" y2="125.5" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="89.0" x2="606" y2="89.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="52.5" x2="606" y2="52.5" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="16.0" x2="606" y2="16.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><text x="46" y="165.0" text-anchor="end" fill="#64748b" font-size="10">0</text><text x="46" y="128.5" text-anchor="end" fill="#64748b" font-size="10">0.2</text><text x="46" y="92.0" text-anchor="end" fill="#64748b" font-size="10">0.5</text><text x="46" y="55.5" text-anchor="end" fill="#64748b" font-size="10">0.8</text><text x="46" y="19.0" text-anchor="end" fill="#64748b" font-size="10">1</text><rect x="314.0" y="162.0" width="28.0" height="0.0" rx="2" fill="#087f5b"><title>step 0: 0.0 tokens</title></rect><text x="50" y="182" fill="#64748b" font-size="10">#0</text><text x="606" y="182" text-anchor="end" fill="#64748b" font-size="10">#0</text><text x="328.0" y="196" text-anchor="middle" fill="#64748b" font-size="10">agent step</text><text x="10" y="89.0" fill="#64748b" font-size="10" transform="rotate(-90 10 89.0)" text-anchor="middle">tokens</text></svg></div>
+  <div class="chart" style="grid-column: 1 / -1;"><h3>Tool durations (sequential)</h3><svg viewBox="0 0 1280 200" role="img" class="chart-svg"><line x1="50" y1="162" x2="1266" y2="162" stroke="#d9e0ea"/><line x1="50" y1="16" x2="50" y2="162" stroke="#d9e0ea"/><line x1="50" y1="162.0" x2="1266" y2="162.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="125.5" x2="1266" y2="125.5" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="89.0" x2="1266" y2="89.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="52.5" x2="1266" y2="52.5" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><line x1="50" y1="16.0" x2="1266" y2="16.0" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="2 3"/><text x="46" y="165.0" text-anchor="end" fill="#64748b" font-size="10">0.0ms</text><text x="46" y="128.5" text-anchor="end" fill="#64748b" font-size="10">12.5ms</text><text x="46" y="92.0" text-anchor="end" fill="#64748b" font-size="10">25.0ms</text><text x="46" y="55.5" text-anchor="end" fill="#64748b" font-size="10">37.5ms</text><text x="46" y="19.0" text-anchor="end" fill="#64748b" font-size="10">50.0ms</text><rect x="644.0" y="37.8" width="28.0" height="124.2" rx="2" fill="#7c3aed"><title>control.request_human_review @step 0: 42.5ms</title></rect><text x="50" y="182" fill="#64748b" font-size="10">#0</text><text x="1266" y="182" text-anchor="end" fill="#64748b" font-size="10">#0</text><text x="658.0" y="196" text-anchor="middle" fill="#64748b" font-size="10">tool call (in order)</text><text x="10" y="89.0" fill="#64748b" font-size="10" transform="rotate(-90 10 89.0)" text-anchor="middle">ms</text></svg></div>
+</div>
+<div class="spacer"></div>
+<h3 style="margin-top:0;">Per-tool stats (this run)</h3><div class="table-wrap"><table class="compact"><thead><tr><th>Tool</th><th>Calls</th><th>Errors</th><th>Total</th><th>Avg</th><th>p50</th><th>p95</th><th>Step span</th></tr></thead><tbody><tr><td class="mono">control.request_human_review</td><td>1</td><td><span class="badge ok">0</span></td><td>42.5ms</td><td>42.5ms</td><td>42.5ms</td><td>42.5ms</td><td class="muted mono">0</td></tr></tbody></table></div>
+
+<div class="notes"><div class="note-ok">No truncation, parse miss, or rejected report on this run.</div></div>
+</div></details><div class="spacer"></div><details class="panel section " id="section-trace" open><summary><span class="section-title">Trace Waterfall</span> <span class="section-subtitle">5 spans · total 919.6ms</span></summary><div class="section-body">
+<div class="trace-layout">
+  <div class="trace-main">
+    <div class="muted">Sequential client-observed spans. Hover bars for timing and detail; tiny tool calls are kept visible with a minimum bar width.</div>
+    <div class="trace">
+      <div class="trace-axis">
+        <div class="trace-cell trace-head">Name</div>
+        <div class="trace-cell trace-head">Resource</div>
+        <div class="trace-ticks"><span style="left:0%">0.0ms</span><span style="left:25%">229.9ms</span><span style="left:50%">459.8ms</span><span style="left:75%">689.7ms</span><span style="left:100%">919.6ms</span></div>
+        <div class="trace-cell trace-head">Duration</div>
+        <div class="trace-cell trace-head">Result</div>
+      </div>
+      <div class="trace-grid"><div class="trace-cell trace-name" style="padding-left:10px"><span class="trace-icon run"></span><span class="mono">agent run</span></div><div class="trace-cell muted">dbagent</div><div class="trace-cell trace-lane"><div class="trace-bar run" style="left:0.000%;width:max(2px,100.000%);" title="agent run | start 0.0ms | duration 919.6ms | end 919.6ms | End-to-end client-observed agent execution."></div></div><div class="trace-cell mono">919.6ms</div><div class="trace-cell"><span class="badge ok">ok</span></div><div class="trace-cell trace-name" style="padding-left:28px"><span class="trace-icon step"></span><span class="mono">agent.step 0</span></div><div class="trace-cell muted">agent-runner</div><div class="trace-cell trace-lane"><div class="trace-bar step" style="left:0.000%;width:max(2px,99.554%);" title="agent.step 0 | start 0.0ms | duration 915.5ms | end 915.5ms | 1 tool call(s)"></div></div><div class="trace-cell mono">915.5ms</div><div class="trace-cell"><span class="badge ok">ok</span></div><div class="trace-cell trace-name" style="padding-left:46px"><span class="trace-icon llm fail"></span><span class="mono">chat gemma4-31b-it</span></div><div class="trace-cell muted">jsonl_socket</div><div class="trace-cell trace-lane"><div class="trace-bar llm fail" style="left:0.000%;width:max(2px,94.929%);" title="chat gemma4-31b-it | start 0.0ms | duration 873.0ms | end 873.0ms | finish=stop, in_tok=3661, out_tok=0, wait=873.0ms, decode=873.0ms, service=0.0ms, queue=0.0ms, bytes=0"></div></div><div class="trace-cell mono">873.0ms</div><div class="trace-cell"><span class="badge fail">fail</span></div><div class="trace-cell trace-name" style="padding-left:46px"><span class="trace-icon tool"></span><span class="mono">execute control.request_human_review</span></div><div class="trace-cell muted">tool-sandbox</div><div class="trace-cell trace-lane"><div class="trace-bar tool" style="left:94.929%;width:max(2px,4.625%);" title="execute control.request_human_review | start 873.0ms | duration 42.5ms | end 915.5ms | needs_human_review"></div></div><div class="trace-cell mono">42.5ms</div><div class="trace-cell"><span class="badge ok">ok</span></div><div class="trace-cell trace-name" style="padding-left:28px"><span class="trace-icon overhead"></span><span class="mono">agent bookkeeping</span></div><div class="trace-cell muted">agent-runner</div><div class="trace-cell trace-lane"><div class="trace-bar overhead" style="left:99.554%;width:max(2px,0.446%);" title="agent bookkeeping | start 915.5ms | duration 4.1ms | end 919.6ms | Client-side loop, transcript writes, diagnostics, and small timing gaps not attributed to LLM or tools."></div></div><div class="trace-cell mono">4.1ms</div><div class="trace-cell"><span class="badge ok">ok</span></div></div>
+    </div>
+  </div>
+  <aside class="trace-sidebar">
+    <h3>Phase totals</h3>
+    <table class="compact"><tbody><tr><td>Server service</td><td class="mono">0.0ms</td></tr><tr><td>Queue wait</td><td class="mono">0.0ms</td></tr><tr><td>Client/socket overhead</td><td class="mono">873.0ms</td></tr><tr><td>Tool execution</td><td class="mono">42.5ms</td></tr><tr><td>Agent bookkeeping</td><td class="mono">4.1ms</td></tr><tr><td>Total elapsed</td><td class="mono">919.6ms</td></tr></tbody></table>
+  </aside>
+</div>
+</div></details><div class="spacer"></div><section class="grid summary-cols"><details class="panel section " id="section-work-items" open><summary><span class="section-title">Work Items</span> <span class="section-subtitle">0 items</span></summary><div class="section-body"><div class="table-wrap"><table class="compact"><thead><tr><th>ID</th><th>Kind</th><th>Status</th><th>Severity</th><th>Evidence</th></tr></thead><tbody><tr><td colspan="5" class="empty">No work items.</td></tr></tbody></table></div></div></details><details class="panel section " id="section-quality" open><summary><span class="section-title">Quality Gate</span> <span class="badge ok">0 err · 0 warn</span></summary><div class="section-body"><div class="notes"><div class="note-ok">Quality gate passed without warnings.</div></div></div></details></section><div class="spacer"></div><details class="panel section " id="section-tools" open><summary><span class="section-title">Tool Calls</span> <span class="section-subtitle">1 calls · click a row to inspect arguments · simulated tool delay: &lt;strong&gt;realistic&lt;/strong&gt;</span></summary><div class="section-body"><div class="table-wrap"><table class="compact" id="tool-call-table"><thead><tr><th>Step</th><th>Tool</th><th>Result</th><th>Duration</th><th class="num">Simulated</th><th>Detail</th><th></th></tr></thead><tbody><tr class="expandable filter-row " data-expand-target="tool-row-0"><td class="mono">0</td><td class="mono">control.request_human_review</td><td><span class="badge ok">ok</span> <span class="badge warn">forced</span> <span class="badge info" title="simulated class: control">sim</span></td><td class="mono">42.5ms</td><td class="mono num">42.1ms</td><td>needs_human_review</td><td class="muted">▾</td></tr><tr class="expand-row" id="tool-row-0" hidden><td colspan="7"><div class="expand-body"><h3>Arguments</h3><pre>{
+  &quot;case_id&quot;: &quot;easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001&quot;,
+  &quot;evidence&quot;: [
+    {
+      &quot;kind&quot;: &quot;run_status&quot;,
+      &quot;value&quot;: {
+        &quot;case_id&quot;: &quot;easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001&quot;,
+        &quot;counts&quot;: {
+          &quot;open&quot;: 1,
+          &quot;threshold&quot;: 1,
+          &quot;total&quot;: 1,
+          &quot;validated_fix&quot;: 0
+        },
+        &quot;run_id&quot;: &quot;bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1&quot;,
+        &quot;schema_version&quot;: &quot;dbagent.run_status.v1&quot;,
+        &quot;severity_threshold&quot;: &quot;medium&quot;,
+        &quot;status_counts&quot;: {
+          &quot;open&quot;: 1
+        },
+        &quot;work_items&quot;: [
+          {
+            &quot;approval_state&quot;: &quot;not_requested&quot;,
+            &quot;evidence&quot;: [
+              &quot;S001&quot;,
+              &quot;SQL001&quot;,
+              &quot;dbo.usp_CheckoutReview&quot;
+            ],
+            &quot;id&quot;: &quot;S001&quot;,
+            &quot;kind&quot;: &quot;static_finding&quot;,
+            &quot;kind_label&quot;: &quot;static finding&quot;,
+            &quot;proposal_id&quot;: null,
+            &quot;severity&quot;: &quot;high&quot;,
+            &quot;status&quot;: &quot;open&quot;,
+            &quot;summary&quot;: &quot;SELECT * is not allowed in deployment procedures.&quot;,
+            &quot;title&quot;: &quot;dbo.usp_CheckoutReview&quot;,
+            &quot;validation_artifact&quot;: null,
+            &quot;validation_id&quot;: null
+          }
+        ]
+      }
+    }
+  ],
+  &quot;reason&quot;: &quot;LLM backend error at step 0: RuntimeError(&#x27;chat sampler hit HBM OOM with cache_length=16384 and max_out_length=512. Try a smaller --max-context-tokens/--cache-length or --max-out-length, or use a larger TPU slice.&#x27;)&quot;,
+  &quot;run_id&quot;: &quot;bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1&quot;,
+  &quot;suggested_next_step&quot;: &quot;Inspect quality_gate_debug.json and rejected_report_*.json. For Gemma demos, rerun with fewer steps or accept needs_human_review; for remediation demos, use a stronger backend.&quot;
+}</pre></div></td></tr></tbody></table></div></div></details><div class="spacer"></div><details class="panel section " id="section-llm" open><summary><span class="section-title">LLM Steps</span> <span class="section-subtitle">1 model calls · per-step queue / service / socket breakdown</span></summary><div class="section-body"><div class="table-wrap"><table class="compact compact-llm"><thead><tr><th class="num">Step</th><th class="num">Latency</th><th class="num">Service</th><th class="num">Queue</th><th class="num">Socket</th><th class="num">In tok</th><th class="num">Out tok</th><th class="num">Tok/s</th><th class="num">Bytes</th><th class="num">Tools (parsed/native)</th><th>Finish</th><th>Excerpt</th></tr></thead><tbody><tr><td class="mono num">0</td><td class="mono num">873.0ms</td><td class="mono num">-</td><td class="mono num">0.0ms</td><td class="mono num">873.0ms</td><td class="mono num">3661</td><td class="mono num">0</td><td class="mono num">-</td><td class="mono num">0</td><td class="mono num">0 / 0</td><td class="finish">stop <span class="badge warn">1 warn</span></td><td class="excerpt"></td></tr></tbody></table></div></div></details><div class="spacer"></div><details class="panel section " id="section-files"><summary><span class="section-title">Run Artifacts</span> <span class="section-subtitle">8 files</span></summary><div class="section-body"><div class="table-wrap"><table class="compact files-table"><thead><tr><th>File</th><th class="num">Size</th><th class="num">Download</th></tr></thead><tbody><tr><td class="mono"><a href="diagnostics.html" class="file-link"><span class="file-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></span>diagnostics.html</a></td><td class="mono num">60.2KB</td><td class="mono num"><a href="diagnostics.html" download title="download" class="file-download"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></a></td></tr><tr><td class="mono"><a href="diagnostics.json" class="file-link"><span class="file-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></span>diagnostics.json</a></td><td class="mono num">16.7KB</td><td class="mono num"><a href="diagnostics.json" download title="download" class="file-download"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></a></td></tr><tr><td class="mono"><a href="events.jsonl" class="file-link"><span class="file-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></span>events.jsonl</a></td><td class="mono num">2.4KB</td><td class="mono num"><a href="events.jsonl" download title="download" class="file-download"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></a></td></tr><tr><td class="mono"><a href="human_review.json" class="file-link"><span class="file-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></span>human_review.json</a></td><td class="mono num">1.8KB</td><td class="mono num"><a href="human_review.json" download title="download" class="file-download"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></a></td></tr><tr><td class="mono"><a href="metrics.jsonl" class="file-link"><span class="file-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></span>metrics.jsonl</a></td><td class="mono num">1.0KB</td><td class="mono num"><a href="metrics.jsonl" download title="download" class="file-download"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></a></td></tr><tr><td class="mono"><a href="run_summary.json" class="file-link"><span class="file-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></span>run_summary.json</a></td><td class="mono num">4.6KB</td><td class="mono num"><a href="run_summary.json" download title="download" class="file-download"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></a></td></tr><tr><td class="mono"><a href="tool_trace.jsonl" class="file-link"><span class="file-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></span>tool_trace.jsonl</a></td><td class="mono num">3.7KB</td><td class="mono num"><a href="tool_trace.jsonl" download title="download" class="file-download"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></a></td></tr><tr><td class="mono"><a href="transcript.jsonl" class="file-link"><span class="file-icon"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></span>transcript.jsonl</a></td><td class="mono num">19.3KB</td><td class="mono num"><a href="transcript.jsonl" download title="download" class="file-download"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7l3.5 3.5L11.5 7M3 13h10"/></svg></a></td></tr></tbody></table></div></div></details><div class="spacer"></div><details class="panel section " id="section-raw"><summary><span class="section-title">Raw Diagnostics</span> <span class="section-subtitle">full JSON payload — useful when reproducing a bug</span></summary><div class="section-body"><pre>{
+  &quot;case_dir&quot;: &quot;/Users/karl/repos/traces/tpu16_paramshard_20260525_full/combined_reports/01_31b_sharding_ablation_16k/cases/easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001&quot;,
+  &quot;case_id&quot;: &quot;easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001&quot;,
+  &quot;created_at&quot;: &quot;2026-05-27T02:06:58.481922Z&quot;,
+  &quot;diagnostic_id&quot;: &quot;8543b45001d3f12f&quot;,
+  &quot;events_count&quot;: 4,
+  &quot;files&quot;: [
+    {
+      &quot;bytes&quot;: 61604,
+      &quot;name&quot;: &quot;diagnostics.html&quot;,
+      &quot;path&quot;: &quot;/Users/karl/repos/traces/tpu16_paramshard_20260525_full/combined_reports/01_31b_sharding_ablation_16k/cases/easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001/runs/bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1/diagnostics.html&quot;
+    },
+    {
+      &quot;bytes&quot;: 17064,
+      &quot;name&quot;: &quot;diagnostics.json&quot;,
+      &quot;path&quot;: &quot;/Users/karl/repos/traces/tpu16_paramshard_20260525_full/combined_reports/01_31b_sharding_ablation_16k/cases/easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001/runs/bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1/diagnostics.json&quot;
+    },
+    {
+      &quot;bytes&quot;: 2430,
+      &quot;name&quot;: &quot;events.jsonl&quot;,
+      &quot;path&quot;: &quot;/Users/karl/repos/traces/tpu16_paramshard_20260525_full/combined_reports/01_31b_sharding_ablation_16k/cases/easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001/runs/bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1/events.jsonl&quot;
+    },
+    {
+      &quot;bytes&quot;: 1865,
+      &quot;name&quot;: &quot;human_review.json&quot;,
+      &quot;path&quot;: &quot;/Users/karl/repos/traces/tpu16_paramshard_20260525_full/combined_reports/01_31b_sharding_ablation_16k/cases/easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001/runs/bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1/human_review.json&quot;
+    },
+    {
+      &quot;bytes&quot;: 1033,
+      &quot;name&quot;: &quot;metrics.jsonl&quot;,
+      &quot;path&quot;: &quot;/Users/karl/repos/traces/tpu16_paramshard_20260525_full/combined_reports/01_31b_sharding_ablation_16k/cases/easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001/runs/bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1/metrics.jsonl&quot;
+    },
+    {
+      &quot;bytes&quot;: 4707,
+      &quot;name&quot;: &quot;run_summary.json&quot;,
+      &quot;path&quot;: &quot;/Users/karl/repos/traces/tpu16_paramshard_20260525_full/combined_reports/01_31b_sharding_ablation_16k/cases/easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001/runs/bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1/run_summary.json&quot;
+    },
+    {
+      &quot;bytes&quot;: 3816,
+      &quot;name&quot;: &quot;tool_trace.jsonl&quot;,
+      &quot;path&quot;: &quot;/Users/karl/repos/traces/tpu16_paramshard_20260525_full/combined_reports/01_31b_sharding_ablation_16k/cases/easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001/runs/bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1/tool_trace.jsonl&quot;
+    },
+    {
+      &quot;bytes&quot;: 19761,
+      &quot;name&quot;: &quot;transcript.jsonl&quot;,
+      &quot;path&quot;: &quot;/Users/karl/repos/traces/tpu16_paramshard_20260525_full/combined_reports/01_31b_sharding_ablation_16k/cases/easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001/runs/bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1/transcript.jsonl&quot;
+    }
+  ],
+  &quot;human_review&quot;: {
+    &quot;case_id&quot;: &quot;easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001&quot;,
+    &quot;created_at&quot;: &quot;2026-05-25T17:34:18.368921Z&quot;,
+    &quot;evidence&quot;: [
+      {
+        &quot;kind&quot;: &quot;run_status&quot;,
+        &quot;value&quot;: {
+          &quot;case_id&quot;: &quot;easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001&quot;,
+          &quot;counts&quot;: {
+            &quot;open&quot;: 1,
+            &quot;threshold&quot;: 1,
+            &quot;total&quot;: 1,
+            &quot;validated_fix&quot;: 0
+          },
+          &quot;run_id&quot;: &quot;bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1&quot;,
+          &quot;schema_version&quot;: &quot;dbagent.run_status.v1&quot;,
+          &quot;severity_threshold&quot;: &quot;medium&quot;,
+          &quot;status_counts&quot;: {
+            &quot;open&quot;: 1
+          },
+          &quot;work_items&quot;: [
+            {
+              &quot;approval_state&quot;: &quot;not_requested&quot;,
+              &quot;evidence&quot;: [
+                &quot;S001&quot;,
+                &quot;SQL001&quot;,
+                &quot;dbo.usp_CheckoutReview&quot;
+              ],
+              &quot;id&quot;: &quot;S001&quot;,
+              &quot;kind&quot;: &quot;static_finding&quot;,
+              &quot;kind_label&quot;: &quot;static finding&quot;,
+              &quot;proposal_id&quot;: null,
+              &quot;severity&quot;: &quot;high&quot;,
+              &quot;status&quot;: &quot;open&quot;,
+              &quot;summary&quot;: &quot;SELECT * is not allowed in deployment procedures.&quot;,
+              &quot;title&quot;: &quot;dbo.usp_CheckoutReview&quot;,
+              &quot;validation_artifact&quot;: null,
+              &quot;validation_id&quot;: null
+            }
+          ]
+        }
+      }
+    ],
+    &quot;reason&quot;: &quot;LLM backend error at step 0: RuntimeError(&#x27;chat sampler hit HBM OOM with cache_length=16384 and max_out_length=512. Try a smaller --max-context-tokens/--cache-length or --max-out-length, or use a larger TPU slice.&#x27;)&quot;,
+    &quot;run_id&quot;: &quot;bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1&quot;,
+    &quot;schema_version&quot;: &quot;dbagent.human_review.v1&quot;,
+    &quot;status&quot;: &quot;needs_human_review&quot;,
+    &quot;suggested_next_step&quot;: &quot;Inspect quality_gate_debug.json and rejected_report_*.json. For Gemma demos, rerun with fewer steps or accept needs_human_review; for remediation demos, use a stronger backend.&quot;
+  },
+  &quot;llm_metrics&quot;: [
+    {
+      &quot;case_id&quot;: &quot;easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001&quot;,
+      &quot;content_bytes&quot;: 0,
+      &quot;finish_reason&quot;: &quot;stop&quot;,
+      &quot;kind&quot;: &quot;llm_response_metrics&quot;,
+      &quot;model&quot;: &quot;gemma4-31b-it&quot;,
+      &quot;provider&quot;: &quot;jsonl_socket&quot;,
+      &quot;request_id&quot;: &quot;bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1_step_000&quot;,
+      &quot;run_id&quot;: &quot;bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1&quot;,
+      &quot;step&quot;: 0,
+      &quot;timing&quot;: {
+        &quot;latency_ms&quot;: 872.9954800000996,
+        &quot;queue_wait_ms&quot;: 0.0,
+        &quot;service_latency_ms&quot;: null,
+        &quot;socket_round_trip_ms&quot;: 872.9954800000996,
+        &quot;total_response_ms&quot;: null
+      },
+      &quot;tool_call_count&quot;: 0,
+      &quot;usage&quot;: {
+        &quot;input_tokens_estimate&quot;: 3661,
+        &quot;output_tokens_estimate&quot;: 0
+      }
+    }
+  ],
+  &quot;llm_steps&quot;: [
+    {
+      &quot;content_bytes&quot;: 0,
+      &quot;content_excerpt&quot;: &quot;&quot;,
+      &quot;finish_reason&quot;: &quot;stop&quot;,
+      &quot;input_tokens_estimate&quot;: 3661,
+      &quot;latency_ms&quot;: 872.9954800000996,
+      &quot;max_new_tokens&quot;: 512,
+      &quot;model&quot;: &quot;gemma4-31b-it&quot;,
+      &quot;native_tool_call_count&quot;: 0,
+      &quot;output_limited&quot;: false,
+      &quot;output_tokens_estimate&quot;: 0,
+      &quot;provider&quot;: &quot;jsonl_socket&quot;,
+      &quot;queue_wait_ms&quot;: 0.0,
+      &quot;raw_response_excerpt&quot;: &quot;&quot;,
+      &quot;request_id&quot;: &quot;bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1_step_000&quot;,
+      &quot;server_response_excerpt&quot;: &quot;&quot;,
+      &quot;service_latency_ms&quot;: null,
+      &quot;socket_round_trip_ms&quot;: 872.9954800000996,
+      &quot;step&quot;: 0,
+      &quot;tool_call_count&quot;: 0,
+      &quot;usage&quot;: {
+        &quot;input_tokens_estimate&quot;: 3661,
+        &quot;output_tokens_estimate&quot;: 0
+      },
+      &quot;warnings&quot;: [
+        &quot;RuntimeError(&#x27;chat sampler hit HBM OOM with cache_length=16384 and max_out_length=512. Try a smaller --max-context-tokens/--cache-length or --max-out-length, or use a larger TPU slice.&#x27;)&quot;
+      ]
+    }
+  ],
+  &quot;metrics_summary&quot;: {
+    &quot;counters&quot;: {
+      &quot;steps&quot;: 1,
+      &quot;tool_calls&quot;: 1
+    },
+    &quot;elapsed_ms&quot;: 919.6279309999227,
+    &quot;finished_at&quot;: &quot;2026-05-25T17:34:18.369408Z&quot;,
+    &quot;timings_ms&quot;: {
+      &quot;agent.step&quot;: {
+        &quot;avg_ms&quot;: 873.3796799997435,
+        &quot;count&quot;: 1,
+        &quot;max_ms&quot;: 873.3796799997435,
+        &quot;min_ms&quot;: 873.3796799997435,
+        &quot;p95_ms&quot;: 873.3796799997435,
+        &quot;total_ms&quot;: 873.3796799997435
+      },
+      &quot;llm.complete&quot;: {
+        &quot;avg_ms&quot;: 872.9954800000996,
+        &quot;count&quot;: 1,
+        &quot;max_ms&quot;: 872.9954800000996,
+        &quot;min_ms&quot;: 872.9954800000996,
+        &quot;p95_ms&quot;: 872.9954800000996,
+        &quot;total_ms&quot;: 872.9954800000996
+      },
+      &quot;run.total&quot;: {
+        &quot;avg_ms&quot;: 919.6279309999227,
+        &quot;count&quot;: 1,
+        &quot;max_ms&quot;: 919.6279309999227,
+        &quot;min_ms&quot;: 919.6279309999227,
+        &quot;p95_ms&quot;: 919.6279309999227,
+        &quot;total_ms&quot;: 919.6279309999227
+      },
+      &quot;tool.control.request_human_review&quot;: {
+        &quot;avg_ms&quot;: 42.53391000020201,
+        &quot;count&quot;: 1,
+        &quot;max_ms&quot;: 42.53391000020201,
+        &quot;min_ms&quot;: 42.53391000020201,
+        &quot;p95_ms&quot;: 42.53391000020201,
+        &quot;total_ms&quot;: 42.53391000020201
+      }
+    }
+  },
+  &quot;overview&quot;: {
+    &quot;elapsed_ms&quot;: 919.6279309999227,
+    &quot;health&quot;: &quot;blocked&quot;,
+    &quot;llm_steps&quot;: 1,
+    &quot;ok&quot;: false,
+    &quot;quality_error_count&quot;: 0,
+    &quot;quality_warning_count&quot;: 0,
+    &quot;rejected_report_count&quot;: 0,
+    &quot;report_path&quot;: &quot;human_review.json&quot;,
+    &quot;status&quot;: &quot;needs_human_review&quot;,
+    &quot;steps&quot;: 1,
+    &quot;tool_calls&quot;: 1,
+    &quot;tool_error_count&quot;: 0,
+    &quot;unresolved_item_count&quot;: 0
+  },
+  &quot;performance&quot;: {
+    &quot;counts&quot;: {
+      &quot;final_json_attempts&quot;: 0,
+      &quot;forced_terminal_calls&quot;: 1,
+      &quot;llm_steps&quot;: 1,
+      &quot;native_tool_call_steps&quot;: 0,
+      &quot;no_parse_warning_count&quot;: 0,
+      &quot;output_limited_steps&quot;: 0,
+      &quot;rejected_terminal_calls&quot;: 0,
+      &quot;terminal_calls&quot;: 1,
+      &quot;tool_calls&quot;: 1,
+      &quot;tool_errors&quot;: 0
+    },
+    &quot;notes&quot;: [],
+    &quot;quality&quot;: {
+      &quot;errors&quot;: 0,
+      &quot;open_items&quot;: 0.0,
+      &quot;status_counts&quot;: {},
+      &quot;validated_fix_items&quot;: 0.0,
+      &quot;warnings&quot;: 0
+    },
+    &quot;schema_version&quot;: &quot;dbagent.performance_summary.v1&quot;,
+    &quot;series&quot;: {
+      &quot;input_tokens&quot;: [
+        {
+          &quot;label&quot;: &quot;step 0&quot;,
+          &quot;step&quot;: 0,
+          &quot;value&quot;: 3661.0
+        }
+      ],
+      &quot;llm_latency_ms&quot;: [
+        {
+          &quot;label&quot;: &quot;step 0&quot;,
+          &quot;step&quot;: 0,
+          &quot;value&quot;: 872.9954800000996
+        }
+      ],
+      &quot;output_tokens&quot;: [
+        {
+          &quot;label&quot;: &quot;step 0&quot;,
+          &quot;step&quot;: 0,
+          &quot;value&quot;: 0.0
+        }
+      ],
+      &quot;tool_duration_ms&quot;: [
+        {
+          &quot;label&quot;: &quot;control.request_human_review&quot;,
+          &quot;ok&quot;: true,
+          &quot;step&quot;: 0,
+          &quot;value&quot;: 42.53391000020201
+        }
+      ]
+    },
+    &quot;timing_ms&quot;: {
+      &quot;agent_overhead_ms&quot;: 4.0985409996210365,
+      &quot;agent_overhead_share&quot;: 0.004456738275842321,
+      &quot;client_llm_overhead_ms&quot;: 872.9954800000996,
+      &quot;client_llm_overhead_share&quot;: 0.9492920458069178,
+      &quot;client_llm_wait_ms&quot;: 872.9954800000996,
+      &quot;client_llm_wait_share&quot;: 0.9492920458069178,
+      &quot;elapsed_ms&quot;: 919.6279309999227,
+      &quot;llm_share&quot;: 0.9492920458069178,
+      &quot;llm_total_ms&quot;: 872.9954800000996,
+      &quot;model_service_ms&quot;: 872.9954800000996,
+      &quot;model_service_share&quot;: 0.9492920458069178,
+      &quot;queue_wait_share&quot;: 0.0,
+      &quot;queue_wait_total_ms&quot;: 0.0,
+      &quot;service_total_ms&quot;: 0.0,
+      &quot;socket_round_trip_total_ms&quot;: 872.9954800000996,
+      &quot;tool_share&quot;: 0.04625121591723989,
+      &quot;tool_total_ms&quot;: 42.53391000020201
+    },
+    &quot;tokens&quot;: {
+      &quot;avg_input_tokens_per_step&quot;: 3661.0,
+      &quot;avg_output_tokens_per_step&quot;: 0.0,
+      &quot;input_tok_per_s&quot;: 4193.607050519417,
+      &quot;input_tokens_estimate&quot;: 3661.0,
+      &quot;output_tok_per_s&quot;: 0.0,
+      &quot;output_tokens_estimate&quot;: 0.0,
+      &quot;total_tokens_estimate&quot;: 3661.0
+    }
+  },
+  &quot;quality_gate&quot;: {},
+  &quot;rejected_reports&quot;: [],
+  &quot;report&quot;: {},
+  &quot;run_dir&quot;: &quot;/Users/karl/repos/traces/tpu16_paramshard_20260525_full/combined_reports/01_31b_sharding_ablation_16k/cases/easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001/runs/bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1&quot;,
+  &quot;run_id&quot;: &quot;bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1&quot;,
+  &quot;schema_version&quot;: &quot;dbagent.run_diagnostics.v1&quot;,
+  &quot;timeline&quot;: [
+    {
+      &quot;detail&quot;: &quot;jsonl_socket/gemma4-31b-it bytes=0&quot;,
+      &quot;duration_ms&quot;: 872.9954800000996,
+      &quot;label&quot;: &quot;LLM step 0&quot;,
+      &quot;ok&quot;: true,
+      &quot;phase&quot;: &quot;llm&quot;,
+      &quot;step&quot;: 0
+    },
+    {
+      &quot;detail&quot;: &quot;needs_human_review&quot;,
+      &quot;duration_ms&quot;: 42.53391000020201,
+      &quot;label&quot;: &quot;control.request_human_review&quot;,
+      &quot;ok&quot;: true,
+      &quot;phase&quot;: &quot;tool&quot;,
+      &quot;step&quot;: 0
+    }
+  ],
+  &quot;tool_calls&quot;: [
+    {
+      &quot;arguments&quot;: {
+        &quot;case_id&quot;: &quot;easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001&quot;,
+        &quot;evidence&quot;: [
+          {
+            &quot;kind&quot;: &quot;run_status&quot;,
+            &quot;value&quot;: {
+              &quot;case_id&quot;: &quot;easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001&quot;,
+              &quot;counts&quot;: {
+                &quot;open&quot;: 1,
+                &quot;threshold&quot;: 1,
+                &quot;total&quot;: 1,
+                &quot;validated_fix&quot;: 0
+              },
+              &quot;run_id&quot;: &quot;bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1&quot;,
+              &quot;schema_version&quot;: &quot;dbagent.run_status.v1&quot;,
+              &quot;severity_threshold&quot;: &quot;medium&quot;,
+              &quot;status_counts&quot;: {
+                &quot;open&quot;: 1
+              },
+              &quot;work_items&quot;: [
+                {
+                  &quot;approval_state&quot;: &quot;not_requested&quot;,
+                  &quot;evidence&quot;: [
+                    &quot;S001&quot;,
+                    &quot;SQL001&quot;,
+                    &quot;dbo.usp_CheckoutReview&quot;
+                  ],
+                  &quot;id&quot;: &quot;S001&quot;,
+                  &quot;kind&quot;: &quot;static_finding&quot;,
+                  &quot;kind_label&quot;: &quot;static finding&quot;,
+                  &quot;proposal_id&quot;: null,
+                  &quot;severity&quot;: &quot;high&quot;,
+                  &quot;status&quot;: &quot;open&quot;,
+                  &quot;summary&quot;: &quot;SELECT * is not allowed in deployment procedures.&quot;,
+                  &quot;title&quot;: &quot;dbo.usp_CheckoutReview&quot;,
+                  &quot;validation_artifact&quot;: null,
+                  &quot;validation_id&quot;: null
+                }
+              ]
+            }
+          }
+        ],
+        &quot;reason&quot;: &quot;LLM backend error at step 0: RuntimeError(&#x27;chat sampler hit HBM OOM with cache_length=16384 and max_out_length=512. Try a smaller --max-context-tokens/--cache-length or --max-out-length, or use a larger TPU slice.&#x27;)&quot;,
+        &quot;run_id&quot;: &quot;bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1&quot;,
+        &quot;suggested_next_step&quot;: &quot;Inspect quality_gate_debug.json and rejected_report_*.json. For Gemma demos, rerun with fewer steps or accept needs_human_review; for remediation demos, use a stronger backend.&quot;
+      },
+      &quot;artifacts&quot;: [],
+      &quot;duration_ms&quot;: 42.53391000020201,
+      &quot;error&quot;: null,
+      &quot;forced&quot;: true,
+      &quot;from_final_json&quot;: false,
+      &quot;id&quot;: &quot;tc_force_review_000&quot;,
+      &quot;name&quot;: &quot;control.request_human_review&quot;,
+      &quot;ok&quot;: true,
+      &quot;real_handler_ms&quot;: 0.4005406166124885,
+      &quot;result_summary&quot;: &quot;needs_human_review&quot;,
+      &quot;simulated_delay_class&quot;: &quot;control&quot;,
+      &quot;simulated_delay_ms&quot;: 42.133369383589525,
+      &quot;simulated_delay_profile&quot;: &quot;realistic&quot;,
+      &quot;step&quot;: 0,
+      &quot;terminal&quot;: false,
+      &quot;warnings&quot;: []
+    }
+  ],
+  &quot;tool_metrics&quot;: [
+    {
+      &quot;case_id&quot;: &quot;easy_static_001__tpu16_31b_legacy_f16_c16k_b1__000__0001&quot;,
+      &quot;error&quot;: null,
+      &quot;kind&quot;: &quot;tool_metrics&quot;,
+      &quot;ok&quot;: true,
+      &quot;run_id&quot;: &quot;bench_5e13817172d6bef1_0001_tpu16_31b_legacy_f16_c16k_b1&quot;,
+      &quot;step&quot;: 0,
+      &quot;timing&quot;: {
+        &quot;duration_ms&quot;: 42.53391000020201,
+        &quot;simulated_delay_class&quot;: &quot;control&quot;,
+        &quot;simulated_delay_ms&quot;: 42.133369383589525,
+        &quot;simulated_delay_profile&quot;: &quot;realistic&quot;
+      },
+      &quot;tool&quot;: &quot;control.request_human_review&quot;
+    }
+  ],
+  &quot;trace_spans&quot;: [
+    {
+      &quot;depth&quot;: 0,
+      &quot;detail&quot;: &quot;End-to-end client-observed agent execution.&quot;,
+      &quot;duration_ms&quot;: 919.6279309999227,
+      &quot;end_ms&quot;: 919.6279309999227,
+      &quot;id&quot;: &quot;run&quot;,
+      &quot;name&quot;: &quot;agent run&quot;,
+      &quot;ok&quot;: true,
+      &quot;parent_id&quot;: null,
+      &quot;phase&quot;: &quot;run&quot;,
+      &quot;resource&quot;: &quot;dbagent&quot;,
+      &quot;start_ms&quot;: 0.0,
+      &quot;step&quot;: null
+    },
+    {
+      &quot;depth&quot;: 1,
+      &quot;detail&quot;: &quot;1 tool call(s)&quot;,
+      &quot;duration_ms&quot;: 915.5293900003016,
+      &quot;end_ms&quot;: 915.5293900003016,
+      &quot;id&quot;: &quot;step_0&quot;,
+      &quot;name&quot;: &quot;agent.step 0&quot;,
+      &quot;ok&quot;: true,
+      &quot;parent_id&quot;: &quot;run&quot;,
+      &quot;phase&quot;: &quot;step&quot;,
+      &quot;resource&quot;: &quot;agent-runner&quot;,
+      &quot;start_ms&quot;: 0.0,
+      &quot;step&quot;: 0
+    },
+    {
+      &quot;depth&quot;: 2,
+      &quot;detail&quot;: &quot;finish=stop, in_tok=3661, out_tok=0, wait=873.0ms, decode=873.0ms, service=0.0ms, queue=0.0ms, bytes=0&quot;,
+      &quot;duration_ms&quot;: 872.9954800000996,
+      &quot;end_ms&quot;: 872.9954800000996,
+      &quot;id&quot;: &quot;llm_0&quot;,
+      &quot;name&quot;: &quot;chat gemma4-31b-it&quot;,
+      &quot;ok&quot;: false,
+      &quot;parent_id&quot;: &quot;step_0&quot;,
+      &quot;phase&quot;: &quot;llm&quot;,
+      &quot;resource&quot;: &quot;jsonl_socket&quot;,
+      &quot;start_ms&quot;: 0.0,
+      &quot;step&quot;: 0
+    },
+    {
+      &quot;depth&quot;: 2,
+      &quot;detail&quot;: &quot;needs_human_review&quot;,
+      &quot;duration_ms&quot;: 42.53391000020201,
+      &quot;end_ms&quot;: 915.5293900003016,
+      &quot;id&quot;: &quot;tool_0_1&quot;,
+      &quot;name&quot;: &quot;execute control.request_human_review&quot;,
+      &quot;ok&quot;: true,
+      &quot;parent_id&quot;: &quot;step_0&quot;,
+      &quot;phase&quot;: &quot;tool&quot;,
+      &quot;resource&quot;: &quot;tool-sandbox&quot;,
+      &quot;start_ms&quot;: 872.9954800000996,
+      &quot;step&quot;: 0
+    },
+    {
+      &quot;depth&quot;: 1,
+      &quot;detail&quot;: &quot;Client-side loop, transcript writes, diagnostics, and small timing gaps not attributed to LLM or tools.&quot;,
+      &quot;duration_ms&quot;: 4.0985409996210365,
+      &quot;end_ms&quot;: 919.6279309999227,
+      &quot;id&quot;: &quot;agent_overhead&quot;,
+      &quot;name&quot;: &quot;agent bookkeeping&quot;,
+      &quot;ok&quot;: true,
+      &quot;parent_id&quot;: &quot;run&quot;,
+      &quot;phase&quot;: &quot;overhead&quot;,
+      &quot;resource&quot;: &quot;agent-runner&quot;,
+      &quot;start_ms&quot;: 915.5293900003016,
+      &quot;step&quot;: null
+    }
+  ],
+  &quot;transcript_count&quot;: 2,
+  &quot;work_items&quot;: []
+}</pre></div></details></main>
+  <script>
+(function () {
+  document.querySelectorAll('tr.expandable').forEach(function (row) {
+    row.addEventListener('click', function () {
+      const id = row.getAttribute('data-expand-target');
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (!target) return;
+      target.hidden = !target.hidden;
+    });
+  });
+})();
+</script>
+</body>
+</html>

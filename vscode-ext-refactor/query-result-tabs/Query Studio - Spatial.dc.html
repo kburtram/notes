@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@0.0.35/dist/codicon.css">
+<style>
+html,body{height:100%;margin:0}
+*{box-sizing:border-box}
+#sp-root{--vscode-font-family:"Segoe WPC","Segoe UI",system-ui,-apple-system,sans-serif;--vscode-editor-font-family:"Cascadia Code","Consolas","Courier New",monospace}
+[data-theme="dark"]{
+--vscode-foreground:#cccccc;--vscode-editor-background:#1e1e1e;--vscode-editor-foreground:#d4d4d4;
+--vscode-editorWidget-background:#252526;--vscode-editorWidget-border:#454545;--vscode-panel-background:#1e1e1e;--vscode-panel-border:#2b2b2b;
+--vscode-contrastBorder:transparent;--vscode-focusBorder:#007fd4;--vscode-descriptionForeground:#9d9d9d;--vscode-disabledForeground:#7f7f7f;
+--vscode-input-background:#3c3c3c;--vscode-input-foreground:#cccccc;--vscode-input-border:#3c3c3c;
+--vscode-dropdown-background:#3c3c3c;--vscode-dropdown-foreground:#f0f0f0;--vscode-dropdown-border:#454545;
+--vscode-button-background:#0e639c;--vscode-button-foreground:#ffffff;--vscode-button-hoverBackground:#1177bb;--vscode-button-secondaryBackground:#3a3d41;
+--vscode-toolbar-hoverBackground:#5a5d5e50;--vscode-list-hoverBackground:#2a2d2e;--vscode-list-activeSelectionBackground:#04395e;--vscode-list-activeSelectionForeground:#ffffff;
+--vscode-editor-selectionBackground:#264f78;--vscode-editor-lineHighlightBackground:#2a2d2e66;--vscode-editorLineNumber-foreground:#858585;
+--vscode-statusBar-background:#2d2d2d;--vscode-statusBar-foreground:#cccccc;--vscode-statusBarItem-warningBackground:#7a5c00;--vscode-statusBarItem-errorBackground:#a1260d;
+--vscode-inputValidation-warningBackground:#352a05;--vscode-inputValidation-warningBorder:#b89500;--vscode-inputValidation-infoBackground:#063b49;--vscode-inputValidation-infoBorder:#1a85b8;--vscode-errorForeground:#f48771;
+--vscode-tab-activeBackground:#1e1e1e;--vscode-tab-inactiveBackground:#2d2d2d;--vscode-tab-activeForeground:#ffffff;--vscode-tab-inactiveForeground:#969696;--vscode-tab-border:#252526;--vscode-editorGroupHeader-tabsBackground:#252526;--vscode-panelTitle-activeBorder:#007fd4;
+--vscode-scrollbarSlider-background:#79797966;--vscode-scrollbarSlider-hoverBackground:#646464b3;--vscode-badge-background:#4d4d4d;--vscode-badge-foreground:#ffffff;
+--vscode-widget-shadow:#00000066;--vscode-notifications-background:#252526;--vscode-notifications-border:#454545;
+--vscode-charts-blue:#4daafc;--vscode-charts-green:#89d185;--vscode-charts-orange:#d18616;--vscode-charts-purple:#c586c0;--vscode-charts-red:#f14c4c;--vscode-charts-yellow:#cca700;
+--map-bg:#191919;--map-grid:#4a5a80;--map-grid-strong:#5c6f9e;--map-label:#7f8fb3;--map-vignette:#00000055;--map-frost:#252526ee;}
+[data-theme="light"]{
+--vscode-foreground:#3b3b3b;--vscode-editor-background:#ffffff;--vscode-editor-foreground:#000000;
+--vscode-editorWidget-background:#f8f8f8;--vscode-editorWidget-border:#c8c8c8;--vscode-panel-background:#ffffff;--vscode-panel-border:#e5e5e5;
+--vscode-contrastBorder:transparent;--vscode-focusBorder:#005fb8;--vscode-descriptionForeground:#717171;--vscode-disabledForeground:#a5a5a5;
+--vscode-input-background:#ffffff;--vscode-input-foreground:#3b3b3b;--vscode-input-border:#cecece;
+--vscode-dropdown-background:#ffffff;--vscode-dropdown-foreground:#3b3b3b;--vscode-dropdown-border:#cecece;
+--vscode-button-background:#005fb8;--vscode-button-foreground:#ffffff;--vscode-button-hoverBackground:#0258a8;--vscode-button-secondaryBackground:#e5e5e5;
+--vscode-toolbar-hoverBackground:#b8b8b850;--vscode-list-hoverBackground:#e8e8e8;--vscode-list-activeSelectionBackground:#0060c0;--vscode-list-activeSelectionForeground:#ffffff;
+--vscode-editor-selectionBackground:#add6ff;--vscode-editor-lineHighlightBackground:#e4e6f1a0;--vscode-editorLineNumber-foreground:#6e7681;
+--vscode-statusBar-background:#dddddd;--vscode-statusBar-foreground:#3b3b3b;--vscode-statusBarItem-warningBackground:#f8d585;--vscode-statusBarItem-errorBackground:#e6c3c0;
+--vscode-inputValidation-warningBackground:#f6f5d2;--vscode-inputValidation-warningBorder:#b89500;--vscode-inputValidation-infoBackground:#e4f6fb;--vscode-inputValidation-infoBorder:#1a85b8;--vscode-errorForeground:#c72e0f;
+--vscode-tab-activeBackground:#ffffff;--vscode-tab-inactiveBackground:#ececec;--vscode-tab-activeForeground:#333333;--vscode-tab-inactiveForeground:#7a7a7a;--vscode-tab-border:#e5e5e5;--vscode-editorGroupHeader-tabsBackground:#f8f8f8;--vscode-panelTitle-activeBorder:#005fb8;
+--vscode-scrollbarSlider-background:#64646466;--vscode-scrollbarSlider-hoverBackground:#646464b3;--vscode-badge-background:#c4c4c4;--vscode-badge-foreground:#333333;
+--vscode-widget-shadow:#00000029;--vscode-notifications-background:#ffffff;--vscode-notifications-border:#cecece;
+--vscode-charts-blue:#1a73e8;--vscode-charts-green:#2a8a4a;--vscode-charts-orange:#bf6a02;--vscode-charts-purple:#8a3ffc;--vscode-charts-red:#cd3131;--vscode-charts-yellow:#b5900;
+--map-bg:#ffffff;--map-grid:#cdd8ef;--map-grid-strong:#aebde3;--map-label:#6b7aa0;--map-vignette:#00000000;--map-frost:#ffffffee;}
+[data-theme="hc"]{
+--vscode-foreground:#ffffff;--vscode-editor-background:#000000;--vscode-editor-foreground:#ffffff;
+--vscode-editorWidget-background:#0c0c0c;--vscode-editorWidget-border:#6fc3df;--vscode-panel-background:#000000;--vscode-panel-border:#6fc3df;
+--vscode-contrastBorder:#6fc3df;--vscode-focusBorder:#f38518;--vscode-descriptionForeground:#e0e0e0;--vscode-disabledForeground:#a0a0a0;
+--vscode-input-background:#000000;--vscode-input-foreground:#ffffff;--vscode-input-border:#6fc3df;
+--vscode-dropdown-background:#000000;--vscode-dropdown-foreground:#ffffff;--vscode-dropdown-border:#6fc3df;
+--vscode-button-background:#000000;--vscode-button-foreground:#ffffff;--vscode-button-hoverBackground:#0a0a0a;--vscode-button-secondaryBackground:#000000;
+--vscode-toolbar-hoverBackground:#00000000;--vscode-list-hoverBackground:#000000;--vscode-list-activeSelectionBackground:#000000;--vscode-list-activeSelectionForeground:#f38518;
+--vscode-editor-selectionBackground:#0e5a7d;--vscode-editor-lineHighlightBackground:#00000000;--vscode-editorLineNumber-foreground:#ffffff;
+--vscode-statusBar-background:#000000;--vscode-statusBar-foreground:#ffffff;--vscode-statusBarItem-warningBackground:#000000;--vscode-statusBarItem-errorBackground:#000000;
+--vscode-inputValidation-warningBackground:#000000;--vscode-inputValidation-warningBorder:#f38518;--vscode-inputValidation-infoBackground:#000000;--vscode-inputValidation-infoBorder:#6fc3df;--vscode-errorForeground:#f48771;
+--vscode-tab-activeBackground:#000000;--vscode-tab-inactiveBackground:#000000;--vscode-tab-activeForeground:#ffffff;--vscode-tab-inactiveForeground:#ffffff;--vscode-tab-border:#6fc3df;--vscode-editorGroupHeader-tabsBackground:#000000;--vscode-panelTitle-activeBorder:#f38518;
+--vscode-scrollbarSlider-background:#6fc3df80;--vscode-scrollbarSlider-hoverBackground:#6fc3dfcc;--vscode-badge-background:#000000;--vscode-badge-foreground:#ffffff;
+--vscode-widget-shadow:#00000000;--vscode-notifications-background:#000000;--vscode-notifications-border:#6fc3df;
+--vscode-charts-blue:#4daafc;--vscode-charts-green:#89d185;--vscode-charts-orange:#f3b13e;--vscode-charts-purple:#c586c0;--vscode-charts-red:#f48771;--vscode-charts-yellow:#f3e28a;
+--map-bg:#000000;--map-grid:#3f7f92;--map-grid-strong:#6fc3df;--map-label:#ffffff;--map-vignette:#00000000;--map-frost:#000000f2;}
+#sp-root :focus-visible{outline:2px solid var(--vscode-focusBorder);outline-offset:-1px}
+#sp-root a{color:#3794ff;text-decoration:none}
+#sp-root a:hover{color:#67b0ff;text-decoration:underline}
+#sp-root button{font-family:inherit}
+#sp-root ::-webkit-scrollbar{width:14px;height:14px}
+#sp-root ::-webkit-scrollbar-thumb{background:var(--vscode-scrollbarSlider-background);border:3px solid transparent;background-clip:content-box}
+#sp-root ::-webkit-scrollbar-thumb:hover{background:var(--vscode-scrollbarSlider-hoverBackground);background-clip:content-box}
+.sp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@keyframes sp-spin{to{transform:rotate(360deg)}}
+@keyframes sp-toastin{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes sp-pop{from{transform:scale(.97);opacity:0}to{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important}}
+</style>
+</helmet>
+<div id="sp-root" data-theme="{{ theme }}" style="height:100vh;display:flex;flex-direction:column;background:var(--vscode-panel-background);color:var(--vscode-foreground);font-family:var(--vscode-font-family);font-size:13px;position:relative;overflow:hidden">
+
+  <!-- ===== RESULTS TAB STRIP ===== -->
+  <div style="height:31px;flex:none;display:flex;align-items:stretch;background:var(--vscode-editorGroupHeader-tabsBackground);border-bottom:1px solid var(--vscode-panel-border)" role="tablist" aria-label="Query results views">
+    <sc-for list="{{ resultTabs }}" as="rt" hint-placeholder-count="4">
+      <button onClick="{{ rt.onClick }}" role="tab" aria-selected="{{ rt.selected }}" style="{{ rt.style }}" style-hover="color:var(--vscode-foreground)"><span class="codicon {{ rt.icon }}" style="font-size:14px"></span><span>{{ rt.label }}</span></button>
+    </sc-for>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:2px;padding:0 8px;color:var(--vscode-descriptionForeground)">
+      <span style="font-size:11px;margin-right:4px;opacity:.8">Theme</span>
+      <sc-for list="{{ themeBtns }}" as="tb" hint-placeholder-count="3">
+        <button onClick="{{ tb.onClick }}" title="{{ tb.title }}" aria-label="{{ tb.title }}" style="{{ tb.style }}" style-hover="background:var(--vscode-toolbar-hoverBackground)">{{ tb.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- ===== TOOLBAR ===== -->
+  <div style="min-height:38px;flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:5px 8px;background:var(--vscode-editorWidget-background);border-bottom:1px solid var(--vscode-panel-border)">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:11px;color:var(--vscode-descriptionForeground)">Result set</span>
+      <button onClick="{{ onResultMenu }}" title="Choose result set" style="{{ selBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span style="{{ selTxt }}">{{ activeSetName }}</span><span class="codicon codicon-chevron-down" style="font-size:13px;opacity:.7"></span></button>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:11px;color:var(--vscode-descriptionForeground)">Spatial column</span>
+      <button onClick="{{ onColMenu }}" title="Choose spatial column" style="{{ selBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon {{ activeColIcon }}" style="font-size:13px;color:{{ activeColColor }}"></span><span style="{{ selTxt }}">{{ activeColName }}</span><span class="codicon codicon-chevron-down" style="font-size:13px;opacity:.7"></span></button>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:11px;color:var(--vscode-descriptionForeground)">Label</span>
+      <button onClick="{{ onLabelMenu }}" title="Choose optional label column" style="{{ selBtnSm }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span style="{{ selTxt }}">{{ activeLabel }}</span><span class="codicon codicon-chevron-down" style="font-size:13px;opacity:.7"></span></button>
+    </div>
+    <sc-if value="{{ showGroupSel }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:11px;color:var(--vscode-inputValidation-warningBorder)">SRID group</span>
+      <button onClick="{{ onGroupMenu }}" title="Multiple coordinate systems present — choose one to display" style="{{ selBtnWarn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span style="{{ selTxt }}">{{ activeGroupLabel }}</span><span class="codicon codicon-chevron-down" style="font-size:13px;opacity:.7"></span></button>
+    </div>
+    </sc-if>
+
+    <div style="flex:1;min-width:12px"></div>
+
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:11px;color:var(--vscode-descriptionForeground)">Projection</span>
+      <button onClick="{{ onProjMenu }}" disabled="{{ projDisabled }}" title="{{ projTitle }}" style="{{ projBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span style="{{ selTxt }}">{{ activeProjLabel }}</span><span class="codicon codicon-chevron-down" style="font-size:13px;opacity:.7"></span></button>
+    </div>
+    <div style="{{ sep }}"></div>
+    <!-- zoom -->
+    <div style="display:flex;align-items:center;gap:4px">
+      <button onClick="{{ onZoomOut }}" title="Zoom out" aria-label="Zoom out" style="{{ iconBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-remove" style="font-size:15px"></span></button>
+      <input ref="{{ setZoomSlider }}" type="range" min="0" max="1000" value="500" onInput="{{ onZoomSlider }}" aria-label="Zoom" title="Zoom" style="width:96px;accent-color:var(--vscode-button-background)">
+      <button onClick="{{ onZoomIn }}" title="Zoom in" aria-label="Zoom in" style="{{ iconBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-add" style="font-size:15px"></span></button>
+      <span ref="{{ setZoomLabel }}" style="font-size:11px;color:var(--vscode-descriptionForeground);width:52px;text-align:right;font-family:var(--vscode-editor-font-family)">100%</span>
+    </div>
+    <div style="{{ sep }}"></div>
+    <button onClick="{{ onFit }}" title="Fit data to view (F)" aria-label="Fit" style="{{ textBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-screen-full" style="font-size:14px"></span><span>Fit</span></button>
+    <button onClick="{{ onLayers }}" title="Layers & display" aria-label="Layers" style="{{ layersBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-layers" style="font-size:15px"></span></button>
+    <button onClick="{{ onToggleList }}" title="Toggle feature list" aria-label="Toggle feature list" aria-pressed="{{ showFeatureList }}" style="{{ listBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-list-unordered" style="font-size:15px"></span></button>
+    <button onClick="{{ onMore }}" title="More" aria-label="More actions" style="{{ moreBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-ellipsis" style="font-size:16px"></span></button>
+  </div>
+
+  <!-- ===== INFO BANNER ===== -->
+  <sc-if value="{{ banner }}" hint-placeholder-val="{{ false }}">
+    <div style="{{ bannerStyle }}">
+      <span class="codicon {{ banner.icon }}" style="font-size:14px;flex:none"></span>
+      <span style="flex:1">{{ banner.text }}</span>
+      <sc-if value="{{ banner.action }}" hint-placeholder-val="{{ false }}"><button onClick="{{ banner.onAction }}" style="background:transparent;border:1px solid currentColor;color:inherit;border-radius:3px;padding:1px 8px;font-size:11px;cursor:pointer;opacity:.9">{{ banner.action }}</button></sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ===== BODY: MAP + FEATURE LIST ===== -->
+  <div style="flex:1;min-height:0;display:flex">
+    <!-- MAP AREA -->
+    <div ref="{{ setMapEl }}" tabindex="0" role="application" aria-label="Spatial results map. Arrow keys pan, plus and minus zoom, F fits, Enter selects the feature under the cursor."
+      onMouseDown="{{ onMapDown }}" onMouseMove="{{ onMapMove }}" onMouseLeave="{{ onMapLeave }}" onWheel="{{ onMapWheel }}" onDoubleClick="{{ onMapDbl }}" onKeyDown="{{ onMapKey }}"
+      style="flex:1;min-width:0;position:relative;overflow:hidden;background:var(--map-bg);cursor:{{ mapCursor }};outline-offset:-2px">
+      <canvas ref="{{ setCanvas }}" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+
+      <!-- legend -->
+      <sc-if value="{{ showLegend }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;left:12px;top:12px;min-width:150px;max-width:230px;padding:9px 11px;background:var(--map-frost);backdrop-filter:blur(6px);border:1px solid var(--vscode-editorWidget-border);border-radius:6px;box-shadow:0 2px 10px var(--vscode-widget-shadow);pointer-events:none">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--vscode-descriptionForeground);margin-bottom:6px">{{ legendTitle }}</div>
+        <sc-for list="{{ legendItems }}" as="lg" hint-placeholder-count="2">
+          <div style="display:flex;align-items:center;gap:8px;padding:2px 0;font-size:12px"><span style="{{ lg.swatch }}"></span><span style="flex:1">{{ lg.label }}</span><span style="color:var(--vscode-descriptionForeground);font-family:var(--vscode-editor-font-family);font-size:11px">{{ lg.count }}</span></div>
+        </sc-for>
+        <sc-if value="{{ legendSkipped }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;padding:2px 0;font-size:12px;margin-top:2px;border-top:1px solid var(--vscode-panel-border);padding-top:5px;color:var(--vscode-descriptionForeground)"><span style="width:11px;height:11px;border-radius:2px;border:1px dashed currentColor;flex:none"></span><span style="flex:1">{{ legendSkipped.label }}</span><span style="font-family:var(--vscode-editor-font-family);font-size:11px">{{ legendSkipped.count }}</span></div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <!-- coordinate readout -->
+      <div ref="{{ setCoordEl }}" style="position:absolute;left:12px;bottom:12px;padding:3px 9px;background:var(--map-frost);border:1px solid var(--vscode-editorWidget-border);border-radius:12px;font-family:var(--vscode-editor-font-family);font-size:11px;color:var(--vscode-foreground);pointer-events:none;opacity:0;transition:opacity .15s">—</div>
+
+      <!-- scale bar -->
+      <div ref="{{ setScaleEl }}" style="position:absolute;right:14px;bottom:14px;display:flex;flex-direction:column;align-items:flex-end;gap:2px;pointer-events:none;color:var(--vscode-foreground)">
+        <span style="font-size:10px;font-family:var(--vscode-editor-font-family);opacity:.85" ref="{{ setScaleLabel }}">—</span>
+        <div style="height:5px;border:1px solid var(--map-label);border-top:0;width:70px" ref="{{ setScaleBar }}"></div>
+      </div>
+
+      <!-- floating zoom cluster -->
+      <div style="position:absolute;right:14px;top:14px;display:flex;flex-direction:column;background:var(--map-frost);border:1px solid var(--vscode-editorWidget-border);border-radius:6px;overflow:hidden;box-shadow:0 2px 10px var(--vscode-widget-shadow)">
+        <button onClick="{{ onZoomIn }}" title="Zoom in" aria-label="Zoom in" style="{{ floatBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-add" style="font-size:15px"></span></button>
+        <button onClick="{{ onFit }}" title="Fit" aria-label="Fit" style="{{ floatBtnMid }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-screen-full" style="font-size:14px"></span></button>
+        <button onClick="{{ onZoomOut }}" title="Zoom out" aria-label="Zoom out" style="{{ floatBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-remove" style="font-size:15px"></span></button>
+      </div>
+
+      <!-- hover card -->
+      <div ref="{{ setHoverEl }}" style="position:absolute;left:0;top:0;z-index:6;max-width:240px;padding:6px 9px;background:var(--map-frost);border:1px solid var(--vscode-editorWidget-border);border-radius:5px;box-shadow:0 3px 12px var(--vscode-widget-shadow);pointer-events:none;opacity:0;transform:translate(-9999px,-9999px);font-size:12px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span ref="{{ setHoverIcon }}" class="codicon" style="font-size:13px"></span><span ref="{{ setHoverTitle }}" style="font-weight:600"></span></div>
+        <div ref="{{ setHoverSub }}" style="color:var(--vscode-descriptionForeground);font-family:var(--vscode-editor-font-family);font-size:11px"></div>
+      </div>
+
+      <!-- selected details drawer -->
+      <sc-if value="{{ selected }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;right:14px;bottom:52px;z-index:7;width:290px;background:var(--map-frost);backdrop-filter:blur(8px);border:1px solid var(--vscode-editorWidget-border);border-radius:7px;box-shadow:0 6px 22px var(--vscode-widget-shadow);animation:{{ popAnim }}">
+        <div style="display:flex;align-items:center;gap:8px;padding:9px 11px;border-bottom:1px solid var(--vscode-panel-border)">
+          <span class="codicon {{ selected.icon }}" style="font-size:15px;color:{{ selected.color }}"></span>
+          <span style="font-weight:600;flex:1">{{ selected.title }}</span>
+          <button onClick="{{ onClearSelection }}" title="Close" aria-label="Close details" style="background:transparent;border:0;color:var(--vscode-descriptionForeground);cursor:pointer;padding:2px" style-hover="color:var(--vscode-foreground)"><span class="codicon codicon-close" style="font-size:15px"></span></button>
+        </div>
+        <div style="padding:8px 11px;display:flex;flex-direction:column;gap:4px">
+          <sc-for list="{{ selected.rows }}" as="dr" hint-placeholder-count="4">
+            <div style="display:flex;gap:10px;font-size:12px;align-items:baseline"><span style="width:78px;flex:none;color:var(--vscode-descriptionForeground)">{{ dr.k }}</span><span style="flex:1;font-family:var(--vscode-editor-font-family);word-break:break-word;{{ dr.vstyle }}">{{ dr.v }}</span></div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:6px;padding:9px 11px;border-top:1px solid var(--vscode-panel-border)">
+          <button onClick="{{ onReveal }}" title="Switch to the Results grid and select this row" style="flex:1;height:26px;display:inline-flex;align-items:center;justify-content:center;gap:5px;background:var(--vscode-button-background);color:var(--vscode-button-foreground);border:0;border-radius:3px;cursor:pointer;font-size:12px" style-hover="background:var(--vscode-button-hoverBackground)"><span class="codicon codicon-table" style="font-size:13px"></span>Reveal in Results</button>
+          <button onClick="{{ onZoomTo }}" title="Zoom to feature" aria-label="Zoom to feature" style="{{ drawerIconBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-search" style="font-size:14px"></span></button>
+          <button onClick="{{ onCopySummary }}" title="Copy summary" aria-label="Copy summary" style="{{ drawerIconBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-copy" style="font-size:14px"></span></button>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- overlays: preparing / empty / renderer-down -->
+      <sc-if value="{{ overlay }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--map-bg);color:var(--vscode-descriptionForeground);text-align:center;padding:24px">
+          <sc-if value="{{ overlay.spin }}" hint-placeholder-val="{{ false }}"><span class="codicon codicon-loading" style="font-size:30px;color:var(--vscode-foreground);animation:sp-spin 1s linear infinite"></span></sc-if>
+          <sc-if value="{{ overlay.icon }}" hint-placeholder-val="{{ false }}"><span class="codicon {{ overlay.icon }}" style="font-size:34px;opacity:.6"></span></sc-if>
+          <div style="font-size:14px;color:var(--vscode-foreground);max-width:420px">{{ overlay.title }}</div>
+          <div style="font-size:12px;max-width:440px;line-height:18px">{{ overlay.sub }}</div>
+          <sc-if value="{{ overlay.action }}" hint-placeholder-val="{{ false }}"><button onClick="{{ overlay.onAction }}" style="height:28px;padding:0 14px;background:var(--vscode-button-background);color:var(--vscode-button-foreground);border:0;border-radius:3px;cursor:pointer;font-size:13px;margin-top:4px" style-hover="background:var(--vscode-button-hoverBackground)">{{ overlay.action }}</button></sc-if>
+        </div>
+      </sc-if>
+
+      <div class="sp-sr" aria-live="polite" ref="{{ setLiveEl }}"></div>
+    </div>
+
+    <!-- FEATURE LIST PANEL -->
+    <sc-if value="{{ showFeatureList }}" hint-placeholder-val="{{ false }}">
+    <div style="width:322px;flex:none;display:flex;flex-direction:column;background:var(--vscode-panel-background);border-left:1px solid var(--vscode-panel-border)">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--vscode-panel-border)">
+        <span style="font-weight:600;font-size:12px">Features</span>
+        <span style="font-size:11px;color:var(--vscode-descriptionForeground)">{{ listCountLabel }}</span>
+        <div style="flex:1"></div>
+        <button onClick="{{ onToggleList }}" title="Hide feature list" aria-label="Hide feature list" style="background:transparent;border:0;color:var(--vscode-descriptionForeground);cursor:pointer;padding:2px" style-hover="color:var(--vscode-foreground)"><span class="codicon codicon-chevron-right" style="font-size:15px"></span></button>
+      </div>
+      <div style="padding:6px 8px;border-bottom:1px solid var(--vscode-panel-border)">
+        <div style="display:flex;align-items:center;gap:6px;height:26px;padding:0 8px;background:var(--vscode-input-background);border:1px solid var(--vscode-input-border);border-radius:3px">
+          <span class="codicon codicon-search" style="font-size:13px;color:var(--vscode-descriptionForeground)"></span>
+          <input ref="{{ setSearchEl }}" value="{{ search }}" onInput="{{ onSearch }}" placeholder="Filter by label or row…" aria-label="Filter features" style="flex:1;background:transparent;border:0;outline:none;color:var(--vscode-input-foreground);font-family:inherit;font-size:12px">
+          <sc-if value="{{ search }}" hint-placeholder-val="{{ false }}"><span onClick="{{ onClearSearch }}" class="codicon codicon-close" style="font-size:13px;color:var(--vscode-descriptionForeground);cursor:pointer"></span></sc-if>
+        </div>
+      </div>
+      <div ref="{{ setListEl }}" onScroll="{{ onListScroll }}" tabindex="0" onKeyDown="{{ onListKey }}" role="listbox" aria-label="Feature list" aria-activedescendant="{{ listActiveId }}" style="flex:1;min-height:0;overflow:auto;position:relative;outline:none">
+        <div style="{{ listSpacerStyle }}">
+          <sc-for list="{{ visibleFeatures }}" as="f" hint-placeholder-count="12">
+            <div id="{{ f.domId }}" role="option" aria-selected="{{ f.selected }}" onClick="{{ f.onClick }}" onMouseEnter="{{ f.onEnter }}" onMouseLeave="{{ f.onLeave }}" style="{{ f.style }}" style-hover="background:var(--vscode-list-hoverBackground)">
+              <span class="codicon {{ f.icon }}" style="font-size:14px;flex:none;color:{{ f.color }};width:16px;text-align:center"></span>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">{{ f.label }}</span><span style="font-size:10px;color:var(--vscode-descriptionForeground);font-family:var(--vscode-editor-font-family);flex:none">Row {{ f.row }}</span></div>
+                <div style="display:flex;align-items:center;gap:6px;margin-top:1px"><span style="font-size:10px;color:var(--vscode-descriptionForeground)">{{ f.type }}</span><span style="{{ f.badgeStyle }}">{{ f.badge }}</span></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ listEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:24px 12px;text-align:center;color:var(--vscode-descriptionForeground);font-size:12px">No features match “{{ search }}”.</div></sc-if>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+
+  <!-- ===== STATUS BAR ===== -->
+  <div style="height:24px;flex:none;display:flex;align-items:stretch;background:var(--vscode-statusBar-background);color:var(--vscode-statusBar-foreground);font-size:12px;border-top:1px solid var(--vscode-contrastBorder)">
+    <div style="display:flex;align-items:center;gap:6px;padding:0 10px;background:var(--vscode-testing-iconPassed,transparent);color:inherit"><span class="codicon codicon-globe" style="font-size:13px"></span><span>{{ statusPrimary }}</span></div>
+    <div style="flex:1"></div>
+    <sc-for list="{{ statusSegs }}" as="s" hint-placeholder-count="5"><div style="{{ s.style }}"><sc-if value="{{ s.icon }}" hint-placeholder-val="{{ false }}"><span class="codicon {{ s.icon }}" style="font-size:12px"></span></sc-if><span>{{ s.text }}</span></div></sc-for>
+  </div>
+
+  <!-- ===== POPOVER MENUS ===== -->
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div onMouseDown="{{ onCloseMenus }}" style="position:absolute;inset:0;z-index:40">
+      <div onMouseDown="{{ stop }}" style="{{ menuStyle }}">
+        <sc-for list="{{ menuItems }}" as="mi" hint-placeholder-count="4">
+          <sc-if value="{{ mi.header }}" hint-placeholder-val="{{ false }}"><div style="padding:5px 12px 3px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--vscode-descriptionForeground)">{{ mi.text }}</div></sc-if>
+          <sc-if value="{{ mi.sep }}" hint-placeholder-val="{{ false }}"><div style="height:1px;background:var(--vscode-editorWidget-border);margin:4px 0"></div></sc-if>
+          <sc-if value="{{ mi.item }}" hint-placeholder-val="{{ false }}"><div onClick="{{ mi.onClick }}" title="{{ mi.title }}" style="{{ mi.style }}" style-hover="background:var(--vscode-list-hoverBackground)"><span class="codicon {{ mi.icon }}" style="font-size:14px;width:16px;flex:none;color:{{ mi.iconColor }}"></span><div style="flex:1;min-width:0"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ mi.label }}</div><sc-if value="{{ mi.detail }}" hint-placeholder-val="{{ false }}"><div style="font-size:10px;color:var(--vscode-descriptionForeground);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ mi.detail }}</div></sc-if></div><sc-if value="{{ mi.check }}" hint-placeholder-val="{{ false }}"><span class="codicon codicon-check" style="font-size:13px;flex:none"></span></sc-if></div></sc-if>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- LAYERS POPOVER -->
+  <sc-if value="{{ layersOpen }}" hint-placeholder-val="{{ false }}">
+    <div onMouseDown="{{ onCloseMenus }}" style="position:absolute;inset:0;z-index:40">
+      <div onMouseDown="{{ stop }}" style="{{ layersStyle }}">
+        <div style="padding:4px 12px 6px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--vscode-descriptionForeground)">Display</div>
+        <sc-for list="{{ layerToggles }}" as="lt" hint-placeholder-count="3">
+          <div onClick="{{ lt.onClick }}" style="display:flex;align-items:center;gap:9px;padding:6px 12px;cursor:pointer;font-size:13px" style-hover="background:var(--vscode-list-hoverBackground)">
+            <span style="{{ lt.box }}"><sc-if value="{{ lt.on }}" hint-placeholder-val="{{ false }}"><span class="codicon codicon-check" style="font-size:11px;color:var(--vscode-button-foreground)"></span></sc-if></span>
+            <span style="flex:1">{{ lt.label }}</span>
+          </div>
+        </sc-for>
+        <div style="height:1px;background:var(--vscode-editorWidget-border);margin:4px 0"></div>
+        <div style="padding:6px 12px;font-size:11px;color:var(--vscode-descriptionForeground);display:flex;align-items:center;gap:7px"><span class="codicon codicon-circle-slash" style="font-size:13px"></span>Basemap: Offline — no network requests</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- toasts -->
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:34px;z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center" aria-live="polite">
+    <sc-for list="{{ toasts }}" as="t" hint-placeholder-count="0"><div style="{{ t.style }}"><span class="codicon {{ t.icon }}" style="font-size:15px;flex:none"></span><span style="font-size:12px">{{ t.text }}</span></div></sc-for>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.store=this._store();
+    let theme='dark'; try{ theme=this.store.get('sp.theme')||'dark'; }catch(e){}
+    this.colorsByTheme={
+      dark:{bg:'#191919',grid:'rgba(90,110,160,.16)',gridStrong:'rgba(110,132,190,.30)',label:'#8492b5',point:'#4daafc',line:'#e0a33e',polyStroke:'#4ec9b0',polyFill:'rgba(78,201,176,.16)',unsupported:'#a2726f',sel:'#ffffff',selAccent:'#4daafc',halo:'rgba(77,170,252,.30)'},
+      light:{bg:'#ffffff',grid:'#d3ddf0',gridStrong:'#adbde3',label:'#6b7aa0',point:'#1a73e8',line:'#bf6a02',polyStroke:'#2a8a6f',polyFill:'rgba(42,138,111,.14)',unsupported:'#b06a6a',sel:'#0b3d91',selAccent:'#1a73e8',halo:'rgba(26,115,232,.24)'},
+      hc:{bg:'#000000',grid:'rgba(111,195,223,.34)',gridStrong:'rgba(111,195,223,.7)',label:'#ffffff',point:'#4daafc',line:'#f3e28a',polyStroke:'#89d185',polyFill:'rgba(137,209,133,.20)',unsupported:'#f48771',sel:'#f38518',selAccent:'#f38518',halo:'rgba(243,133,24,.45)'}
+    };
+    window.__SPDS=this._seed();
+    const first=window.__SPDS[0];
+    this.state={
+      theme, reduced:(typeof matchMedia!=='undefined'&&matchMedia('(prefers-reduced-motion: reduce)').matches),
+      activeSetId:first.id, spatialCol:first.spatialCols[0], labelCol:'(None)', projection:'auto', sridGroup:null,
+      layers:{graticule:true, labels:false, densify:true},
+      showFeatureList:false, search:'', listScrollTop:0, listViewportH:400,
+      hover:null, selected:null, listHoverRow:null,
+      menu:null, menuRect:null, layersOpen:false,
+      scenario:'ready', toasts:[],
+      revealFlash:false
+    };
+    this.view={cx:0,cy:0,scale:1};
+    this.W=800; this.H=400; this.dpr=1;
+    this.canvas=null; this.ctx=null; this.mapEl=null; this.listEl=null;
+    this.zoomLabelEl=null; this.zoomSliderEl=null; this.coordEl=null; this.hoverEl=null; this.hoverIcon=null; this.hoverTitle=null; this.hoverSub=null; this.liveEl=null; this.searchEl=null; this.scaleLabel=null; this.scaleBar=null;
+    this._drag=null; this._raf=null; this._anim=null; this._to=[]; this._toastId=0; this._pendKey=null;
+    ['onMapDown','onMapMove','onMapLeave','onMapWheel','onMapDbl','onMapKey','onListScroll','onListKey','onSearch','onCloseMenus','stop','_onUp','_onMove','onZoomSlider','_draw'].forEach(m=>this[m]=this[m].bind(this));
+  }
+  _store(){ try{ const t='__sp'+Math.random(); localStorage.setItem(t,'1'); localStorage.removeItem(t); return {get:k=>localStorage.getItem(k),set:(k,v)=>localStorage.setItem(k,v)}; }catch(e){ const m={}; return {get:k=>m[k]??null,set:(k,v)=>{m[k]=String(v)}}; } }
+
+  // ---------------- seed data ----------------
+  _rng(seed){ let s=seed>>>0; return ()=>{ s|=0; s=s+0x6D2B79F5|0; let t=Math.imul(s^s>>>15,1|s); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  _seed(){
+    const R=this._rng(20260710);
+    // ---- Result 1: Customer Addresses (geography points 4326) + DeliveryZone (geography polygons, unsupported) ----
+    const metros=[['Seattle','WA',-122.33,47.61,42],['Portland','OR',-122.68,45.52,20],['San Francisco','CA',-122.42,37.77,46],['Los Angeles','CA',-118.24,34.05,60],['San Diego','CA',-117.16,32.72,26],['Las Vegas','NV',-115.14,36.17,18],['Phoenix','AZ',-112.07,33.45,30],['Salt Lake City','UT',-111.89,40.76,16],['Denver','CO',-104.99,39.74,30],['Dallas','TX',-96.80,32.78,40],['Houston','TX',-95.37,29.76,38],['Austin','TX',-97.74,30.27,22],['Minneapolis','MN',-93.27,44.98,24],['Kansas City','MO',-94.58,39.10,18],['Chicago','IL',-87.63,41.88,58],['Atlanta','GA',-84.39,33.75,34],['Miami','FL',-80.19,25.76,30],['Nashville','TN',-86.78,36.16,16],['Washington','DC',-77.04,38.90,40],['Philadelphia','PA',-75.16,39.95,30],['New York','NY',-73.94,40.73,84],['Boston','MA',-71.06,42.36,40],['London','ENG',-0.13,51.51,30],['Paris','IDF',2.35,48.86,20],['Amsterdam','NH',4.90,52.37,12],['Berlin','BE',13.40,52.52,16],['Madrid','MD',-3.70,40.42,10],['Rome','RM',12.50,41.90,10]];
+    let row=0; const pts=[];
+    metros.forEach(m=>{ const [city,st,lon,lat,n]=m; for(let i=0;i<n;i++){ const jl=(R()-.5)*1.4, jt=(R()-.5)*0.9; pts.push({row:row++,kind:'geography',srid:4326,geom:{t:'Point',c:[lon+jl,lat+jt]},label:city,extra:{City:city,StateProvince:st},status:'renderable'}); } });
+    // skipped rows
+    const skipped=[];
+    for(let i=0;i<6;i++)skipped.push({row:row++,kind:'geography',srid:4326,geom:null,label:null,extra:{City:null,StateProvince:null},status:'null'});
+    for(let i=0;i<3;i++)skipped.push({row:row++,kind:'geography',srid:4326,geom:{t:'Point',c:[]},label:'(empty)',extra:{},status:'empty'});
+    skipped.push({row:row++,kind:'geography',srid:4326,geom:null,label:'(oversized)',extra:{},status:'unrenderable',reason:'maxCellBytes',sourceBytes:2310442});
+    const cust=[...pts,...skipped]; const custTotal=cust.length;
+    // DeliveryZone: geography polygons -> unsupportedSemantics
+    const zones=[]; let zrow=0;
+    const zc=[[-122,47.6],[-118.2,34],[-96.8,32.8],[-87.6,41.9],[-73.9,40.7],[2.35,48.86]];
+    zc.forEach((c,i)=>{ zones.push({row:zrow++,kind:'geography',srid:4326,geom:{t:'Polygon',rings:[this._ring(c[0],c[1],1.6+R()*0.8,6,R)]},label:'Zone '+(i+1),extra:{City:'—'},status:'unsupportedSemantics',reason:'geographyEdge'}); });
+    while(zrow<custTotal){ zones.push({row:zrow++,kind:'geography',srid:4326,geom:null,label:null,extra:{},status:'null'}); }
+
+    // ---- Result 2: Sales Territories (geometry polygons SRID 0, Cartesian) ----
+    const terrCols=['Northwest','Southwest','Central','Great Lakes','Northeast','Southeast','Mountain','Pacific'];
+    const terr=[]; const gx=[80,300,520,740], gy=[120,340,540];
+    for(let i=0;i<terrCols.length;i++){ const bx=gx[i%4]+ (R()-.5)*30, by=gy[Math.floor(i/4)]+(R()-.5)*30; const w=150+R()*40, h=150+R()*30; let rings=[this._rectRing(bx,by,w,h,R)]; if(i===2){ rings.push(this._rectRing(bx+w*0.32,by+h*0.34,w*0.32,h*0.3,R).reverse()); } terr.push({row:i,kind:'geometry',srid:0,geom:{t:'Polygon',rings},label:terrCols[i],extra:{Name:terrCols[i],Accounts:120+Math.floor(R()*900)},status:'renderable'}); }
+
+    // ---- Result 3: City Network (mixed geometry SRID 0) ----
+    const net=[]; let nrow=0;
+    // parks (polygons)
+    [['Riverside Park',260,180,120,90],['Cedar Commons',560,420,140,80],['Harbor Green',720,180,90,110]].forEach(p=>{ net.push({row:nrow++,kind:'geometry',srid:0,geom:{t:'Polygon',rings:[this._blob(p[1],p[2],p[3],p[4],R)]},label:p[0],extra:{Name:p[0],Kind:'Park'},status:'renderable',gtype:'Polygon'}); });
+    // roads (lines)
+    for(let i=0;i<6;i++){ const x0=60+R()*120, y0=80+R()*480; const pts2=[[x0,y0]]; let x=x0,y=y0; for(let k=0;k<5;k++){ x+=90+R()*90; y+=(R()-.5)*160; pts2.push([x,y]); } net.push({row:nrow++,kind:'geometry',srid:0,geom:{t:'LineString',c:pts2},label:'Route '+String.fromCharCode(65+i),extra:{Name:'Route '+String.fromCharCode(65+i),Kind:'Road'},status:'renderable',gtype:'LineString'}); }
+    // stations (points)
+    for(let i=0;i<22;i++){ net.push({row:nrow++,kind:'geometry',srid:0,geom:{t:'Point',c:[80+R()*820,80+R()*500]},label:'Station '+(i+1),extra:{Name:'Station '+(i+1),Kind:'Station'},status:'renderable',gtype:'Point'}); }
+
+    // ---- Result 4: Regional Sensors (mixed SRID: 0 and 3857) ----
+    const sens=[]; let srow=0;
+    for(let i=0;i<22;i++){ sens.push({row:srow++,kind:'geometry',srid:0,geom:{t:'Point',c:[100+R()*800,100+R()*500]},label:'Sensor '+(srow),extra:{Region:'Grid-0'},status:'renderable'}); }
+    for(let i=0;i<14;i++){ sens.push({row:srow++,kind:'geometry',srid:3857,geom:{t:'Point',c:[-8200000+R()*3400000,3900000+R()*2200000]},label:'Sensor '+(srow),extra:{Region:'WebMercator'},status:'renderable'}); }
+
+    return [
+      {id:'r1',name:'Customer Addresses',rowCount:custTotal,complete:true,
+        columns:[{name:'BusinessEntityID',type:'int'},{name:'City',type:'nvarchar(30)'},{name:'StateProvince',type:'nvarchar(50)'},{name:'SpatialLocation',type:'geography',spatial:true,kind:'geography',srid:4326},{name:'DeliveryZone',type:'geography',spatial:true,kind:'geography',srid:4326}],
+        spatialCols:['SpatialLocation','DeliveryZone'], labelCols:['(None)','City','StateProvince'],
+        features:{SpatialLocation:cust, DeliveryZone:zones}},
+      {id:'r2',name:'Sales Territories',rowCount:terr.length,complete:true,
+        columns:[{name:'TerritoryID',type:'int'},{name:'Name',type:'nvarchar(50)'},{name:'Accounts',type:'int'},{name:'Boundary',type:'geometry',spatial:true,kind:'geometry',srid:0}],
+        spatialCols:['Boundary'], labelCols:['(None)','Name'],
+        features:{Boundary:terr}},
+      {id:'r3',name:'City Network',rowCount:net.length,complete:true,
+        columns:[{name:'FeatureID',type:'int'},{name:'Name',type:'nvarchar(60)'},{name:'Kind',type:'nvarchar(20)'},{name:'Shape',type:'geometry',spatial:true,kind:'geometry',srid:0}],
+        spatialCols:['Shape'], labelCols:['(None)','Name','Kind'],
+        features:{Shape:net}},
+      {id:'r4',name:'Regional Sensors',rowCount:sens.length,complete:false,truncatedReason:'rowLimit',
+        columns:[{name:'SensorID',type:'int'},{name:'Region',type:'nvarchar(30)'},{name:'Location',type:'geometry',spatial:true,kind:'geometry',srid:0}],
+        spatialCols:['Location'], labelCols:['(None)','Region'],
+        features:{Location:sens}}
+    ];
+  }
+  _ring(cx,cy,r,n,R){ const out=[]; for(let i=0;i<n;i++){ const a=i/n*Math.PI*2; const rr=r*(0.7+R()*0.5); out.push([cx+Math.cos(a)*rr*1.4,cy+Math.sin(a)*rr]); } out.push(out[0]); return out; }
+  _rectRing(x,y,w,h,R){ const j=()=>(R()-.5)*14; return [[x+j(),y+j()],[x+w+j(),y+j()],[x+w+j(),y+h+j()],[x+j(),y+h+j()],[x,y]].map((p,i)=>i===4?[x,y]:p); }
+  _blob(cx,cy,w,h,R){ const out=[]; const n=8; for(let i=0;i<n;i++){ const a=i/n*Math.PI*2; out.push([cx+Math.cos(a)*w/2*(0.8+R()*0.4),cy+Math.sin(a)*h/2*(0.8+R()*0.4)]); } out.push(out[0]); return out; }
+
+  // ---------------- lifecycle ----------------
+  componentDidMount(){
+    window.addEventListener('mousemove',this._onMove,true);
+    window.addEventListener('mouseup',this._onUp,true);
+    this._ro=new ResizeObserver(()=>this._resize());
+    if(this.mapEl)this._ro.observe(this.mapEl);
+    setTimeout(()=>{ this._resize(); this.fit(true); },50);
+  }
+  componentDidUpdate(){
+    const s=this.state; const L=this._last||(this._last={});
+    const relayout = L.activeSetId!==s.activeSetId||L.spatialCol!==s.spatialCol||L.projection!==s.projection||L.sridGroup!==s.sridGroup||L.scenario!==s.scenario;
+    const redraw = L.theme!==s.theme||L.selected!==s.selected||L.hover!==s.hover||L.layers!==s.layers;
+    const relist = L.showFeatureList!==s.showFeatureList;
+    Object.assign(L,{activeSetId:s.activeSetId,spatialCol:s.spatialCol,projection:s.projection,sridGroup:s.sridGroup,scenario:s.scenario,theme:s.theme,selected:s.selected,hover:s.hover,layers:s.layers,showFeatureList:s.showFeatureList});
+    if(relayout){ this.fit(true); this._draw(); return; }
+    if(redraw)this._draw();
+    if(relist)setTimeout(()=>this._resize(),0);
+  }
+  componentWillUnmount(){ window.removeEventListener('mousemove',this._onMove,true); window.removeEventListener('mouseup',this._onUp,true); this._to.forEach(clearTimeout); if(this._raf)cancelAnimationFrame(this._raf); if(this._anim)cancelAnimationFrame(this._anim); try{this._ro.disconnect();}catch(e){} }
+
+  // ---------------- refs ----------------
+  setCanvas(el){ this.canvas=el; this.ctx=el?el.getContext('2d'):null; }
+  setMapEl(el){ this.mapEl=el; if(el&&this._ro){ try{this._ro.observe(el);}catch(e){} } }
+  setListEl(el){ this.listEl=el; }
+  setZoomLabel(el){ this.zoomLabelEl=el; }
+  setZoomSlider(el){ this.zoomSliderEl=el; }
+  setCoordEl(el){ this.coordEl=el; }
+  setScaleLabel(el){ this.scaleLabel=el; }
+  setScaleBar(el){ this.scaleBar=el; }
+  setScaleEl(){}
+  setHoverEl(el){ this.hoverEl=el; }
+  setHoverIcon(el){ this.hoverIcon=el; }
+  setHoverTitle(el){ this.hoverTitle=el; }
+  setHoverSub(el){ this.hoverSub=el; }
+  setLiveEl(el){ this.liveEl=el; }
+  setSearchEl(el){ this.searchEl=el; }
+  announce(msg){ if(this.liveEl)this.liveEl.textContent=msg; }
+
+  // ---------------- helpers ----------------
+  colors(){ return this.colorsByTheme[this.state.theme]||this.colorsByTheme.dark; }
+  _ds(){ return window.__SPDS; }
+  activeSet(){ const DS=this._ds(); return DS.find(d=>d.id===this.state.activeSetId)||DS[0]; }
+  activeColMeta(){ const set=this.activeSet(); return set.columns.find(c=>c.name===this.state.spatialCol)||set.columns.find(c=>c.spatial); }
+  rawFeatures(){ const set=this.activeSet(); return set.features[this.state.spatialCol]||[]; }
+  sridGroups(){ const fs=this.rawFeatures().filter(f=>f.status==='renderable'&&f.geom); const map={}; fs.forEach(f=>{ const k=f.kind+':'+f.srid; (map[k]=map[k]||{kind:f.kind,srid:f.srid,count:0}).count++; }); return Object.keys(map).map(k=>({key:k,...map[k]})); }
+  activeGroup(){ const g=this.sridGroups(); if(g.length<=1)return g[0]||null; const chosen=this.state.sridGroup&&g.find(x=>x.key===this.state.sridGroup); return chosen||g[0]; }
+  renderFeatures(){ // features to actually draw (renderable, in active group)
+    const g=this.activeGroup(); const grp=this.sridGroups();
+    return this.rawFeatures().filter(f=>f.status==='renderable'&&f.geom&&(grp.length<=1|| (f.kind+':'+f.srid)===(g&&g.key)));
+  }
+  listFeatures(){ // all features for the list (incl. skipped/unsupported), filtered by search
+    const q=this.state.search.trim().toLowerCase(); let fs=this.rawFeatures();
+    if(q)fs=fs.filter(f=>((f.label||'')+'').toLowerCase().includes(q)||('row '+f.row).includes(q)||(''+f.row)===q);
+    return fs;
+  }
+  isGeographic(){ const col=this.activeColMeta(); const g=this.activeGroup(); const srid=g?g.srid:(col?col.srid:0); return (col&&col.kind==='geography')||srid===4326||srid===3857; }
+  projMode(){ // effective projection
+    const s=this.state; if(!this.isGeographic())return 'cartesian';
+    if(s.projection==='mercator')return 'mercator';
+    if(s.projection==='equirect')return 'equirect';
+    // auto
+    const g=this.activeGroup(); if(g&&g.srid===3857)return 'mercator';
+    return 'equirect';
+  }
+  gtypeOf(f){ return f.gtype|| (f.geom?f.geom.t:'Point'); }
+  // world coords
+  mercY(lat){ lat=Math.max(-85,Math.min(85,lat)); return (180/Math.PI)*Math.log(Math.tan(Math.PI/4+lat*Math.PI/360)); }
+  invMercY(y){ return (360/Math.PI)*Math.atan(Math.exp(y*Math.PI/180))-90; }
+  toWorld(pt){ const m=this.projMode(); if(m==='mercator'&&this.activeGroup()&&this.activeGroup().srid===3857){ return [pt[0],pt[1]]; } if(m==='mercator'){ return [pt[0],this.mercY(pt[1])]; } return [pt[0],pt[1]]; }
+  worldToScreen(w){ return [this.W/2+(w[0]-this.view.cx)*this.view.scale, this.H/2-(w[1]-this.view.cy)*this.view.scale]; }
+  screenToWorld(s){ return [this.view.cx+(s[0]-this.W/2)/this.view.scale, this.view.cy-(s[1]-this.H/2)/this.view.scale]; }
+
+  // ---------------- resize + fit ----------------
+  _resize(){ if(!this.canvas||!this.mapEl)return; const r=this.mapEl.getBoundingClientRect(); this.W=Math.max(50,r.width); this.H=Math.max(50,r.height); this.dpr=window.devicePixelRatio||1; this.canvas.width=Math.round(this.W*this.dpr); this.canvas.height=Math.round(this.H*this.dpr); this._draw(); }
+  featureWorldPoints(){ const out=[]; this.renderFeatures().forEach(f=>{ const g=f.geom; if(g.t==='Point')out.push(this.toWorld(g.c)); else if(g.t==='LineString')g.c.forEach(p=>out.push(this.toWorld(p))); else if(g.t==='Polygon')g.rings.forEach(r=>r.forEach(p=>out.push(this.toWorld(p)))); }); return out; }
+  fit(instant){ const wp=this.featureWorldPoints(); if(!wp.length){ this.view={cx:0,cy:0,scale:2}; this._draw(); this._syncZoom(); return; }
+    let minx=1e18,miny=1e18,maxx=-1e18,maxy=-1e18; wp.forEach(p=>{ if(p[0]<minx)minx=p[0]; if(p[0]>maxx)maxx=p[0]; if(p[1]<miny)miny=p[1]; if(p[1]>maxy)maxy=p[1]; });
+    const spanx=Math.max(1e-6,maxx-minx), spany=Math.max(1e-6,maxy-miny); const pad=0.86;
+    let scale=Math.min(this.W*pad/spanx,this.H*pad/spany); const single=wp.length===1||(spanx<1e-3&&spany<1e-3); if(single)scale=Math.min(scale,this.isGeographic()?24:2.2); scale=Math.min(scale,4000);
+    const target={cx:(minx+maxx)/2,cy:(miny+maxy)/2,scale};
+    if(instant||this.state.reduced){ this.view=target; this._draw(); this._syncZoom(); } else this._animateTo(target);
+  }
+  _animateTo(target){ if(this._anim)cancelAnimationFrame(this._anim); if(this._animFb)clearTimeout(this._animFb); if(this.state.reduced){ this.view={...target}; this._draw(); this._syncZoom(); return; }
+    const from={...this.view}; const t0=performance.now(); const dur=340; const ease=t=>1-Math.pow(1-t,3);
+    const step=(now)=>{ let k=Math.min(1,(now-t0)/dur); const e=ease(k); this.view={cx:from.cx+(target.cx-from.cx)*e,cy:from.cy+(target.cy-from.cy)*e,scale:from.scale*Math.pow(target.scale/from.scale,e)}; this._draw(); this._syncZoom(); if(k<1)this._anim=requestAnimationFrame(step); };
+    this._anim=requestAnimationFrame(step);
+    // rAF is paused while the iframe/tab is unfocused; snap to target so Fit/Zoom-to always complete
+    this._animFb=setTimeout(()=>{ this.view={...target}; this._draw(); this._syncZoom(); },380); }
+  _baseScale(){ // scale that fit() would choose, for zoom% reference
+    const wp=this.featureWorldPoints(); if(!wp.length)return 1; let minx=1e18,miny=1e18,maxx=-1e18,maxy=-1e18; wp.forEach(p=>{ if(p[0]<minx)minx=p[0]; if(p[0]>maxx)maxx=p[0]; if(p[1]<miny)miny=p[1]; if(p[1]>maxy)maxy=p[1]; }); const spanx=Math.max(1e-6,maxx-minx),spany=Math.max(1e-6,maxy-miny); return Math.min(this.W*0.86/spanx,this.H*0.86/spany); }
+  _syncZoom(){ const pct=Math.round(this.view.scale/this._baseScale()*100); if(this.zoomLabelEl)this.zoomLabelEl.textContent=(isFinite(pct)?pct:100)+'%'; if(this.zoomSliderEl){ const v=Math.max(0,Math.min(1000,Math.round((Math.log(this.view.scale/this._baseScale())/Math.log(64)+0.5)*500))); this.zoomSliderEl.value=v; } this._updateScaleBar(); }
+  _updateScaleBar(){ if(!this.scaleLabel)return; const geo=this.isGeographic(); const unitsPerPx=1/this.view.scale; let target=70*unitsPerPx; // choose nice
+    const nice=(v)=>{ const p=Math.pow(10,Math.floor(Math.log10(v))); const f=v/p; const n=f>=5?5:f>=2?2:1; return n*p; }; const val=nice(target); const px=val*this.view.scale;
+    if(this.scaleBar)this.scaleBar.style.width=px+'px'; this.scaleLabel.textContent= geo? (val>=1?val+'°':(val*60).toFixed(0)+'′') : (val>=1000?(val/1000)+'k u':val+' u'); }
+
+  // ---------------- drawing ----------------
+  _draw(){ this._paint(); }
+  _paint(){ const ctx=this.ctx; if(!ctx)return; const C=this.colors(); const W=this.W,H=this.H,dpr=this.dpr; ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H); ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
+    if(this.state.scenario==='preparing'||this.state.scenario==='empty'||this.state.scenario==='rendererDown'){ return; }
+    if(this.state.layers.graticule)this._drawGrid(ctx,C);
+    // vignette (dark only)
+    if(this.state.theme==='dark'){ const g=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*0.35,W/2,H/2,Math.max(W,H)*0.75); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,0.35)'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); }
+    const feats=this.renderFeatures(); const sel=this.state.selected, hov=this.state.hover;
+    // polygons
+    ctx.lineJoin='round'; ctx.lineCap='round';
+    feats.forEach(f=>{ if(this.gtypeOf(f)!=='Polygon'&&f.geom.t!=='Polygon')return; if(f.geom.t!=='Polygon')return; this._pathPolygon(ctx,f); ctx.fillStyle=C.polyFill; ctx.fill('evenodd'); ctx.strokeStyle=C.polyStroke; ctx.lineWidth=(sel&&sel.row===f.row&&sel.col===this.state.spatialCol)?3:1.5; ctx.stroke(); });
+    // lines
+    feats.forEach(f=>{ if(f.geom.t!=='LineString')return; ctx.beginPath(); f.geom.c.forEach((p,i)=>{ const s=this.worldToScreen(this.toWorld(p)); i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]); }); const sell=sel&&sel.row===f.row&&sel.col===this.state.spatialCol; if(sell){ ctx.strokeStyle=C.halo; ctx.lineWidth=7; ctx.stroke(); } ctx.strokeStyle=C.line; ctx.lineWidth=sell?3:2; ctx.stroke(); });
+    // points
+    const pr=this.state.theme==='hc'?4.2:3.4;
+    feats.forEach(f=>{ if(f.geom.t!=='Point')return; const s=this.worldToScreen(this.toWorld(f.geom.c)); if(s[0]<-20||s[0]>W+20||s[1]<-20||s[1]>H+20)return; const isSel=sel&&sel.row===f.row&&sel.col===this.state.spatialCol; const isHov=hov&&hov.row===f.row; const r=isSel?pr+2.4:(isHov?pr+1.4:pr); ctx.beginPath(); ctx.arc(s[0],s[1],r,0,Math.PI*2); ctx.fillStyle=C.point; ctx.globalAlpha=0.92; ctx.fill(); ctx.globalAlpha=1; ctx.lineWidth=1; ctx.strokeStyle=this.state.theme==='light'?'rgba(255,255,255,.85)':'rgba(0,0,0,.45)'; ctx.stroke(); });
+    // selection halo/crosshair
+    if(sel&&sel.col===this.state.spatialCol){ const f=this.rawFeatures().find(x=>x.row===sel.row); if(f&&f.geom&&f.status==='renderable'){ this._drawSelection(ctx,C,f); } }
+    // labels (selected always; all if layer on and few)
+    const showAll=this.state.layers.labels; ctx.font='11px '+getComputedStyle(this.mapEl).fontFamily; ctx.textBaseline='middle';
+    if(this.state.labelCol!=='(None)'){ const doLabel=(f)=>{ if(f.geom.t!=='Point')return; const s=this.worldToScreen(this.toWorld(f.geom.c)); if(s[0]<0||s[0]>W||s[1]<0||s[1]>H)return; const txt=(f.extra&&f.extra[this.state.labelCol])||f.label||''; if(!txt)return; ctx.fillStyle=C.label; ctx.fillText(txt,s[0]+7,s[1]); }; if(showAll&&feats.length<=140)feats.forEach(doLabel); }
+  }
+  _drawGrid(ctx,C){ const W=this.W,H=this.H; const geo=this.isGeographic(); const tl=this.screenToWorld([0,0]), br=this.screenToWorld([W,H]); const minx=tl[0],maxx=br[0],maxy=tl[1],miny=br[1];
+    const stepsGeo=[0.5,1,2,5,10,15,30,45,90], stepsCart=[1,2,5,10,20,50,100,200,500,1000,2000,5000,10000,50000,100000,500000,1000000];
+    const targetPx=90; const spanPxPerUnit=this.view.scale; let step; const steps=geo?stepsGeo:stepsCart; step=steps.find(s=>s*spanPxPerUnit>=targetPx)||steps[steps.length-1];
+    ctx.lineWidth=1; ctx.font='10px '+getComputedStyle(this.mapEl).fontFamily; ctx.textBaseline='alphabetic';
+    const x0=Math.floor(minx/step)*step, x1=Math.ceil(maxx/step)*step;
+    for(let x=x0;x<=x1;x+=step){ const s=this.worldToScreen([x, (miny+maxy)/2]); const strong=Math.abs(x)<1e-9; ctx.strokeStyle=strong?C.gridStrong:C.grid; ctx.beginPath(); ctx.moveTo(s[0],0); ctx.lineTo(s[0],H); ctx.stroke(); ctx.fillStyle=C.label; const lbl=geo?this._fmtLon(x):this._fmtNum(x); ctx.fillText(lbl,s[0]+3,12); }
+    const y0=Math.floor(miny/step)*step, y1=Math.ceil(maxy/step)*step;
+    for(let y=y0;y<=y1;y+=step){ const s=this.worldToScreen([(minx+maxx)/2,y]); const strong=Math.abs(y)<1e-9; ctx.strokeStyle=strong?C.gridStrong:C.grid; ctx.beginPath(); ctx.moveTo(0,s[1]); ctx.lineTo(W,s[1]); ctx.stroke(); ctx.fillStyle=C.label; const yy=(this.projMode()==='mercator'&&!(this.activeGroup()&&this.activeGroup().srid===3857))?this.invMercY(y):y; const lbl=geo?this._fmtLat(yy):this._fmtNum(y); ctx.fillText(lbl,3,s[1]-3); }
+  }
+  _fmtLon(x){ let v=((x+180)%360+360)%360-180; return (Math.round(v*10)/10)+'°'; }
+  _fmtLat(y){ return (Math.round(y*10)/10)+'°'; }
+  _fmtNum(v){ if(Math.abs(v)>=1000)return (v/1000)+'k'; return ''+Math.round(v*100)/100; }
+  _pathPolygon(ctx,f){ ctx.beginPath(); f.geom.rings.forEach(ring=>{ ring.forEach((p,i)=>{ const s=this.worldToScreen(this.toWorld(p)); i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]); }); ctx.closePath(); }); }
+  _drawSelection(ctx,C,f){ const g=f.geom; let cx,cy; if(g.t==='Point'){ const s=this.worldToScreen(this.toWorld(g.c)); cx=s[0];cy=s[1]; ctx.beginPath(); ctx.arc(cx,cy,9,0,Math.PI*2); ctx.strokeStyle=C.sel; ctx.lineWidth=2; ctx.stroke(); ctx.beginPath(); ctx.arc(cx,cy,9,0,Math.PI*2); ctx.strokeStyle=C.selAccent; ctx.lineWidth=1; ctx.stroke(); } else { // bbox center + outline highlight already drawn thicker; add corner ring
+      let minx=1e18,miny=1e18,maxx=-1e18,maxy=-1e18; const acc=(p)=>{ const s=this.worldToScreen(this.toWorld(p)); if(s[0]<minx)minx=s[0]; if(s[0]>maxx)maxx=s[0]; if(s[1]<miny)miny=s[1]; if(s[1]>maxy)maxy=s[1]; }; if(g.t==='LineString')g.c.forEach(acc); else g.rings.forEach(r=>r.forEach(acc)); ctx.strokeStyle=C.selAccent; ctx.setLineDash([4,3]); ctx.lineWidth=1; ctx.strokeRect(minx-4,miny-4,maxx-minx+8,maxy-miny+8); ctx.setLineDash([]); }
+  }
+
+  // ---------------- picking ----------------
+  _pick(sx,sy){ const feats=this.renderFeatures(); let best=null,bestD=64; // points
+    for(const f of feats){ if(f.geom.t!=='Point')continue; const s=this.worldToScreen(this.toWorld(f.geom.c)); const d=(s[0]-sx)**2+(s[1]-sy)**2; if(d<bestD){ bestD=d; best=f; } }
+    if(best)return best;
+    for(const f of feats){ if(f.geom.t!=='LineString')continue; for(let i=1;i<f.geom.c.length;i++){ const a=this.worldToScreen(this.toWorld(f.geom.c[i-1])), b=this.worldToScreen(this.toWorld(f.geom.c[i])); if(this._distSeg(sx,sy,a,b)<6)return f; } }
+    for(const f of feats){ if(f.geom.t!=='Polygon')continue; const pts=f.geom.rings[0].map(p=>this.worldToScreen(this.toWorld(p))); if(this._inPoly(sx,sy,pts))return f; }
+    return null; }
+  _distSeg(px,py,a,b){ const dx=b[0]-a[0],dy=b[1]-a[1]; const l2=dx*dx+dy*dy||1; let t=((px-a[0])*dx+(py-a[1])*dy)/l2; t=Math.max(0,Math.min(1,t)); const x=a[0]+t*dx,y=a[1]+t*dy; return Math.hypot(px-x,py-y); }
+  _inPoly(px,py,pts){ let c=false; for(let i=0,j=pts.length-1;i<pts.length;j=i++){ if(((pts[i][1]>py)!==(pts[j][1]>py))&&(px<(pts[j][0]-pts[i][0])*(py-pts[i][1])/(pts[j][1]-pts[i][1])+pts[i][0]))c=!c; } return c; }
+
+  // ---------------- map interactions ----------------
+  _rel(e){ const r=this.mapEl.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; }
+  onMapDown(e){ if(e.button!==0)return; if(this.mapEl)this.mapEl.focus(); const p=this._rel(e); this._drag={x:e.clientX,y:e.clientY,cx:this.view.cx,cy:this.view.cy,moved:false,sx:p[0],sy:p[1]}; }
+  _onMove(e){ if(!this._drag)return; const dx=e.clientX-this._drag.x, dy=e.clientY-this._drag.y; if(Math.abs(dx)>3||Math.abs(dy)>3)this._drag.moved=true; this.view.cx=this._drag.cx-dx/this.view.scale; this.view.cy=this._drag.cy+dy/this.view.scale; this._draw(); this._syncZoom(); }
+  _onUp(e){ if(this._drag){ if(!this._drag.moved){ const f=this._pick(this._drag.sx,this._drag.sy); this.select(f); } this._drag=null; } }
+  onMapMove(e){ if(this._drag)return; const p=this._rel(e); this._updateCoord(p); const f=this._pick(p[0],p[1]); const cur=this.state.hover; if((f&&f.row)!==(cur&&cur.row)||((f&&f.col)!==(cur&&cur.col))){ this.setState({hover:f?{row:f.row}:null}); } this._positionHover(f,p); }
+  onMapLeave(){ this._drag=null; if(this.state.hover)this.setState({hover:null}); if(this.hoverEl){ this.hoverEl.style.opacity=0; this.hoverEl.style.transform='translate(-9999px,-9999px)'; } if(this.coordEl)this.coordEl.style.opacity=0; }
+  _positionHover(f,p){ if(!this.hoverEl)return; if(!f){ this.hoverEl.style.opacity=0; this.hoverEl.style.transform='translate(-9999px,-9999px)'; return; } const type=this.gtypeOf(f); const iconMap={Point:'codicon-circle-filled',LineString:'codicon-arrow-both',Polygon:'codicon-primitive-square',MultiPolygon:'codicon-primitive-square'}; if(this.hoverIcon){ this.hoverIcon.className='codicon '+(iconMap[type]||'codicon-circle-filled'); this.hoverIcon.style.color=this._typeColor(type); } if(this.hoverTitle)this.hoverTitle.textContent=(f.label||('Row '+f.row)); if(this.hoverSub)this.hoverSub.textContent=type+' · Row '+f.row+' · SRID '+f.srid; let x=p[0]+14,y=p[1]+14; if(x>this.W-250)x=p[0]-236; if(y>this.H-70)y=p[1]-64; this.hoverEl.style.transform='translate('+x+'px,'+y+'px)'; this.hoverEl.style.opacity=1; }
+  _updateCoord(p){ if(!this.coordEl)return; const w=this.screenToWorld(p); let txt; if(this.isGeographic()){ let lat=w[1]; if(this.projMode()==='mercator'&&!(this.activeGroup()&&this.activeGroup().srid===3857))lat=this.invMercY(w[1]); const lon=((w[0]+180)%360+360)%360-180; txt=lat.toFixed(4)+', '+lon.toFixed(4); } else { txt='x '+Math.round(w[0])+'  y '+Math.round(w[1]); } this.coordEl.textContent=txt; this.coordEl.style.opacity=1; }
+  _zoomAt(factor,sx,sy){ const before=this.screenToWorld([sx,sy]); this.view.scale=Math.max(this._baseScale()/8,Math.min(this._baseScale()*64,this.view.scale*factor)); const after=this.screenToWorld([sx,sy]); this.view.cx+=before[0]-after[0]; this.view.cy+=before[1]-after[1]; this._draw(); this._syncZoom(); }
+  onMapWheel(e){ e.preventDefault(); const p=this._rel(e); this._zoomAt(e.deltaY<0?1.15:1/1.15,p[0],p[1]); }
+  onMapDbl(e){ const p=this._rel(e); this._zoomAt(1.8,p[0],p[1]); }
+  onMapKey(e){ const k=e.key; const pan=40/this.view.scale; if(k==='ArrowLeft'){e.preventDefault();this.view.cx-=pan;this._draw();this._syncZoom();} else if(k==='ArrowRight'){e.preventDefault();this.view.cx+=pan;this._draw();this._syncZoom();} else if(k==='ArrowUp'){e.preventDefault();this.view.cy+=pan;this._draw();this._syncZoom();} else if(k==='ArrowDown'){e.preventDefault();this.view.cy-=pan;this._draw();this._syncZoom();} else if(k==='+'||k==='='){e.preventDefault();this._zoomAt(1.3,this.W/2,this.H/2);} else if(k==='-'||k==='_'){e.preventDefault();this._zoomAt(1/1.3,this.W/2,this.H/2);} else if(k==='f'||k==='F'){e.preventDefault();this.fit();} else if(k==='Escape'){ if(this.state.selected)this.select(null); } }
+
+  // ---------------- selection ----------------
+  select(f){ if(!f){ this.setState({selected:null}); return; } this.setState({selected:{row:f.row,col:this.state.spatialCol}}); const type=this.gtypeOf(f); this.announce('Selected '+(f.label||'row '+f.row)+', '+type+', SRID '+f.srid); this._ensureListVisible(f.row); }
+  selectedFeature(){ const s=this.state.selected; if(!s)return null; return this.rawFeatures().find(f=>f.row===s.row&&s.col===this.state.spatialCol); }
+  onClearSelection(){ this.select(null); }
+  onReveal(){ const f=this.selectedFeature(); if(!f)return; this.setState({revealFlash:true}); this.toast('Revealed row '+f.row+' in Results grid','codicon-table'); const t=setTimeout(()=>this.setState({revealFlash:false}),1400); this._to.push(t); this.announce('Revealed row '+f.row+' in the Results grid'); }
+  onZoomTo(){ const f=this.selectedFeature(); if(!f||!f.geom)return; const wp=[]; const g=f.geom; if(g.t==='Point')wp.push(this.toWorld(g.c)); else if(g.t==='LineString')g.c.forEach(p=>wp.push(this.toWorld(p))); else g.rings.forEach(r=>r.forEach(p=>wp.push(this.toWorld(p)))); let minx=1e18,miny=1e18,maxx=-1e18,maxy=-1e18; wp.forEach(p=>{ if(p[0]<minx)minx=p[0]; if(p[0]>maxx)maxx=p[0]; if(p[1]<miny)miny=p[1]; if(p[1]>maxy)maxy=p[1]; }); const spanx=Math.max(1e-4,maxx-minx),spany=Math.max(1e-4,maxy-miny); let scale=Math.min(this.W*0.5/spanx,this.H*0.5/spany); if(g.t==='Point')scale=Math.min(this._baseScale()*20,this._baseScale()*20); scale=Math.min(scale,this._baseScale()*60); this._animateTo({cx:(minx+maxx)/2,cy:(miny+maxy)/2,scale}); }
+  onCopySummary(){ const f=this.selectedFeature(); if(!f)return; const s=this._summaryText(f); try{navigator.clipboard.writeText(s);}catch(e){} this.toast('Summary copied','codicon-copy'); }
+  _summaryText(f){ const type=this.gtypeOf(f); let coords=''; if(f.geom&&f.geom.t==='Point')coords=' ('+f.geom.c.map(n=>Math.round(n*1e4)/1e4).join(', ')+')'; return (f.label||('Row '+f.row))+' — '+type+', '+f.kind+', SRID '+f.srid+coords; }
+
+  // ---------------- feature list ----------------
+  onToggleList(){ this.setState(s=>({showFeatureList:!s.showFeatureList})); }
+  onSearch(e){ this.setState({search:e.target.value,listScrollTop:0}); if(this.listEl)this.listEl.scrollTop=0; }
+  onClearSearch(){ this.setState({search:''}); if(this.searchEl)this.searchEl.value=''; }
+  onListScroll(e){ this.setState({listScrollTop:e.target.scrollTop,listViewportH:e.target.clientHeight}); }
+  _ensureListVisible(rowNum){ if(!this.state.showFeatureList||!this.listEl)return; const arr=this.listFeatures(); const idx=arr.findIndex(f=>f.row===rowNum); if(idx<0)return; const y=idx*44; const el=this.listEl; if(y<el.scrollTop||y+44>el.scrollTop+el.clientHeight){ el.scrollTop=Math.max(0,y-el.clientHeight/2); this.setState({listScrollTop:el.scrollTop}); } }
+  onListKey(e){ const arr=this.listFeatures(); if(!arr.length)return; const sel=this.state.selected; let idx=sel?arr.findIndex(f=>f.row===sel.row):-1; if(e.key==='ArrowDown'){ e.preventDefault(); idx=Math.min(arr.length-1,idx+1); this._selectFromList(arr[idx]); } else if(e.key==='ArrowUp'){ e.preventDefault(); idx=Math.max(0,idx<0?0:idx-1); this._selectFromList(arr[idx]); } else if(e.key==='Home'){ e.preventDefault(); this._selectFromList(arr[0]); } else if(e.key==='End'){ e.preventDefault(); this._selectFromList(arr[arr.length-1]); } else if(e.key==='Enter'){ const f=this.selectedFeature(); if(f&&f.geom&&f.status==='renderable')this.onZoomTo(); } }
+  _selectFromList(f){ if(!f)return; if(f.status==='renderable'&&f.geom){ this.select(f); } else { this.setState({selected:{row:f.row,col:this.state.spatialCol}}); this.announce('Row '+f.row+', '+(f.status)+(f.reason?' ('+f.reason+')':'')); this._ensureListVisible(f.row); } }
+  listClick(f){ if(f.status==='renderable'&&f.geom){ this.select(f); if(!this.state.reduced)this.onZoomTo(); } else this._selectFromList(f); }
+
+  // ---------------- toolbar menus ----------------
+  stop(e){ e.stopPropagation(); }
+  onCloseMenus(){ this.setState({menu:null,layersOpen:false}); }
+  _openMenu(name,e){ const r=e.currentTarget.getBoundingClientRect(); this.setState({menu:name,menuRect:r,layersOpen:false}); }
+  onResultMenu(e){ this._openMenu('result',e); }
+  onColMenu(e){ this._openMenu('col',e); }
+  onLabelMenu(e){ this._openMenu('label',e); }
+  onProjMenu(e){ if(this.projDisabled())return; this._openMenu('proj',e); }
+  onGroupMenu(e){ this._openMenu('group',e); }
+  onMore(e){ this._openMenu('more',e); }
+  onLayers(e){ const r=e.currentTarget.getBoundingClientRect(); this.setState({layersOpen:!this.state.layersOpen,menu:null,menuRect:r}); }
+  projDisabled(){ return !this.isGeographic(); }
+  pickResult(id){ const set=this._ds().find(d=>d.id===id); this.setState({activeSetId:id,spatialCol:set.spatialCols[0],labelCol:'(None)',selected:null,hover:null,search:'',sridGroup:null,menu:null,scenario:'ready'}); }
+  pickCol(name){ this.setState({spatialCol:name,selected:null,hover:null,labelCol:'(None)',sridGroup:null,menu:null}); }
+  pickLabel(name){ this.setState({labelCol:name,menu:null}); this._draw(); }
+  pickProj(p){ this.setState({projection:p,menu:null,selected:null}); }
+  pickGroup(key){ this.setState({sridGroup:key,menu:null,selected:null}); }
+  toggleLayer(k){ this.setState(s=>({layers:{...s.layers,[k]:!s.layers[k]}})); }
+  setScenario(sc){ this.setState({scenario:sc,menu:null,selected:null}); if(sc==='preparing'){ const t=setTimeout(()=>{ if(this.state.scenario==='preparing')this.setState({scenario:'ready'}); this.fit(true); this.announce('Spatial preparation complete'); },1600); this._to.push(t); } }
+  setTheme(t){ this.setState({theme:t}); try{this.store.set('sp.theme',t);}catch(e){} }
+  onFit(){ this.fit(); }
+  onZoomIn(){ this._zoomAt(1.3,this.W/2,this.H/2); }
+  onZoomOut(){ this._zoomAt(1/1.3,this.W/2,this.H/2); }
+  onZoomSlider(e){ const v=+e.target.value; const scale=this._baseScale()*Math.pow(64,v/500-0.5); const sx=this.W/2,sy=this.H/2; const before=this.screenToWorld([sx,sy]); this.view.scale=scale; const after=this.screenToWorld([sx,sy]); this.view.cx+=before[0]-after[0]; this.view.cy+=before[1]-after[1]; this._draw(); const pct=Math.round(this.view.scale/this._baseScale()*100); if(this.zoomLabelEl)this.zoomLabelEl.textContent=pct+'%'; this._updateScaleBar(); }
+
+  // ---------------- toast ----------------
+  toast(text,icon){ const id=++this._toastId; const style={display:'flex',alignItems:'center',gap:'8px',padding:'7px 13px',background:'var(--vscode-notifications-background)',color:'var(--vscode-foreground)',border:'1px solid var(--vscode-notifications-border)',borderRadius:'4px',boxShadow:'0 3px 12px var(--vscode-widget-shadow)',animation:this.state.reduced?'none':'sp-toastin .18s ease'}; this.setState(s=>({toasts:[...s.toasts,{id,text,icon,style}]})); const t=setTimeout(()=>this.setState(s=>({toasts:s.toasts.filter(x=>x.id!==id)})),2600); this._to.push(t); }
+
+  _typeColor(type){ const C=this.colors(); if(type==='Polygon'||type==='MultiPolygon')return C.polyStroke; if(type==='LineString'||type==='MultiLineString')return C.line; return C.point; }
+  _typeIcon(type){ const m={Point:'codicon-circle-filled',MultiPoint:'codicon-circle-filled',LineString:'codicon-arrow-both',MultiLineString:'codicon-arrow-both',Polygon:'codicon-primitive-square',MultiPolygon:'codicon-primitive-square'}; return m[type]||'codicon-circle-filled'; }
+
+  // =========================================================
+  renderVals(){
+    const S=this.state; const set=this.activeSet(); const col=this.activeColMeta(); const C=this.colors();
+    const themeBtns=[['dark','Dark','Dark theme'],['light','Light','Light theme'],['hc','HC','High contrast']].map(([v,label,title])=>({label,title,onClick:()=>this.setTheme(v),style:{height:'20px',padding:'0 8px',fontSize:'11px',border:'1px solid '+(S.theme===v?'var(--vscode-focusBorder)':'transparent'),background:S.theme===v?'var(--vscode-button-background)':'transparent',color:S.theme===v?'var(--vscode-button-foreground)':'var(--vscode-foreground)',borderRadius:'2px',cursor:'pointer'}}));
+
+    // result tabs
+    const tabDef=[['results','Results','codicon-table',false],['spatial','Spatial','codicon-globe',true],['messages','Messages','codicon-output',false],['plan','Query Plan','codicon-graph',false]];
+    const tabStyle=(active,flash)=>({height:'31px',padding:'0 13px',display:'inline-flex',alignItems:'center',gap:'6px',background: flash?'var(--vscode-inputValidation-infoBackground)':'transparent',border:'0',borderBottom:'2px solid '+(active?'var(--vscode-panelTitle-activeBorder)':'transparent'),color:active?'var(--vscode-foreground)':'var(--vscode-tab-inactiveForeground)',cursor:'pointer',fontSize:'12px'});
+    const resultTabs=tabDef.map(([id,label,icon,active])=>({label,icon,selected:active,onClick:()=> active?null:this.toast('This prototype focuses on the Spatial pane','codicon-info'),style:tabStyle(active, id==='results'&&S.revealFlash)}));
+
+    // shared control styles
+    const selBtn={height:'26px',maxWidth:'190px',padding:'0 8px',display:'inline-flex',alignItems:'center',gap:'6px',background:'var(--vscode-dropdown-background)',color:'var(--vscode-dropdown-foreground)',border:'1px solid var(--vscode-dropdown-border)',borderRadius:'3px',cursor:'pointer',fontSize:'12px'};
+    const selBtnSm={...selBtn,maxWidth:'150px'};
+    const selBtnWarn={...selBtn,border:'1px solid var(--vscode-inputValidation-warningBorder)'};
+    const projBtn={...selBtn,maxWidth:'170px',opacity:this.projDisabled()?0.55:1,cursor:this.projDisabled()?'default':'pointer'};
+    const selTxt={overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',flex:1,textAlign:'left'};
+    const iconBtn={height:'26px',width:'26px',display:'inline-flex',alignItems:'center',justifyContent:'center',background:'transparent',color:'var(--vscode-foreground)',border:'1px solid transparent',borderRadius:'3px',cursor:'pointer'};
+    const textBtn={height:'26px',padding:'0 9px',display:'inline-flex',alignItems:'center',gap:'5px',background:'transparent',color:'var(--vscode-foreground)',border:'1px solid transparent',borderRadius:'3px',cursor:'pointer',fontSize:'12px'};
+    const sep={width:'1px',height:'20px',background:'var(--vscode-editorWidget-border)',margin:'0 3px',flex:'none'};
+    const btnActive=(on)=>({...iconBtn,background:on?'var(--vscode-button-background)':'transparent',color:on?'var(--vscode-button-foreground)':'var(--vscode-foreground)'});
+
+    // active column facts
+    const colKind=col?col.kind:'geometry';
+    const activeColIcon=colKind==='geography'?'codicon-globe':'codicon-symbol-namespace';
+    const activeColColor=C.point;
+
+    // groups
+    const groups=this.sridGroups(); const showGroupSel=groups.length>1; const ag=this.activeGroup();
+    const activeGroupLabel=ag?(ag.kind+' · SRID '+ag.srid):'—';
+
+    // projection
+    const projMap={auto:'Auto',equirect:'Equirectangular',mercator:'Web Mercator',cartesian:'Native (Cartesian)'};
+    const activeProjLabel=this.projDisabled()?'Native (Cartesian)':(projMap[S.projection]||'Auto')+(S.projection==='auto'?' · '+(this.projMode()==='mercator'?'Mercator':'Equirect.'):'');
+    const projTitle=this.projDisabled()?'Projection applies to geographic data (SRID 4326/3857)':'Choose map projection';
+
+    // features + counts
+    const rf=this.renderFeatures(); const raw=this.rawFeatures();
+    const byType={}; rf.forEach(f=>{ const t=this.gtypeOf(f); byType[t]=(byType[t]||0)+1; });
+    const shown=rf.length;
+    const scannedTotal=raw.length;
+    const nullC=raw.filter(f=>f.status==='null').length;
+    const emptyC=raw.filter(f=>f.status==='empty').length;
+    const unsupC=raw.filter(f=>f.status==='unsupportedSemantics').length;
+    const unrendC=raw.filter(f=>f.status==='unrenderable').length;
+    const otherGroupC = groups.length>1 ? raw.filter(f=>f.status==='renderable'&&f.geom&&(f.kind+':'+f.srid)!==(ag&&ag.key)).length : 0;
+    const skipped=nullC+emptyC+unsupC+unrendC+otherGroupC;
+    let vertices=0; rf.forEach(f=>{ const g=f.geom; if(g.t==='Point')vertices+=1; else if(g.t==='LineString')vertices+=g.c.length; else g.rings.forEach(r=>vertices+=r.length); });
+
+    // legend
+    const typeLabel={Point:'Points',MultiPoint:'Points',LineString:'Lines',MultiLineString:'Lines',Polygon:'Polygons',MultiPolygon:'Polygons'};
+    const swatchFor=(t)=>{ if(t==='Polygon'||t==='MultiPolygon')return {width:'12px',height:'12px',borderRadius:'2px',flex:'none',background:C.polyFill,border:'1.5px solid '+C.polyStroke}; if(t==='LineString'||t==='MultiLineString')return {width:'13px',height:'0',flex:'none',borderTop:'2.5px solid '+C.line,marginTop:'5px'}; return {width:'11px',height:'11px',borderRadius:'50%',flex:'none',background:C.point,border:'1px solid '+(S.theme==='light'?'#fff':'#0006')}; };
+    const legendItems=Object.keys(byType).map(t=>({label:typeLabel[t]||t,count:byType[t].toLocaleString(),swatch:swatchFor(t)}));
+    const legendSkipped= skipped>0?{label: (unsupC>0&&rf.length===0)?'Not rendered':'Skipped',count:skipped.toLocaleString()}:null;
+    const legendTitle=col?col.name:'Legend';
+    const showLegend=legendItems.length>0 && S.scenario!=='empty' && S.scenario!=='rendererDown' && S.scenario!=='preparing';
+
+    // selected details
+    let selected=null, popAnim=(S.reduced?'none':'sp-pop .16s ease');
+    const selF=this.selectedFeature();
+    if(selF){ const type=this.gtypeOf(selF); const color=this._typeColor(type); const icon=this._typeIcon(type); const rows=[];
+      rows.push({k:'Row',v:'#'+selF.row,vstyle:''});
+      rows.push({k:'Type',v:type+(selF.kind==='geography'?' (geography)':' (geometry)'),vstyle:''});
+      rows.push({k:'SRID',v:''+selF.srid,vstyle:''});
+      if(S.labelCol!=='(None)'&&selF.extra&&selF.extra[S.labelCol]!=null)rows.push({k:S.labelCol,v:''+selF.extra[S.labelCol],vstyle:''});
+      else if(selF.label)rows.push({k:'Label',v:selF.label,vstyle:''});
+      if(selF.geom&&selF.geom.t==='Point')rows.push({k:'Coordinates',v:selF.geom.c.map(n=>Math.round(n*1e5)/1e5).join(', '),vstyle:''});
+      else if(selF.geom){ let vc=0; if(selF.geom.t==='LineString')vc=selF.geom.c.length; else selF.geom.rings.forEach(r=>vc+=r.length); rows.push({k:'Vertices',v:''+vc,vstyle:''}); }
+      // status stage
+      let statusV='Rendered', statusStyle='color:var(--vscode-charts-green)';
+      if(selF.status==='unsupportedSemantics'){ statusV='Unsupported (geography edge)'; statusStyle='color:var(--vscode-inputValidation-warningBorder)'; }
+      else if(selF.status==='unrenderable'){ statusV='Not transported ('+(selF.reason||'')+')'; statusStyle='color:var(--vscode-errorForeground)'; }
+      else if(selF.status==='null'){ statusV='NULL'; statusStyle='color:var(--vscode-descriptionForeground)'; }
+      else if(selF.status==='empty'){ statusV='Empty geometry'; statusStyle='color:var(--vscode-descriptionForeground)'; }
+      rows.push({k:'Status',v:statusV,vstyle:statusStyle});
+      selected={title:selF.label||('Row '+selF.row),icon,color,rows};
+    }
+
+    // feature list virtualization
+    const listAll=this.listFeatures(); const rowH=44; const vh=S.listViewportH||400; const start=Math.max(0,Math.floor(S.listScrollTop/rowH)-4); const end=Math.min(listAll.length,start+Math.ceil(vh/rowH)+8);
+    const statusBadge=(f)=>{ if(f.status==='renderable')return null; const map={null:['NULL','var(--vscode-descriptionForeground)'],empty:['empty','var(--vscode-descriptionForeground)'],unsupportedSemantics:['unsupported','var(--vscode-inputValidation-warningBorder)'],unrenderable:['not transported','var(--vscode-errorForeground)']}; return map[f.status]||['—','var(--vscode-descriptionForeground)']; };
+    const visibleFeatures=[]; for(let i=start;i<end;i++){ const f=listAll[i]; if(!f)continue; const type=this.gtypeOf(f); const isSel=S.selected&&S.selected.row===f.row; const inGroup= f.status!=='renderable' || !groups.length || groups.length<=1 || (ag&&(f.kind+':'+f.srid)===ag.key); const badge=statusBadge(f); const labelTxt=(S.labelCol!=='(None)'&&f.extra&&f.extra[S.labelCol]!=null)?(''+f.extra[S.labelCol]):(f.label||'(no label)');
+      visibleFeatures.push({domId:'sp-f-'+f.row,row:f.row,label:labelTxt,type:type+' · SRID '+f.srid,icon:this._typeIcon(type),color: f.status==='renderable'?this._typeColor(type):'var(--vscode-descriptionForeground)',selected:isSel,
+        badge:badge?badge[0]:'', badgeStyle: badge?{fontSize:'9px',padding:'0 5px',borderRadius:'6px',border:'1px solid '+badge[1],color:badge[1]}:{display:'none'},
+        style:{position:'absolute',top:(i*rowH)+'px',left:0,right:0,height:rowH+'px',display:'flex',alignItems:'center',gap:'9px',padding:'0 10px',cursor:'pointer',boxSizing:'border-box',borderBottom:'1px solid var(--vscode-panel-border)',opacity: inGroup?1:0.5,background:isSel?'var(--vscode-list-activeSelectionBackground)':'transparent',color:isSel?'var(--vscode-list-activeSelectionForeground)':'var(--vscode-foreground)'},
+        onClick:()=>this.listClick(f), onEnter:()=>{ if(f.status==='renderable')this.setState({hover:{row:f.row}}); }, onLeave:()=>{ if(this.state.hover&&this.state.hover.row===f.row)this.setState({hover:null}); }});
+    }
+    const listSpacerStyle={position:'relative',height:(listAll.length*rowH)+'px'};
+    const listActiveId=S.selected?('sp-f-'+S.selected.row):'';
+    const listCountLabel=listAll.length.toLocaleString()+(S.search?' match'+(listAll.length===1?'':'es'):' rows');
+    const listEmpty=S.search&&listAll.length===0;
+
+    // banner
+    let banner=null, bannerStyle={};
+    const bStyle=(kind)=>({display:'flex',alignItems:'center',gap:'8px',padding:'5px 12px',flex:'none',fontSize:'12px',color: kind==='warn'?'var(--vscode-foreground)':'var(--vscode-foreground)',background: kind==='warn'?'var(--vscode-inputValidation-warningBackground)':'var(--vscode-inputValidation-infoBackground)',borderBottom:'1px solid '+(kind==='warn'?'var(--vscode-inputValidation-warningBorder)':'var(--vscode-inputValidation-infoBorder)')});
+    if(S.scenario==='partial'||(!set.complete&&S.scenario==='ready'&&set.id==='r4')){ banner={icon:'codicon-warning',text:'Result set is a terminal partial — the query was truncated at the row limit. Showing all '+shown.toLocaleString()+' spatial values from the returned rows.'}; bannerStyle=bStyle('warn'); }
+    if(S.scenario==='budget'){ banner={icon:'codicon-warning',text:'Feature budget reached — showing '+shown.toLocaleString()+' features from the first 25,000 of '+scannedTotal.toLocaleString()+' scanned rows. Remaining feature count unknown.'}; bannerStyle=bStyle('warn'); }
+    if(showGroupSel){ banner={icon:'codicon-info',text:'Multiple coordinate systems in this column ('+groups.map(g=>'SRID '+g.srid+' ×'+g.count).join(', ')+'). Showing '+activeGroupLabel+' — groups are never overlaid without a proven transform.',action:'Switch group',onAction:(e)=>this.onGroupMenu({currentTarget:this.mapEl?{getBoundingClientRect:()=>({bottom:80,left:this.W-260})}:e.currentTarget})}; bannerStyle=bStyle('info'); }
+    if(unsupC>0 && rf.length===0){ banner={icon:'codicon-warning',text:unsupC+' geography line/polygon values are valid but not drawn — their edges are geodesic arcs the preview renderer does not yet support. Inspect them in the feature list.'}; bannerStyle=bStyle('warn'); }
+
+    // overlay
+    let overlay=null;
+    if(S.scenario==='preparing')overlay={spin:true,title:'Preparing spatial features…',sub:'Scanning result rows and decoding geometry within bounded budgets.'};
+    else if(S.scenario==='empty')overlay={icon:'codicon-globe',title:'No spatial data to display',sub:'The selected column returned no renderable geometry for this result set.'};
+    else if(S.scenario==='rendererDown')overlay={icon:'codicon-circle-slash',title:'Map renderer unavailable',sub:'The canvas renderer could not start. Your features are still available as a list and in the Results grid.',action:'Show feature list',onAction:()=>this.setState({showFeatureList:true,scenario:'ready'})};
+    else if(rf.length===0 && !(unsupC>0)) overlay={icon:'codicon-globe',title:'Nothing to render here',sub:'This column has no renderable geometry in the active group. Try another column or result set.'};
+
+    // status bar
+    const geo=this.isGeographic();
+    const sridLabel= ag?('SRID '+ag.srid):(col?('SRID '+col.srid):'—');
+    const seg={display:'flex',alignItems:'center',gap:'5px',padding:'0 10px',borderLeft:'1px solid var(--vscode-panel-border)',whiteSpace:'nowrap'};
+    const statusSegs=[];
+    statusSegs.push({icon:this._typeIcon(Object.keys(byType)[0]||'Point'),text:shown.toLocaleString()+' shown',style:seg});
+    if(skipped>0)statusSegs.push({icon:null,text:skipped.toLocaleString()+' skipped',style:seg});
+    statusSegs.push({icon:null,text:vertices.toLocaleString()+' vertices',style:seg});
+    statusSegs.push({icon:null,text:sridLabel,style:seg});
+    statusSegs.push({icon:col&&col.kind==='geography'?'codicon-globe':'codicon-symbol-namespace',text:(col?col.kind:'geometry'),style:seg});
+    statusSegs.push({icon:'codicon-circle-slash',text:'Offline',style:seg});
+    const statusPrimary=set.name+' · '+shown.toLocaleString()+' features';
+
+    // menus
+    let menuOpen=false, menuStyle={}, menuItems=[];
+    const mBase=(r,w)=>({position:'fixed',top:(r?r.bottom+3:60)+'px',left:Math.max(6,Math.min((r?r.left:8),(typeof window!=='undefined'?window.innerWidth:1200)-w-8))+'px',minWidth:w+'px',maxWidth:(w+120)+'px',background:'var(--vscode-dropdown-background)',border:'1px solid var(--vscode-dropdown-border)',borderRadius:'5px',boxShadow:'0 4px 16px var(--vscode-widget-shadow)',padding:'4px 0',zIndex:'41'});
+    const mItem=(label,opts={})=>({item:true,label,detail:opts.detail||null,icon:opts.icon||'codicon-blank',iconColor:opts.iconColor||'var(--vscode-foreground)',check:!!opts.check,title:opts.title||'',onClick:opts.onClick,style:{display:'flex',alignItems:'center',gap:'9px',padding:'6px 12px',cursor:'pointer',fontSize:'13px',color:'var(--vscode-dropdown-foreground)'}});
+    if(S.menu==='result'){ menuOpen=true; menuStyle=mBase(S.menuRect,240); menuItems=this._ds().map(d=>mItem(d.name,{detail:d.rowCount.toLocaleString()+' rows · '+d.spatialCols.length+' spatial column'+(d.spatialCols.length>1?'s':'')+(d.complete?'':' · partial'),icon:'codicon-table',check:d.id===S.activeSetId,onClick:()=>this.pickResult(d.id)})); }
+    else if(S.menu==='col'){ menuOpen=true; menuStyle=mBase(S.menuRect,230); menuItems=set.columns.filter(c=>c.spatial).map(c=>mItem(c.name,{detail:c.type+' · SRID '+c.srid,icon:c.kind==='geography'?'codicon-globe':'codicon-symbol-namespace',iconColor:C.point,check:c.name===S.spatialCol,onClick:()=>this.pickCol(c.name)})); }
+    else if(S.menu==='label'){ menuOpen=true; menuStyle=mBase(S.menuRect,180); menuItems=set.labelCols.map(l=>mItem(l,{icon:l==='(None)'?'codicon-circle-slash':'codicon-tag',check:l===S.labelCol,onClick:()=>this.pickLabel(l)})); }
+    else if(S.menu==='proj'){ menuOpen=true; menuStyle=mBase(S.menuRect,220); menuItems=[mItem('Auto',{detail:'Choose from SRID',icon:'codicon-wand',check:S.projection==='auto',onClick:()=>this.pickProj('auto')}),mItem('Equirectangular',{detail:'Plate carrée (lon/lat)',icon:'codicon-globe',check:S.projection==='equirect',onClick:()=>this.pickProj('equirect')}),mItem('Web Mercator',{detail:'EPSG:3857',icon:'codicon-globe',check:S.projection==='mercator',onClick:()=>this.pickProj('mercator')})]; }
+    else if(S.menu==='group'){ menuOpen=true; menuStyle=mBase(S.menuRect,220); menuItems=groups.map(g=>mItem(g.kind+' · SRID '+g.srid,{detail:g.count.toLocaleString()+' features',icon:'codicon-layers',check:(ag&&ag.key)===g.key,onClick:()=>this.pickGroup(g.key)})); }
+    else if(S.menu==='more'){ menuOpen=true; menuStyle=mBase(S.menuRect,250); menuItems=[
+      mItem((S.showFeatureList?'Hide':'Show')+' feature list',{icon:'codicon-list-unordered',onClick:()=>{this.setState({menu:null});this.onToggleList();}}),
+      mItem('Copy selected summary',{icon:'codicon-copy',title:selF?'':'Select a feature first',onClick:()=>{this.setState({menu:null}); if(selF)this.onCopySummary(); else this.toast('Select a feature first','codicon-info');}}),
+      {sep:true},{header:true,text:'Prototype demo states'},
+      mItem('Ready (full scan)',{icon:'codicon-pass',check:S.scenario==='ready',onClick:()=>this.setScenario('ready')}),
+      mItem('Preparing…',{icon:'codicon-loading',check:S.scenario==='preparing',onClick:()=>this.setScenario('preparing')}),
+      mItem('Terminal partial',{icon:'codicon-warning',check:S.scenario==='partial',onClick:()=>this.setScenario('partial')}),
+      mItem('Feature budget reached',{icon:'codicon-warning',check:S.scenario==='budget',onClick:()=>this.setScenario('budget')}),
+      mItem('Empty result',{icon:'codicon-circle-slash',check:S.scenario==='empty',onClick:()=>this.setScenario('empty')}),
+      mItem('Renderer unavailable',{icon:'codicon-error',check:S.scenario==='rendererDown',onClick:()=>this.setScenario('rendererDown')})
+    ]; }
+
+    // layers popover
+    const layersStyle=mBase(S.menuRect,210); layersStyle.padding='6px 0';
+    const boxOn={width:'15px',height:'15px',flex:'none',borderRadius:'3px',border:'1px solid var(--vscode-button-background)',background:'var(--vscode-button-background)',display:'flex',alignItems:'center',justifyContent:'center'};
+    const boxOff={width:'15px',height:'15px',flex:'none',borderRadius:'3px',border:'1px solid var(--vscode-dropdown-border)',background:'transparent'};
+    const layerToggles=[
+      {label:'Coordinate graticule',key:'graticule',on:S.layers.graticule},
+      {label:'Feature labels',key:'labels',on:S.layers.labels},
+      {label:'Geodesic densify (geography)',key:'densify',on:S.layers.densify}
+    ].map(l=>({label:l.label,on:l.on,box:l.on?boxOn:boxOff,onClick:()=>this.toggleLayer(l.key)}));
+
+    // cursor
+    const mapCursor=this._drag&&this._drag.moved?'grabbing':(S.hover?'pointer':'grab');
+
+    // float btns
+    const floatBtn={width:'32px',height:'30px',display:'flex',alignItems:'center',justifyContent:'center',background:'transparent',border:'0',color:'var(--vscode-foreground)',cursor:'pointer'};
+    const floatBtnMid={...floatBtn,borderTop:'1px solid var(--vscode-editorWidget-border)',borderBottom:'1px solid var(--vscode-editorWidget-border)'};
+    const drawerIconBtn={width:'30px',height:'26px',display:'inline-flex',alignItems:'center',justifyContent:'center',background:'var(--vscode-button-secondaryBackground)',border:'1px solid var(--vscode-editorWidget-border)',borderRadius:'3px',color:'var(--vscode-foreground)',cursor:'pointer'};
+
+    return {
+      theme:S.theme,
+      resultTabs, themeBtns,
+      selBtn, selBtnSm, selBtnWarn, projBtn, selTxt, iconBtn, textBtn, sep, floatBtn, floatBtnMid, drawerIconBtn,
+      layersBtn:btnActive(S.layersOpen), listBtn:btnActive(S.showFeatureList), moreBtn:btnActive(S.menu==='more'),
+      activeSetName:set.name, activeColName:S.spatialCol, activeColIcon, activeColColor, activeLabel:S.labelCol,
+      onResultMenu:(e)=>this.onResultMenu(e), onColMenu:(e)=>this.onColMenu(e), onLabelMenu:(e)=>this.onLabelMenu(e), onProjMenu:(e)=>this.onProjMenu(e), onGroupMenu:(e)=>this.onGroupMenu(e),
+      showGroupSel, activeGroupLabel, activeProjLabel, projDisabled:this.projDisabled(), projTitle,
+      onZoomOut:()=>this.onZoomOut(), onZoomIn:()=>this.onZoomIn(), onZoomSlider:this.onZoomSlider, setZoomSlider:(el)=>this.setZoomSlider(el), setZoomLabel:(el)=>this.setZoomLabel(el),
+      onFit:()=>this.onFit(), onLayers:(e)=>this.onLayers(e), onToggleList:()=>this.onToggleList(), onMore:(e)=>this.onMore(e), showFeatureList:S.showFeatureList,
+      // map
+      setMapEl:(el)=>this.setMapEl(el), setCanvas:(el)=>this.setCanvas(el), mapCursor,
+      onMapDown:this.onMapDown, onMapMove:this.onMapMove, onMapLeave:this.onMapLeave, onMapWheel:this.onMapWheel, onMapDbl:this.onMapDbl, onMapKey:this.onMapKey,
+      setCoordEl:(el)=>this.setCoordEl(el), setScaleEl:()=>{}, setScaleLabel:(el)=>this.setScaleLabel(el), setScaleBar:(el)=>this.setScaleBar(el),
+      setHoverEl:(el)=>this.setHoverEl(el), setHoverIcon:(el)=>this.setHoverIcon(el), setHoverTitle:(el)=>this.setHoverTitle(el), setHoverSub:(el)=>this.setHoverSub(el), setLiveEl:(el)=>this.setLiveEl(el),
+      showLegend, legendTitle, legendItems, legendSkipped,
+      selected, popAnim, onClearSelection:()=>this.onClearSelection(), onReveal:()=>this.onReveal(), onZoomTo:()=>this.onZoomTo(), onCopySummary:()=>this.onCopySummary(),
+      overlay,
+      // feature list
+      listCountLabel, search:S.search, onSearch:this.onSearch, onClearSearch:()=>this.onClearSearch(), setSearchEl:(el)=>this.setSearchEl(el),
+      setListEl:(el)=>this.setListEl(el), onListScroll:this.onListScroll, onListKey:this.onListKey, listActiveId, listSpacerStyle, visibleFeatures, listEmpty,
+      // banner
+      banner, bannerStyle,
+      // status
+      statusPrimary, statusSegs,
+      // menus
+      menuOpen, menuStyle, menuItems, layersOpen:S.layersOpen, layersStyle, layerToggles,
+      onCloseMenus:this.onCloseMenus, stop:this.stop,
+      toasts:S.toasts
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@0.0.35/dist/codicon.css">
+<style>
+html,body{height:100%;margin:0}
+*{box-sizing:border-box}
+#vb-root{--vscode-font-family:"Segoe WPC","Segoe UI",system-ui,-apple-system,sans-serif;--vscode-editor-font-family:"Cascadia Code","Consolas","Courier New",monospace}
+[data-theme="dark"]{
+--vscode-foreground:#cccccc;--vscode-editor-background:#1e1e1e;--vscode-editor-foreground:#d4d4d4;
+--vscode-editorWidget-background:#252526;--vscode-editorWidget-border:#454545;--vscode-panel-background:#1e1e1e;--vscode-panel-border:#2b2b2b;
+--vscode-contrastBorder:transparent;--vscode-focusBorder:#007fd4;--vscode-descriptionForeground:#9d9d9d;--vscode-disabledForeground:#7f7f7f;
+--vscode-input-background:#3c3c3c;--vscode-input-foreground:#cccccc;--vscode-input-border:#3c3c3c;
+--vscode-dropdown-background:#3c3c3c;--vscode-dropdown-foreground:#f0f0f0;--vscode-dropdown-border:#454545;
+--vscode-button-background:#0e639c;--vscode-button-foreground:#ffffff;--vscode-button-hoverBackground:#1177bb;--vscode-button-secondaryBackground:#3a3d41;
+--vscode-toolbar-hoverBackground:#5a5d5e50;--vscode-list-hoverBackground:#2a2d2e;--vscode-list-activeSelectionBackground:#04395e;--vscode-list-activeSelectionForeground:#ffffff;
+--vscode-editor-selectionBackground:#264f78;--vscode-editor-lineHighlightBackground:#2a2d2e66;
+--vscode-statusBar-background:#2d2d2d;--vscode-statusBar-foreground:#cccccc;
+--vscode-inputValidation-warningBackground:#352a05;--vscode-inputValidation-warningBorder:#b89500;--vscode-inputValidation-infoBackground:#063b49;--vscode-inputValidation-infoBorder:#1a85b8;--vscode-inputValidation-errorBackground:#5a1d1d;--vscode-inputValidation-errorBorder:#be1100;--vscode-errorForeground:#f48771;
+--vscode-tab-activeForeground:#ffffff;--vscode-tab-inactiveForeground:#969696;--vscode-editorGroupHeader-tabsBackground:#252526;--vscode-panelTitle-activeBorder:#007fd4;
+--vscode-scrollbarSlider-background:#79797966;--vscode-scrollbarSlider-hoverBackground:#646464b3;
+--vscode-widget-shadow:#00000066;--vscode-notifications-background:#252526;--vscode-notifications-border:#454545;
+--vscode-charts-blue:#4daafc;--vscode-charts-green:#89d185;--vscode-charts-orange:#d18616;--vscode-charts-purple:#c586c0;--vscode-charts-red:#f14c4c;--vscode-charts-yellow:#cca700;
+--vb-zebra:#2a2d2e50;--vb-canvas:#181818;}
+[data-theme="light"]{
+--vscode-foreground:#3b3b3b;--vscode-editor-background:#ffffff;--vscode-editor-foreground:#000000;
+--vscode-editorWidget-background:#f8f8f8;--vscode-editorWidget-border:#c8c8c8;--vscode-panel-background:#ffffff;--vscode-panel-border:#e5e5e5;
+--vscode-contrastBorder:transparent;--vscode-focusBorder:#005fb8;--vscode-descriptionForeground:#717171;--vscode-disabledForeground:#a5a5a5;
+--vscode-input-background:#ffffff;--vscode-input-foreground:#3b3b3b;--vscode-input-border:#cecece;
+--vscode-dropdown-background:#ffffff;--vscode-dropdown-foreground:#3b3b3b;--vscode-dropdown-border:#cecece;
+--vscode-button-background:#005fb8;--vscode-button-foreground:#ffffff;--vscode-button-hoverBackground:#0258a8;--vscode-button-secondaryBackground:#e5e5e5;
+--vscode-toolbar-hoverBackground:#b8b8b850;--vscode-list-hoverBackground:#e8e8e8;--vscode-list-activeSelectionBackground:#0060c0;--vscode-list-activeSelectionForeground:#ffffff;
+--vscode-editor-selectionBackground:#add6ff;--vscode-editor-lineHighlightBackground:#e4e6f1a0;
+--vscode-statusBar-background:#dddddd;--vscode-statusBar-foreground:#3b3b3b;
+--vscode-inputValidation-warningBackground:#f6f5d2;--vscode-inputValidation-warningBorder:#b89500;--vscode-inputValidation-infoBackground:#e4f6fb;--vscode-inputValidation-infoBorder:#1a85b8;--vscode-inputValidation-errorBackground:#f2dede;--vscode-inputValidation-errorBorder:#be1100;--vscode-errorForeground:#c72e0f;
+--vscode-tab-activeForeground:#333333;--vscode-tab-inactiveForeground:#7a7a7a;--vscode-editorGroupHeader-tabsBackground:#f8f8f8;--vscode-panelTitle-activeBorder:#005fb8;
+--vscode-scrollbarSlider-background:#64646466;--vscode-scrollbarSlider-hoverBackground:#646464b3;
+--vscode-widget-shadow:#00000029;--vscode-notifications-background:#ffffff;--vscode-notifications-border:#cecece;
+--vscode-charts-blue:#1a73e8;--vscode-charts-green:#2a8a4a;--vscode-charts-orange:#bf6a02;--vscode-charts-purple:#8a3ffc;--vscode-charts-red:#cd3131;--vscode-charts-yellow:#946800;
+--vb-zebra:#f4f6fa;--vb-canvas:#fbfbfb;}
+[data-theme="hc"]{
+--vscode-foreground:#ffffff;--vscode-editor-background:#000000;--vscode-editor-foreground:#ffffff;
+--vscode-editorWidget-background:#0c0c0c;--vscode-editorWidget-border:#6fc3df;--vscode-panel-background:#000000;--vscode-panel-border:#6fc3df;
+--vscode-contrastBorder:#6fc3df;--vscode-focusBorder:#f38518;--vscode-descriptionForeground:#e0e0e0;--vscode-disabledForeground:#a0a0a0;
+--vscode-input-background:#000000;--vscode-input-foreground:#ffffff;--vscode-input-border:#6fc3df;
+--vscode-dropdown-background:#000000;--vscode-dropdown-foreground:#ffffff;--vscode-dropdown-border:#6fc3df;
+--vscode-button-background:#000000;--vscode-button-foreground:#ffffff;--vscode-button-hoverBackground:#0a0a0a;--vscode-button-secondaryBackground:#000000;
+--vscode-toolbar-hoverBackground:#00000000;--vscode-list-hoverBackground:#000000;--vscode-list-activeSelectionBackground:#000000;--vscode-list-activeSelectionForeground:#f38518;
+--vscode-editor-selectionBackground:#0e5a7d;--vscode-editor-lineHighlightBackground:#00000000;
+--vscode-statusBar-background:#000000;--vscode-statusBar-foreground:#ffffff;
+--vscode-inputValidation-warningBackground:#000000;--vscode-inputValidation-warningBorder:#f38518;--vscode-inputValidation-infoBackground:#000000;--vscode-inputValidation-infoBorder:#6fc3df;--vscode-inputValidation-errorBackground:#000000;--vscode-inputValidation-errorBorder:#f48771;--vscode-errorForeground:#f48771;
+--vscode-tab-activeForeground:#ffffff;--vscode-tab-inactiveForeground:#ffffff;--vscode-editorGroupHeader-tabsBackground:#000000;--vscode-panelTitle-activeBorder:#f38518;
+--vscode-scrollbarSlider-background:#6fc3df80;--vscode-scrollbarSlider-hoverBackground:#6fc3dfcc;
+--vscode-widget-shadow:#00000000;--vscode-notifications-background:#000000;--vscode-notifications-border:#6fc3df;
+--vscode-charts-blue:#4daafc;--vscode-charts-green:#89d185;--vscode-charts-orange:#f3b13e;--vscode-charts-purple:#c586c0;--vscode-charts-red:#f48771;--vscode-charts-yellow:#f3e28a;
+--vb-zebra:#0a0a0a;--vb-canvas:#000000;}
+#vb-root :focus-visible{outline:1px solid var(--vscode-focusBorder);outline-offset:-1px}
+#vb-root a{color:#3794ff;text-decoration:none}
+#vb-root a:hover{color:#67b0ff;text-decoration:underline}
+#vb-root button{font-family:inherit}
+#vb-root ::-webkit-scrollbar{width:12px;height:12px}
+#vb-root ::-webkit-scrollbar-thumb{background:var(--vscode-scrollbarSlider-background);border:3px solid transparent;background-clip:content-box}
+#vb-root ::-webkit-scrollbar-thumb:hover{background:var(--vscode-scrollbarSlider-hoverBackground);background-clip:content-box}
+.vb-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.vb-mono{font-family:var(--vscode-editor-font-family)}
+@keyframes vb-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important}}
+</style>
+</helmet>
+<div id="vb-root" data-theme="{{ theme }}" style="height:100vh;display:flex;flex-direction:column;background:var(--vscode-panel-background);color:var(--vscode-foreground);font-family:var(--vscode-font-family);font-size:13px;position:relative;overflow:hidden;padding-bottom:24px">
+
+  <!-- RESULTS TAB STRIP : 30px, text-only 24px tabs -->
+  <div style="height:30px;flex:none;display:flex;align-items:flex-end;background:var(--vscode-editorGroupHeader-tabsBackground);border-bottom:1px solid var(--vscode-panel-border)" role="tablist" aria-label="Query results views">
+    <sc-for list="{{ resultTabs }}" as="rt" hint-placeholder-count="4"><button onClick="{{ rt.onClick }}" role="tab" aria-selected="{{ rt.selected }}" style="{{ rt.style }}" style-hover="color:var(--vscode-foreground)">{{ rt.label }}</button></sc-for>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:2px;padding:0 8px 3px 0;color:var(--vscode-descriptionForeground)">
+      <sc-for list="{{ themeBtns }}" as="tb" hint-placeholder-count="3"><button onClick="{{ tb.onClick }}" title="{{ tb.title }}" style="{{ tb.style }}" style-hover="background:var(--vscode-toolbar-hoverBackground)">{{ tb.label }}</button></sc-for>
+    </div>
+  </div>
+
+  <!-- HEADER TOOLBAR : 35px -->
+  <div style="height:35px;flex:none;display:flex;align-items:center;gap:6px;padding:0 8px;border-bottom:1px solid var(--vscode-panel-border)">
+    <span class="codicon codicon-symbol-array" style="font-size:14px;color:var(--vscode-charts-purple)" title="Vector Workbench"></span>
+    <button onClick="{{ onResultMenu }}" title="Result set" style="{{ selBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span style="{{ selTxt }}">{{ resultName }}</span><span class="codicon codicon-chevron-down" style="font-size:12px;opacity:.7"></span></button>
+    <button onClick="{{ onColMenu }}" title="Vector column" style="{{ selBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-symbol-array" style="font-size:12px;color:var(--vscode-charts-purple)"></span><span style="{{ selTxt }}">embedding</span><span class="vb-mono" style="font-size:10px;color:var(--vscode-descriptionForeground)">1536·f32</span><span class="codicon codicon-chevron-down" style="font-size:12px;opacity:.7"></span></button>
+    <div style="flex:1"></div>
+    <button onClick="{{ onCapability }}" title="Vector capabilities — facts probed from the connection" style="{{ hdrBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-verified" style="font-size:12px;color:var(--vscode-charts-green)"></span><span>{{ capLabel }}</span></button>
+    <button onClick="{{ onBinding }}" title="{{ bindTitle }}" style="{{ hdrBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon {{ bindIcon }}" style="font-size:12px;color:{{ bindColor }}"></span><span>{{ bindLabel }}</span></button>
+    <button onClick="{{ onScope }}" title="Analysis scope — opens details" style="{{ hdrBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-list-selection" style="font-size:12px;color:var(--vscode-charts-orange)"></span><span>{{ scopeLabel }}</span></button>
+    <button onClick="{{ onOverflow }}" title="More" aria-label="More" style="{{ iconBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-ellipsis" style="font-size:15px"></span></button>
+  </div>
+
+  <!-- BODY : RAIL + WORKSPACE -->
+  <div style="flex:1;min-height:0;display:flex">
+    <div role="navigation" aria-label="Vector workspaces" style="width:160px;flex:none;display:flex;flex-direction:column;padding:4px 0;background:var(--vscode-editorGroupHeader-tabsBackground);border-right:1px solid var(--vscode-panel-border)">
+      <sc-for list="{{ workspaces }}" as="w" hint-placeholder-count="6">
+        <button onClick="{{ w.onClick }}" aria-current="{{ w.active }}" title="{{ w.title }}" style="{{ w.style }}" style-hover="background:var(--vscode-list-hoverBackground)"><span class="codicon {{ w.icon }}" style="font-size:14px;flex:none;width:16px;text-align:center"></span><span style="flex:1;text-align:left">{{ w.label }}</span><sc-if value="{{ w.lock }}" hint-placeholder-val="{{ false }}"><span class="codicon codicon-lock" style="font-size:11px;opacity:.6;flex:none"></span></sc-if></button>
+      </sc-for>
+    </div>
+
+    <div ref="{{ setContentEl }}" style="flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;position:relative">
+
+      <!-- FACTS STRIP -->
+      <sc-if value="{{ facts }}" hint-placeholder-val="{{ true }}">
+      <div style="height:24px;flex:none;display:flex;align-items:center;padding:0 10px;border-bottom:1px solid var(--vscode-panel-border);overflow:hidden">
+        <sc-for list="{{ facts }}" as="f" hint-placeholder-count="4">
+          <div style="{{ f.style }}"><sc-if value="{{ f.icon }}" hint-placeholder-val="{{ false }}"><span class="codicon {{ f.icon }}" style="font-size:12px;color:{{ f.iconColor }}"></span></sc-if><span style="font-size:11px;color:var(--vscode-descriptionForeground)">{{ f.k }}</span><span class="vb-mono" style="font-size:12px;color:{{ f.vColor }}">{{ f.v }}</span></div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <!-- ===================== PROFILE ===================== -->
+      <sc-if value="{{ wsProfile }}" hint-placeholder-val="{{ true }}">
+      <div style="{{ profileWrap }}">
+        <div style="{{ profileCols }}">
+          <div style="{{ profileCol }}">
+            <div style="{{ secLabel }}"><span>Norms</span><div style="flex:1"></div><span style="{{ secMeta }}">local · 5,000 sampled</span></div>
+            <div style="display:flex;gap:2px;margin-bottom:8px">
+              <sc-for list="{{ normTabs }}" as="nt" hint-placeholder-count="3"><button onClick="{{ nt.onClick }}" style="{{ nt.style }}">{{ nt.label }}</button></sc-for>
+              <div style="flex:1"></div><span class="vb-mono" style="font-size:10px;color:var(--vscode-descriptionForeground);align-self:center">near-0 ≤ 1e-6</span>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:1px;height:84px;border-bottom:1px solid var(--vscode-panel-border);position:relative">
+              <sc-if value="{{ showUnitRef }}" hint-placeholder-val="{{ false }}"><div style="{{ unitRefStyle }}" title="Expected unit norm"></div></sc-if>
+              <sc-for list="{{ normBars }}" as="b" hint-placeholder-count="24"><div title="{{ b.title }}" style="{{ b.style }}"></div></sc-for>
+              <sc-for list="{{ normTicks }}" as="t" hint-placeholder-count="3"><div title="{{ t.title }}" style="{{ t.style }}"></div></sc-for>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--vscode-descriptionForeground);margin-top:2px" class="vb-mono"><span>{{ normAxisMin }}</span><span>{{ normAxisMax }}</span></div>
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:6px;margin-bottom:14px">
+              <sc-for list="{{ normStats }}" as="s" hint-placeholder-count="6"><div style="font-size:10px"><span style="color:var(--vscode-descriptionForeground)">{{ s.k }}</span><div class="vb-mono" style="font-size:11.5px;color:{{ s.color }}">{{ s.v }}</div></div></sc-for>
+            </div>
+            <div style="{{ secLabel }}"><span>Component variance</span><div style="flex:1"></div><span style="{{ secMeta }}">per-dimension · sampled</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+              <div><div style="font-size:10.5px;color:var(--vscode-descriptionForeground);margin-bottom:4px">Highest</div><sc-for list="{{ compHigh }}" as="d" hint-placeholder-count="8"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span class="vb-mono" style="font-size:10px;width:58px;flex:none;color:var(--vscode-descriptionForeground)">{{ d.dim }}</span><div style="flex:1;height:7px;background:var(--vscode-panel-border)"><div style="{{ d.bar }}"></div></div><span class="vb-mono" style="font-size:10px;width:44px;text-align:right">{{ d.v }}</span></div></sc-for></div>
+              <div><div style="font-size:10.5px;color:var(--vscode-descriptionForeground);margin-bottom:4px">Lowest</div><sc-for list="{{ compLow }}" as="d" hint-placeholder-count="8"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span class="vb-mono" style="font-size:10px;width:58px;flex:none;color:var(--vscode-descriptionForeground)">{{ d.dim }}</span><div style="flex:1;height:7px;background:var(--vscode-panel-border)"><div style="{{ d.bar }}"></div></div><span class="vb-mono" style="font-size:10px;width:44px;text-align:right">{{ d.v }}</span></div></sc-for></div>
+            </div>
+          </div>
+          <div style="{{ profileCol }}">
+            <div style="{{ secLabel }}"><span>Findings</span><div style="flex:1"></div><span style="{{ secMeta }}">{{ findingsCount }} · local + interpretation</span></div>
+            <div style="margin-bottom:14px">
+              <sc-for list="{{ findings }}" as="f" hint-placeholder-count="6">
+                <div onClick="{{ f.onClick }}" role="button" tabindex="0" style="{{ f.style }}" style-hover="background:var(--vscode-list-hoverBackground)">
+                  <span class="codicon {{ f.icon }}" style="font-size:13px;flex:none;color:{{ f.iconColor }}"></span>
+                  <div style="flex:1;min-width:0"><div style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.title }}</div><div class="vb-mono" style="font-size:10px;color:var(--vscode-descriptionForeground);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.method }}</div></div>
+                  <span class="vb-mono" style="font-size:11px;flex:none;text-align:right;width:36px">{{ f.count }}</span>
+                  <span class="codicon codicon-chevron-right" style="font-size:12px;opacity:.5;flex:none"></span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="{{ secLabel }}"><span>Sampled pair distances</span><div style="flex:1"></div><span style="{{ secMeta }}">cosine · 10,000 pairs · local</span></div>
+            <div style="display:flex;align-items:flex-end;gap:1px;height:84px;border-bottom:1px solid var(--vscode-panel-border);position:relative">
+              <sc-for list="{{ distBars }}" as="b" hint-placeholder-count="24"><div title="{{ b.title }}" style="{{ b.style }}"></div></sc-for>
+              <sc-for list="{{ distTicks }}" as="t" hint-placeholder-count="3"><div title="{{ t.title }}" style="{{ t.style }}"></div></sc-for>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--vscode-descriptionForeground);margin-top:2px" class="vb-mono"><span>0.0</span><span>1.0</span></div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px"><sc-for list="{{ distStats }}" as="s" hint-placeholder-count="3"><div style="font-size:10px"><span style="color:var(--vscode-descriptionForeground)">{{ s.k }}</span><div class="vb-mono" style="font-size:11.5px">{{ s.v }}</div></div></sc-for></div>
+          </div>
+        </div>
+        <div style="{{ groupWrap }}">
+          <div style="{{ secLabel }}"><span>Group comparison</span><div style="flex:1"></div><span style="{{ secMeta }}">by category · local · sampled</span></div>
+          <div style="overflow:auto">
+            <div style="{{ gridHeadRow }}"><span style="{{ gh0 }}">Group</span><span style="{{ ghR }}">Vectors</span><span style="{{ ghR }}">Median norm</span><span style="{{ ghR }}">Median within-dist</span><span style="{{ ghR }}">Outlier %</span></div>
+            <sc-for list="{{ groups }}" as="g" hint-placeholder-count="5"><div style="{{ g.style }}"><span style="display:flex;align-items:center;gap:7px;overflow:hidden"><span style="{{ g.dot }}"></span>{{ g.name }}</span><span class="vb-mono" style="{{ gcR }}">{{ g.count }}</span><span class="vb-mono" style="{{ gcR }}">{{ g.norm }}</span><span class="vb-mono" style="{{ gcR }}">{{ g.dist }}</span><span class="vb-mono" style="{{ g.outStyle }}">{{ g.outlier }}</span></div></sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== SEARCH ===================== -->
+      <sc-if value="{{ wsSearch }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;display:flex;flex-direction:column">
+        <!-- source tabs -->
+        <div style="height:26px;flex:none;display:flex;align-items:flex-end;padding:0 8px;border-bottom:1px solid var(--vscode-panel-border)">
+          <sc-for list="{{ srcTabs }}" as="t" hint-placeholder-count="4"><button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button></sc-for>
+        </div>
+        <!-- source content row -->
+        <div style="min-height:30px;flex:none;display:flex;align-items:center;gap:10px;padding:3px 10px;border-bottom:1px solid var(--vscode-panel-border)">
+          <sc-if value="{{ srcRow }}" hint-placeholder-val="{{ true }}">
+            <span class="vb-mono" style="font-size:11px;color:var(--vscode-descriptionForeground)">{{ qRowKey }}</span><span style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ qRowLabel }}</span><span class="vb-mono" style="font-size:10px;color:var(--vscode-descriptionForeground)">VECTOR(1536, float32)</span><span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--vscode-charts-green)"><span class="codicon codicon-pass" style="font-size:11px"></span>provenance match</span>
+          </sc-if>
+          <sc-if value="{{ srcText }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size:11px;color:var(--vscode-descriptionForeground);flex:none">dbo.TextEmbedding3Small</span>
+            <input value="{{ searchText }}" aria-label="Source text" style="{{ inputStyle }}">
+            <button onClick="{{ onGenEmbed }}" style="{{ secondaryBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-sparkle" style="font-size:12px;color:var(--vscode-charts-purple)"></span>Generate…</button>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--vscode-inputValidation-warningBorder);flex:none"><span class="codicon codicon-warning" style="font-size:11px"></span>model call — confirmation required</span>
+          </sc-if>
+          <sc-if value="{{ srcPaste }}" hint-placeholder-val="{{ false }}">
+            <input value="{{ pasteJson }}" placeholder="[0.0123, -0.044, …] — flat JSON array of 1,536 finite numbers" aria-label="Paste vector JSON" style="{{ inputStyle }}">
+            <span style="font-size:11px;color:var(--vscode-descriptionForeground);flex:none">validated: syntax · dims · finite · float32</span>
+          </sc-if>
+          <sc-if value="{{ srcExpr }}" hint-placeholder-val="{{ false }}">
+            <input value="{{ expr }}" aria-label="Vector expression" style="{{ inputStyle }}">
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--vscode-charts-yellow);flex:none"><span class="codicon codicon-beaker" style="font-size:11px"></span>Experimental vector arithmetic · A,B,C = Compare basket · parsed locally, never eval()</span>
+          </sc-if>
+        </div>
+        <!-- settings toolbar row -->
+        <div style="height:30px;flex:none;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1px solid var(--vscode-panel-border);overflow:hidden">
+          <span style="{{ ctlLabel }}">Mode</span>
+          <button onClick="{{ onModeMenu }}" style="{{ selBtnSm }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span style="{{ selTxt }}">{{ runModeLabel }}</span><span class="codicon codicon-chevron-down" style="font-size:11px;opacity:.7"></span></button>
+          <span style="{{ ctlLabel }}">Metric</span>
+          <button onClick="{{ onMetricMenu }}" style="{{ selBtnSm }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span style="{{ selTxt }};text-transform:capitalize">{{ searchMetric }}</span><span class="codicon codicon-chevron-down" style="font-size:11px;opacity:.7"></span></button>
+          <span style="{{ ctlLabel }}">K</span>
+          <div style="display:flex;align-items:center;border:1px solid var(--vscode-dropdown-border);border-radius:2px"><button onClick="{{ onKDown }}" aria-label="Decrease K" style="{{ stepBtn }}">−</button><span class="vb-mono" style="width:28px;text-align:center;font-size:12px">{{ searchK }}</span><button onClick="{{ onKUp }}" aria-label="Increase K" style="{{ stepBtn }}">+</button></div>
+          <sc-for list="{{ variantDefs }}" as="v" hint-placeholder-count="3"><button onClick="{{ v.onClick }}" title="{{ v.title }}" style="{{ v.style }}"><span class="codicon {{ v.checkIcon }}" style="font-size:12px;color:{{ v.boxColor }}"></span>{{ v.label }}</button></sc-for>
+          <button onClick="{{ onFilterInfo }}" title="Structured filter — composed into the generated SQL" style="{{ selBtnSm }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-filter" style="font-size:11px"></span><span class="vb-mono" style="font-size:11px">category='Technical'</span></button>
+          <div style="flex:1"></div>
+        </div>
+        <!-- disclosure + run row -->
+        <div style="height:28px;flex:none;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1px solid var(--vscode-panel-border)">
+          <span class="codicon codicon-info" style="font-size:12px;color:var(--vscode-inputValidation-infoBorder);flex:none"></span>
+          <span style="font-size:11px;color:var(--vscode-descriptionForeground);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Isolated diagnostic session · target dbo.DocumentChunks · no open transaction · no model call · {{ runCostLine }}</span>
+          <div style="flex:1"></div>
+          <button onClick="{{ onRun }}" disabled="{{ searchRunning }}" style="{{ runBtn }}" style-hover="background:var(--vscode-button-hoverBackground)">
+            <sc-if value="{{ searchRunning }}" hint-placeholder-val="{{ false }}"><span class="codicon codicon-loading" style="font-size:13px;animation:vb-spin 1s linear infinite"></span><span>Running… {{ runElapsed }}</span></sc-if>
+            <sc-if value="{{ searchIdleOrDone }}" hint-placeholder-val="{{ true }}"><span class="codicon codicon-run-all" style="font-size:13px"></span><span>{{ runLabel }}</span></sc-if>
+          </button>
+          <button onClick="{{ onRunMenu }}" title="Run options" aria-label="Run options" style="{{ runChev }}" style-hover="background:var(--vscode-button-hoverBackground)"><span class="codicon codicon-chevron-down" style="font-size:12px"></span></button>
+        </div>
+
+        <!-- idle empty state (teaches) -->
+        <sc-if value="{{ searchIdle }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--vscode-descriptionForeground);padding:20px;text-align:center">
+            <span class="codicon codicon-search-fuzzy" style="font-size:24px;opacity:.5"></span>
+            <div style="font-size:13px;color:var(--vscode-foreground)">What changes between exact and approximate retrieval — and what proves it?</div>
+            <div style="font-size:11.5px;max-width:480px;line-height:16px">Exact <span class="vb-mono">VECTOR_DISTANCE</span> is the ground truth; approximate is measured against it. Recall is reported with its denominator, the ANN path is claimed only when proven, and filter semantics are disclosed per index version.</div>
+          </div>
+        </sc-if>
+
+        <!-- results -->
+        <sc-if value="{{ searchDone }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;min-height:0;display:flex;flex-direction:column">
+          <!-- evidence -->
+          <div style="flex:none;padding:6px 10px;border-bottom:1px solid var(--vscode-panel-border)">
+            <div style="{{ secLabel }}"><span>Evidence</span><div style="flex:1"></div><button onClick="{{ onRepro }}" title="Concatenate capability check + executed variants + version + health queries into one commented .sql" style="{{ secondaryBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-file-code" style="font-size:12px"></span>Open repro script</button></div>
+            <div style="padding-top:2px">
+              <sc-for list="{{ evidenceRows }}" as="e" hint-placeholder-count="5"><div style="display:flex;align-items:center;gap:5px;height:19px;overflow:hidden"><span style="font-size:11px;color:var(--vscode-descriptionForeground);width:150px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.k }}</span><span class="codicon {{ e.icon }}" style="font-size:12px;color:{{ e.color }};flex:none"></span><span style="color:{{ e.vColor }};font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none;max-width:46%">{{ e.v }}</span><span class="vb-mono" style="font-size:10px;color:var(--vscode-descriptionForeground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">{{ e.meta }}</span></div></sc-for>
+            </div>
+          </div>
+          <!-- single: rank grid + flow -->
+          <sc-if value="{{ modeSingle }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;min-height:0;display:flex">
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+              <div style="{{ rankHeadRow }}">
+                <sc-for list="{{ rankCols }}" as="c" hint-placeholder-count="7"><div onClick="{{ c.onSort }}" title="{{ c.title }}" style="{{ c.style }}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.label }}</span><sc-if value="{{ c.sortIcon }}" hint-placeholder-val="{{ false }}"><span class="codicon {{ c.sortIcon }}" style="font-size:11px"></span></sc-if><div onMouseDown="{{ c.onResize }}" style="position:absolute;top:0;right:0;width:5px;height:100%;cursor:col-resize"></div></div></sc-for>
+              </div>
+              <div style="flex:1;min-height:0;overflow:auto">
+                <sc-for list="{{ rankRows }}" as="r" hint-placeholder-count="20">
+                  <div onClick="{{ r.onClick }}" style="{{ r.style }}"><span class="vb-mono" style="{{ r.c0 }}">{{ r.exactRank }}</span><span class="vb-mono" style="{{ r.c1 }}">{{ r.approxRank }}</span><span style="{{ r.c2 }}"><sc-if value="{{ r.deltaIcon }}" hint-placeholder-val="{{ false }}"><span class="codicon {{ r.deltaIcon }}" style="font-size:11px;color:{{ r.deltaColor }}"></span></sc-if><span class="vb-mono" style="color:{{ r.deltaColor }}">{{ r.delta }}</span></span><span style="{{ r.c3 }}"><span style="{{ r.dot }}"></span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.label }}</span><span class="vb-mono" style="font-size:10px;color:var(--vscode-descriptionForeground)">{{ r.key }}</span></span><span class="vb-mono" style="{{ r.c4 }}">{{ r.exactDist }}</span><span class="vb-mono" style="{{ r.c5 }}">{{ r.approxDist }}</span><span style="{{ r.c6 }}"><span class="codicon {{ r.statusIcon }}" style="font-size:11px;color:{{ r.statusColor }}"></span><span style="color:{{ r.statusColor }};font-size:11px">{{ r.statusLabel }}</span></span></div>
+                </sc-for>
+              </div>
+            </div>
+            <sc-if value="{{ showFlow }}" hint-placeholder-val="{{ false }}">
+            <div style="width:150px;flex:none;border-left:1px solid var(--vscode-panel-border);display:flex;flex-direction:column">
+              <div style="{{ secLabelPad }}"><span>Rank flow</span></div>
+              <div style="flex:1;overflow:auto;padding:4px 12px"><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--vscode-descriptionForeground);margin-bottom:3px" class="vb-mono"><span>exact</span><span>approx</span></div>
+                <svg width="120" height="{{ rankFlowH }}" style="overflow:visible;display:block"><sc-for list="{{ flowLines }}" as="l" hint-placeholder-count="18"><path d="{{ l.d }}" fill="none" stroke="{{ l.color }}" stroke-width="{{ l.w }}" opacity="{{ l.op }}"></path></sc-for><sc-for list="{{ flowNodes }}" as="n" hint-placeholder-count="20"><circle cx="0" cy="{{ n.exY }}" r="2" fill="var(--vscode-descriptionForeground)"></circle><circle cx="120" cy="{{ n.apY }}" r="2" fill="var(--vscode-descriptionForeground)"></circle></sc-for></svg>
+              </div>
+            </div>
+            </sc-if>
+          </div>
+          </sc-if>
+          <!-- harness -->
+          <sc-if value="{{ modeHarness }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1;min-height:0;display:flex">
+            <div style="width:300px;flex:none;border-right:1px solid var(--vscode-panel-border);padding:6px 10px;overflow:auto">
+              <div style="{{ secLabel }}"><span>Recall@20 distribution</span><div style="flex:1"></div><span style="{{ secMeta }}">50 queries</span></div>
+              <div style="display:flex;align-items:flex-end;gap:1px;height:74px;border-bottom:1px solid var(--vscode-panel-border)"><sc-for list="{{ harnessBars }}" as="b" hint-placeholder-count="10"><div title="{{ b.title }}" style="{{ b.style }}"></div></sc-for></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--vscode-descriptionForeground);margin-top:2px" class="vb-mono"><span>0.75</span><span>1.00</span></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:8px"><sc-for list="{{ harnessStats }}" as="s" hint-placeholder-count="3"><div style="font-size:10px"><span style="color:var(--vscode-descriptionForeground)">{{ s.k }}</span><div class="vb-mono" style="font-size:11.5px">{{ s.v }}</div></div></sc-for></div>
+              <div style="font-size:10.5px;color:var(--vscode-descriptionForeground);margin-top:10px;line-height:15px">Leave-one-out: each sampled row's own vector queries the index; its exact top-20 is the truth set. 2N = 100 bounded statements, sequential, cancellable.</div>
+            </div>
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+              <div style="{{ secLabelPad }}"><span>Worst offenders</span><div style="flex:1"></div><span style="{{ secMeta }}">lowest recall · keys are real rows</span></div>
+              <div style="{{ offHeadRow }}"><span style="{{ oh0 }}">Query row</span><span style="{{ ohL }}">Label</span><span style="{{ ohR }}">Recall@20</span><span style="{{ ohR }}">Missing</span><span style="{{ ohR }}">Approx ms</span></div>
+              <div style="flex:1;min-height:0;overflow:auto"><sc-for list="{{ offRows }}" as="r" hint-placeholder-count="8"><div style="{{ r.style }}"><span class="vb-mono" style="{{ oc0 }}">{{ r.key }}</span><span style="{{ ocL }}">{{ r.label }}</span><span class="vb-mono" style="{{ r.recStyle }}">{{ r.recall }}</span><span class="vb-mono" style="{{ ocR }}">{{ r.missing }}</span><span class="vb-mono" style="{{ ocR }}">{{ r.ms }}</span></div></sc-for></div>
+            </div>
+          </div>
+          </sc-if>
+          <!-- sweep -->
+          <sc-if value="{{ modeSweep }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1;min-height:0;display:flex">
+            <div style="width:330px;flex:none;border-right:1px solid var(--vscode-panel-border);padding:6px 10px;overflow:auto">
+              <div style="{{ secLabel }}"><span>Recall and wall time vs K</span><div style="flex:1"></div><span style="{{ secMeta }}">1 exact + 4 approx runs</span></div>
+              <sc-for list="{{ sweepViz }}" as="k" hint-placeholder-count="4">
+                <div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--vscode-descriptionForeground)" class="vb-mono"><span>K={{ k.k }}</span><span>{{ k.recallPct }} · {{ k.ms }} ms</span></div>
+                <div style="height:8px;background:var(--vscode-panel-border);margin-top:2px"><div style="{{ k.recallBar }}"></div></div>
+                <div style="height:3px;background:var(--vscode-panel-border);margin-top:1px"><div style="{{ k.timeBar }}"></div></div></div>
+              </sc-for>
+              <div style="font-size:10.5px;color:var(--vscode-descriptionForeground);margin-top:8px;line-height:15px">Recall@K measured against prefixes of one exact run at K=100. Blue = recall, orange = approximate wall time.</div>
+            </div>
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+              <div style="{{ secLabelPad }}"><span>Sweep detail</span></div>
+              <div style="{{ swHeadRow }}"><span style="{{ ohR }}">K</span><span style="{{ ohR }}">Recall@K</span><span style="{{ ohR }}">Overlap</span><span style="{{ ohR }}">Approx ms</span><span style="{{ ohR }}">Speedup ×</span><span style="{{ ohL }}">Note</span></div>
+              <div style="flex:1;min-height:0;overflow:auto"><sc-for list="{{ sweepRows }}" as="r" hint-placeholder-count="4"><div style="{{ r.style }}"><span class="vb-mono" style="{{ ocR }}">{{ r.k }}</span><span class="vb-mono" style="{{ ocR }}">{{ r.recall }}</span><span class="vb-mono" style="{{ ocR }}">{{ r.overlap }}</span><span class="vb-mono" style="{{ ocR }}">{{ r.ms }}</span><span class="vb-mono" style="{{ ocR }}">{{ r.speed }}</span><span style="{{ ocL }};color:var(--vscode-descriptionForeground);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">{{ r.note }}</span></div></sc-for></div>
+            </div>
+          </div>
+          </sc-if>
+          <!-- SQL drawer -->
+          <div style="flex:none;border-top:1px solid var(--vscode-panel-border)">
+            <div onClick="{{ onToggleSql }}" role="button" tabindex="0" style="height:24px;display:flex;align-items:center;gap:7px;padding:0 10px;cursor:pointer" style-hover="background:var(--vscode-list-hoverBackground)">
+              <span class="codicon {{ sqlChevron }}" style="font-size:13px"></span>
+              <span style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--vscode-descriptionForeground)">Generated T-SQL</span>
+              <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--vscode-charts-green)"><span class="codicon codicon-play" style="font-size:10px"></span>Executed</span>
+              <div style="flex:1"></div>
+              <sc-if value="{{ sqlOpen }}" hint-placeholder-val="{{ false }}"><span style="font-size:10.5px;color:var(--vscode-descriptionForeground)">exactly what executed · parameters shown</span></sc-if>
+            </div>
+            <sc-if value="{{ sqlOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;border-top:1px solid var(--vscode-panel-border);padding:0 6px"><sc-for list="{{ sqlTabs }}" as="t" hint-placeholder-count="4"><button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button></sc-for><div style="flex:1"></div><button onClick="{{ onCopySql }}" title="Copy" aria-label="Copy SQL" style="{{ iconBtnSm }}" style-hover="color:var(--vscode-foreground)"><span class="codicon codicon-copy" style="font-size:12px"></span></button><button onClick="{{ onOpenSqlEditor }}" title="Open in editor" aria-label="Open in editor" style="{{ iconBtnSm }}" style-hover="color:var(--vscode-foreground)"><span class="codicon codicon-link-external" style="font-size:12px"></span></button></div>
+              <pre class="vb-mono" style="margin:0;padding:8px 12px;font-size:11px;line-height:15px;color:var(--vscode-editor-foreground);white-space:pre;overflow:auto;height:170px;border-top:1px solid var(--vscode-panel-border);background:var(--vb-canvas)">{{ sqlText }}</pre>
+            </sc-if>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <!-- ===================== COMPARE ===================== -->
+      <sc-if value="{{ wsCompare }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:0 18px;padding:8px 10px;overflow:hidden">
+        <div style="min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:2px">
+          <div style="{{ secLabel }}"><span>Compare basket</span><div style="flex:1"></div><span style="{{ secMeta }}">A · B · C from result rows</span></div>
+          <div style="margin-bottom:12px"><sc-for list="{{ cmpBasket }}" as="b" hint-placeholder-count="3"><div style="{{ b.style }}"><span class="vb-mono" style="padding:0 6px;color:var(--vscode-descriptionForeground)">{{ b.k }}</span><span class="vb-mono" style="font-size:10.5px;color:var(--vscode-descriptionForeground)">{{ b.key }}</span><span style="display:flex;align-items:center;gap:6px;overflow:hidden;padding:0 4px"><span style="{{ b.dot }}"></span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.label }}</span></span><span class="vb-mono" style="font-size:10.5px;color:var(--vscode-descriptionForeground)">1536·f32</span><span class="vb-mono" style="text-align:right;padding-right:6px">{{ b.norm }}</span></div></sc-for></div>
+          <div style="{{ secLabel }}"><span>A ↔ B</span><div style="flex:1"></div><span style="{{ secMeta }}">each metric named — no single “% similar”</span></div>
+          <div style="margin-bottom:12px"><sc-for list="{{ cmpMetrics }}" as="m" hint-placeholder-count="6"><div style="{{ propRow }}"><span style="{{ propK }}">{{ m.k }}</span><span class="vb-mono">{{ m.v }}</span></div></sc-for></div>
+          <div style="{{ secLabel }}"><span>Pairwise distances</span><div style="flex:1"></div><span style="{{ secMeta }}">cosine · values shown in cells</span></div>
+          <div style="display:grid;grid-template-columns:22px 1fr 1fr 1fr;gap:1px;margin-bottom:6px;max-width:340px"><span></span><span style="text-align:center;font-size:10.5px;color:var(--vscode-descriptionForeground)">A</span><span style="text-align:center;font-size:10.5px;color:var(--vscode-descriptionForeground)">B</span><span style="text-align:center;font-size:10.5px;color:var(--vscode-descriptionForeground)">C</span><sc-for list="{{ cmpMatrix }}" as="row" hint-placeholder-count="3"><span style="font-size:10.5px;color:var(--vscode-descriptionForeground);display:flex;align-items:center;justify-content:center">{{ row.label }}</span><sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="3"><div style="{{ c.style }}">{{ c.v }}</div></sc-for></sc-for></div>
+          <div style="{{ secLabel }};margin-top:12px"><span>Selection summary</span></div>
+          <div><sc-for list="{{ cmpSummary }}" as="s" hint-placeholder-count="6"><div style="{{ propRow }}"><span style="{{ propK }}">{{ s.k }}</span><span class="vb-mono">{{ s.v }}</span></div></sc-for></div>
+        </div>
+        <div style="min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:2px">
+          <div style="{{ secLabel }}"><span>Top |Δ| dimensions</span><div style="flex:1"></div><span style="{{ secMeta }}">A − B · local</span></div>
+          <div style="margin-bottom:12px"><sc-for list="{{ cmpDiffs }}" as="d" hint-placeholder-count="5"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span class="vb-mono" style="font-size:10px;width:58px;flex:none;color:var(--vscode-descriptionForeground)">{{ d.d }}</span><div style="flex:1;height:7px;background:var(--vscode-panel-border)"><div style="{{ d.bar }}"></div></div><span class="vb-mono" style="font-size:10px;width:52px;text-align:right">{{ d.v }}</span></div></sc-for></div>
+          <div style="{{ secLabel }}"><span>Top contributions (aᵢ·bᵢ)</span><div style="flex:1"></div><span style="{{ secMeta }}">why this pair ranks close · cosine/dot</span></div>
+          <div style="margin-bottom:12px"><sc-for list="{{ cmpContrib }}" as="d" hint-placeholder-count="5"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span class="vb-mono" style="font-size:10px;width:58px;flex:none;color:var(--vscode-descriptionForeground)">{{ d.d }}</span><div style="flex:1;height:7px;background:var(--vscode-panel-border)"><div style="{{ d.bar }}"></div></div><span class="vb-mono" style="font-size:10px;width:52px;text-align:right">{{ d.v }}</span></div></sc-for></div>
+          <div style="{{ secLabel }}"><span>Arithmetic</span><div style="flex:1"></div><span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;text-transform:none;letter-spacing:0;color:var(--vscode-charts-yellow)"><span class="codicon codicon-beaker" style="font-size:10px"></span>Experimental vector arithmetic</span></div>
+          <div style="display:flex;gap:6px;margin-bottom:8px"><input value="{{ cmpExpr }}" onInput="{{ onCmpExpr }}" aria-label="Expression" style="{{ inputStyle }}"><button onClick="{{ onUseArith }}" style="{{ secondaryBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)">Use as query vector</button></div>
+          <div style="{{ propRow }}"><span style="{{ propK }}">Output</span><span class="vb-mono">VECTOR(1536) · ‖v‖ 1.000000</span></div>
+          <div style="{{ propRow }}"><span style="{{ propK }}">Head</span><span class="vb-mono" style="color:var(--vscode-descriptionForeground)">[0.021, −0.088, 0.114, …]</span></div>
+          <div style="font-size:10.5px;color:var(--vscode-descriptionForeground);margin:8px 0 4px">Nearest bound rows (cosine)</div>
+          <sc-for list="{{ arithNear }}" as="n" hint-placeholder-count="3"><div style="{{ n.style }}"><span class="vb-mono" style="padding:0 6px;font-size:10.5px;color:var(--vscode-descriptionForeground)">{{ n.key }}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ n.label }}</span><span class="vb-mono" style="text-align:right;padding-right:6px">{{ n.d }}</span></div></sc-for>
+          <div style="font-size:10.5px;color:var(--vscode-descriptionForeground);margin-top:8px">Analogy behaviour depends on the model, version, preprocessing, and training objective. Parsed locally — never eval().</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== PROJECTION ===================== -->
+      <sc-if value="{{ wsProjection }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;display:flex;flex-direction:column">
+        <div style="height:28px;flex:none;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1px solid var(--vscode-panel-border)">
+          <span style="font-size:11px;color:var(--vscode-descriptionForeground)">PCA 2D · Center only</span>
+          <div style="flex:1"></div>
+          <span style="{{ ctlLabel }}">Color by</span>
+          <button onClick="{{ onColorByMenu }}" style="{{ selBtnSm }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span style="{{ selTxt }}">{{ colorByLabel }}</span><span class="codicon codicon-chevron-down" style="font-size:11px;opacity:.7"></span></button>
+          <button onClick="{{ onProjFit }}" style="{{ secondaryBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-screen-full" style="font-size:12px"></span>Fit</button>
+        </div>
+        <div style="height:22px;flex:none;display:flex;align-items:center;gap:7px;padding:0 10px;background:var(--vscode-inputValidation-warningBackground);border-left:3px solid var(--vscode-inputValidation-warningBorder);border-bottom:1px solid var(--vscode-panel-border);font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis"><span class="codicon codicon-info" style="font-size:12px;flex:none"></span><span style="overflow:hidden;text-overflow:ellipsis">{{ truthLine }}</span></div>
+        <div style="flex:1;min-height:0;display:flex">
+          <div ref="{{ setProjMap }}" tabindex="0" role="application" aria-label="PCA projection scatter. Drag to pan, scroll to zoom, click to select. The point list on the right mirrors selection." onMouseDown="{{ onProjDown }}" onWheel="{{ onProjWheel }}" style="flex:1;min-width:0;position:relative;background:var(--vb-canvas);cursor:grab;overflow:hidden">
+            <canvas ref="{{ setProjCanvas }}" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+            <div style="position:absolute;left:10px;top:10px;padding:6px 9px;background:var(--vscode-panel-background);border:1px solid var(--vscode-panel-border);border-radius:2px;pointer-events:none"><sc-for list="{{ projLegend }}" as="l" hint-placeholder-count="5"><div style="display:flex;align-items:center;gap:6px;padding:1px 0;font-size:11px"><span style="{{ l.dot }}"></span><span>{{ l.name }}</span></div></sc-for></div>
+            <div style="position:absolute;right:10px;top:10px;display:flex;flex-direction:column;background:var(--vscode-panel-background);border:1px solid var(--vscode-panel-border);border-radius:2px;overflow:hidden"><button onClick="{{ onProjZoomIn }}" aria-label="Zoom in" style="{{ iconBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-add" style="font-size:13px"></span></button><button onClick="{{ onProjFit }}" aria-label="Fit" style="{{ iconBtn }};border-top:1px solid var(--vscode-panel-border);border-bottom:1px solid var(--vscode-panel-border)" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-screen-full" style="font-size:12px"></span></button><button onClick="{{ onProjZoomOut }}" aria-label="Zoom out" style="{{ iconBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-remove" style="font-size:13px"></span></button></div>
+          </div>
+          <div style="width:260px;flex:none;display:flex;flex-direction:column;border-left:1px solid var(--vscode-panel-border)">
+            <sc-if value="{{ projSelProps }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:none;padding:6px 10px;border-bottom:1px solid var(--vscode-panel-border)">
+              <div style="font-size:12px;font-weight:600;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ projSelProps.label }}</div>
+              <sc-for list="{{ projSelProps.rows }}" as="r" hint-placeholder-count="5"><div style="{{ propRow }}"><span style="{{ propK }}">{{ r.k }}</span><span class="vb-mono" style="font-size:11px;text-align:right">{{ r.v }}</span></div></sc-for>
+            </div>
+            </sc-if>
+            <div style="{{ secLabelPad }}"><span>Points</span><div style="flex:1"></div><span style="{{ secMeta }}">1,200 sampled</span></div>
+            <div ref="{{ setProjList }}" onScroll="{{ onProjScroll }}" role="listbox" aria-label="Projection points" style="flex:1;min-height:0;overflow:auto;position:relative"><div style="{{ projListSpacer }}"><sc-for list="{{ projRows }}" as="r" hint-placeholder-count="16"><div role="option" onClick="{{ r.onClick }}" style="{{ r.style }}" style-hover="background:var(--vscode-list-hoverBackground)"><span style="{{ r.dot }}"></span><span class="vb-mono" style="font-size:10px;color:var(--vscode-descriptionForeground)">{{ r.ord }}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.label }}</span></div></sc-for></div></div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== INDEX ===================== -->
+      <sc-if value="{{ wsIndex }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:0 18px;padding:8px 10px;overflow:hidden">
+        <div style="min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:2px">
+          <div style="{{ secLabel }}"><span>Properties</span><div style="flex:1"></div><span style="{{ secMeta }}">catalog + sys.dm_db_vector_indexes</span></div>
+          <div style="margin-bottom:12px"><sc-for list="{{ idxProps }}" as="p" hint-placeholder-count="10"><div title="{{ p.tip }}" style="{{ propRow }}"><span style="{{ propK }}">{{ p.k }}</span><span class="vb-mono" style="color:{{ p.color }};text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.v }}</span></div></sc-for></div>
+          <div style="{{ secLabel }}"><span>Findings</span></div>
+          <sc-for list="{{ idxFindings }}" as="f" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:8px;height:32px;padding:0 4px;borderBottom:1px solid var(--vscode-panel-border);border-bottom:1px solid var(--vscode-panel-border)"><span class="codicon {{ f.icon }}" style="font-size:13px;flex:none;color:{{ f.color }}"></span><div style="flex:1;min-width:0"><div style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.title }}</div><div class="vb-mono" style="font-size:10px;color:var(--vscode-descriptionForeground);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.desc }}</div></div></div></sc-for>
+        </div>
+        <div style="min-height:0;display:flex;flex-direction:column">
+          <div style="{{ secLabel }}"><span>Scripts</span><div style="flex:1"></div><span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;text-transform:none;letter-spacing:0;color:var(--vscode-charts-blue)"><span class="codicon codicon-code" style="font-size:10px"></span>generated — never executed by this pane</span></div>
+          <div style="flex:none;margin-bottom:6px"><sc-for list="{{ idxScripts }}" as="s" hint-placeholder-count="5"><button onClick="{{ s.onClick }}" style="{{ s.style }}" style-hover="background:var(--vscode-list-hoverBackground)"><span class="codicon {{ s.icon }}" style="font-size:13px;flex:none"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left">{{ s.label }}</span></button></sc-for></div>
+          <div style="flex:none;display:flex;align-items:center;gap:4px;margin-bottom:4px"><div style="flex:1"></div><button onClick="{{ onCopyIdxSql }}" title="Copy" aria-label="Copy script" style="{{ iconBtnSm }}" style-hover="color:var(--vscode-foreground)"><span class="codicon codicon-copy" style="font-size:12px"></span></button><button onClick="{{ onOpenIdxSql }}" title="Open in editor" aria-label="Open in editor" style="{{ iconBtnSm }}" style-hover="color:var(--vscode-foreground)"><span class="codicon codicon-link-external" style="font-size:12px"></span></button></div>
+          <pre class="vb-mono" style="flex:1;min-height:0;margin:0;padding:8px 10px;font-size:11px;line-height:15px;color:var(--vscode-editor-foreground);white-space:pre;overflow:auto;border:1px solid var(--vscode-panel-border);background:var(--vb-canvas)">{{ idxSqlText }}</pre>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== PIPELINE ===================== -->
+      <sc-if value="{{ wsPipeline }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding:8px 10px">
+        <div style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:0 18px;overflow:hidden">
+          <div style="min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:2px">
+            <div style="{{ secLabel }}"><span>Provenance</span><div style="flex:1"></div><span style="{{ secMeta }}">declared · stored locally</span></div>
+            <sc-for list="{{ provRows }}" as="p" hint-placeholder-count="11"><div style="{{ propRow }}"><span style="{{ propK }}">{{ p.k }}</span><span class="vb-mono" style="text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.v }}</span></div></sc-for>
+          </div>
+          <div style="min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:2px">
+            <div style="{{ secLabel }}"><span>Re-embed selected row</span><div style="flex:1"></div><span style="{{ secMeta }}">stored vs freshly generated</span></div>
+            <div class="vb-mono" style="padding:6px 8px;border:1px solid var(--vscode-panel-border);background:var(--vb-canvas);font-size:11px;line-height:15px;margin-bottom:6px">“Customers on annual plans may request a prorated refund within 30 days of renewal…”</div>
+            <button onClick="{{ onReembed }}" style="{{ secondaryBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-sparkle" style="font-size:12px;color:var(--vscode-charts-purple)"></span>Re-embed &amp; compare…</button>
+            <sc-if value="{{ reembed }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:10px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--vscode-charts-green)"><span class="codicon codicon-play" style="font-size:11px"></span>Executed · one confirmed model call</div>
+              <sc-for list="{{ reembed }}" as="r" hint-placeholder-count="6"><div style="{{ propRow }}"><span style="{{ propK }}">{{ r.k }}</span><span class="vb-mono">{{ r.v }}</span></div></sc-for>
+            </sc-if>
+          </div>
+        </div>
+        <div style="flex:none;border-top:1px solid var(--vscode-panel-border);padding-top:6px;margin-top:6px">
+          <div style="{{ secLabel }}"><span>Chunk debugger</span><div style="flex:1"></div><span style="{{ secMeta }}">fixed · characters, not tokens</span></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="{{ ctlLabel }}">Size</span>
+            <div style="display:flex;align-items:center;border:1px solid var(--vscode-dropdown-border);border-radius:2px"><button onClick="{{ onChunkSizeDown }}" aria-label="Decrease chunk size" style="{{ stepBtn }}">−</button><span class="vb-mono" style="width:46px;text-align:center;font-size:12px">{{ chunkSize }}</span><button onClick="{{ onChunkSizeUp }}" aria-label="Increase chunk size" style="{{ stepBtn }}">+</button></div>
+            <span style="{{ ctlLabel }}">Overlap %</span>
+            <div style="display:flex;align-items:center;border:1px solid var(--vscode-dropdown-border);border-radius:2px"><button onClick="{{ onChunkOverlapDown }}" aria-label="Decrease overlap" style="{{ stepBtn }}">−</button><span class="vb-mono" style="width:36px;text-align:center;font-size:12px">{{ chunkOverlap }}</span><button onClick="{{ onChunkOverlapUp }}" aria-label="Increase overlap" style="{{ stepBtn }}">+</button></div>
+            <div style="flex:1"></div>
+            <button onClick="{{ onChunkEmbed }}" style="{{ secondaryBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-sparkle" style="font-size:12px;color:var(--vscode-charts-purple)"></span>Generate embeddings for chunks…</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:2px"><sc-for list="{{ chunkParts }}" as="c" hint-placeholder-count="9"><div style="{{ c.style }}">{{ c.n }}</div></sc-for></div>
+          <div style="font-size:10.5px;color:var(--vscode-descriptionForeground);margin-top:5px">Hatched spans are overlap regions shared between adjacent chunks.</div>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+
+    <!-- PROFILE INSPECTOR DRAWER -->
+    <sc-if value="{{ inspector }}" hint-placeholder-val="{{ false }}">
+    <div style="width:340px;flex:none;display:flex;flex-direction:column;border-left:1px solid var(--vscode-panel-border)">
+      <div style="height:26px;flex:none;display:flex;align-items:center;gap:7px;padding:0 10px;border-bottom:1px solid var(--vscode-panel-border)"><span class="codicon {{ inspector.icon }}" style="font-size:13px;color:{{ inspector.color }}"></span><span style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--vscode-descriptionForeground);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ inspector.title }}</span><button onClick="{{ onCloseInspector }}" aria-label="Close" style="{{ iconBtnSm }}" style-hover="color:var(--vscode-foreground)"><span class="codicon codicon-close" style="font-size:13px"></span></button></div>
+      <div style="flex:none;padding:6px 10px;border-bottom:1px solid var(--vscode-panel-border);font-size:11px;color:var(--vscode-descriptionForeground);line-height:15px">{{ inspector.desc }}</div>
+      <div style="{{ insHeadRow }}"><span style="{{ ih0 }}">Key</span><span style="{{ ihL }}">Label</span><span style="{{ ihR }}">‖v‖</span><span style="{{ ihL }}">Reason</span></div>
+      <div ref="{{ setInspectorScroll }}" onScroll="{{ onInspectorScroll }}" style="flex:1;min-height:0;overflow:auto;position:relative" role="list">
+        <div style="{{ inspectorSpacer }}">
+          <sc-for list="{{ inspectorRows }}" as="r" hint-placeholder-count="14">
+            <div onClick="{{ r.onClick }}" title="{{ r.titleTip }}" style="{{ r.style }}" style-hover="background:var(--vscode-list-hoverBackground)"><span class="vb-mono" style="{{ ic0 }}">{{ r.key }}</span><span style="{{ icL }}">{{ r.label }}</span><span class="vb-mono" style="{{ icR }}">{{ r.norm }}</span><span class="vb-mono" style="{{ r.reasonStyle }}">{{ r.reason }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="flex:none;display:flex;gap:6px;padding:6px 10px;border-top:1px solid var(--vscode-panel-border)">
+        <button onClick="{{ onInsReveal }}" style="{{ secondaryBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-table" style="font-size:12px"></span>Reveal in Results</button>
+        <button onClick="{{ onInsCompare }}" style="{{ secondaryBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-add" style="font-size:12px"></span>Add to Compare</button>
+        <button onClick="{{ onInsQuery }}" style="{{ secondaryBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-search-fuzzy" style="font-size:12px"></span>Use as query</button>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+
+  <!-- STATUS BAR (absolute) -->
+  <div style="position:absolute;left:0;right:0;bottom:0;z-index:6;height:24px;display:flex;align-items:stretch;background:var(--vscode-statusBar-background);color:var(--vscode-statusBar-foreground);font-size:11.5px;border-top:1px solid var(--vscode-contrastBorder)">
+    <div style="display:flex;align-items:center;gap:6px;padding:0 10px"><span class="codicon codicon-symbol-array" style="font-size:12px"></span><span>{{ footerPrimary }}</span></div>
+    <div style="flex:1"></div>
+    <button onClick="{{ onEvidenceLegend }}" title="What the evidence labels mean" style="display:flex;align-items:center;gap:5px;padding:0 10px;background:transparent;border:0;border-left:1px solid var(--vscode-panel-border);color:inherit;cursor:pointer;font-size:11.5px" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-info" style="font-size:12px"></span><span>Evidence</span></button>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 10px;border-left:1px solid var(--vscode-panel-border)"><span class="codicon codicon-server-process" style="font-size:12px"></span><span>Diagnostic session isolated</span></div>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 10px;border-left:1px solid var(--vscode-panel-border)"><span class="codicon codicon-circle-slash" style="font-size:12px"></span><span>No network requests</span></div>
+  </div>
+
+  <!-- MENUS -->
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div onMouseDown="{{ onCloseMenus }}" style="position:absolute;inset:0;z-index:40">
+      <div onMouseDown="{{ stop }}" style="{{ menuStyle }}">
+        <sc-for list="{{ menuItems }}" as="mi" hint-placeholder-count="4">
+          <sc-if value="{{ mi.header }}" hint-placeholder-val="{{ false }}"><div style="padding:5px 12px 3px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--vscode-descriptionForeground)">{{ mi.text }}</div></sc-if>
+          <sc-if value="{{ mi.sep }}" hint-placeholder-val="{{ false }}"><div style="height:1px;background:var(--vscode-editorWidget-border);margin:4px 0"></div></sc-if>
+          <sc-if value="{{ mi.item }}" hint-placeholder-val="{{ false }}"><div onClick="{{ mi.onClick }}" title="{{ mi.title }}" style="{{ mi.style }}" style-hover="background:var(--vscode-list-hoverBackground)"><span class="codicon {{ mi.icon }}" style="font-size:13px;width:16px;flex:none;color:{{ mi.iconColor }}"></span><div style="flex:1;min-width:0"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ mi.label }}</div><sc-if value="{{ mi.detail }}" hint-placeholder-val="{{ false }}"><div style="font-size:10px;color:var(--vscode-descriptionForeground);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ mi.detail }}</div></sc-if></div><sc-if value="{{ mi.check }}" hint-placeholder-val="{{ false }}"><span class="codicon codicon-check" style="font-size:12px;flex:none"></span></sc-if></div></sc-if>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- POPOVER: capability / scope / evidence legend -->
+  <sc-if value="{{ popover }}" hint-placeholder-val="{{ false }}">
+    <div onMouseDown="{{ onCloseMenus }}" style="position:absolute;inset:0;z-index:41">
+      <div onMouseDown="{{ stop }}" style="{{ popStyle }}">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--vscode-descriptionForeground);padding-bottom:4px;border-bottom:1px solid var(--vscode-panel-border);margin-bottom:4px">{{ popover.title }}</div>
+        <sc-if value="{{ popover.note }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:var(--vscode-descriptionForeground);margin-bottom:6px;line-height:15px">{{ popover.note }}</div></sc-if>
+        <sc-for list="{{ popover.rows }}" as="c" hint-placeholder-count="8"><div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:11.5px;border-bottom:1px solid var(--vscode-panel-border)"><sc-if value="{{ c.icon }}" hint-placeholder-val="{{ false }}"><span class="codicon {{ c.icon }}" style="font-size:12px;color:{{ c.iconColor }};flex:none"></span></sc-if><span style="flex:1;color:var(--vscode-descriptionForeground)">{{ c.k }}</span><span class="vb-mono" style="color:{{ c.color }};text-align:right">{{ c.v }}</span></div></sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- MODEL-CALL CONFIRMATION -->
+  <sc-if value="{{ modelDialog }}" hint-placeholder-val="{{ false }}">
+    <div onMouseDown="{{ onCloseModelDialog }}" style="position:absolute;inset:0;z-index:55;background:#00000077;display:flex;align-items:center;justify-content:center">
+      <div onMouseDown="{{ stop }}" style="width:440px;max-width:92%;background:var(--vscode-notifications-background);border:1px solid var(--vscode-notifications-border);border-radius:2px;box-shadow:0 8px 28px var(--vscode-widget-shadow);overflow:hidden">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--vscode-panel-border)"><span class="codicon codicon-sparkle" style="font-size:14px;color:var(--vscode-charts-purple)"></span><span style="font-weight:600;font-size:13px;flex:1">{{ modelDialog.title }}</span><button onClick="{{ onCloseModelDialog }}" aria-label="Cancel" style="{{ iconBtnSm }}" style-hover="color:var(--vscode-foreground)"><span class="codicon codicon-close" style="font-size:14px"></span></button></div>
+        <div style="padding:4px 14px"><sc-for list="{{ modelDialog.rows }}" as="r" hint-placeholder-count="10"><div style="{{ propRow }}"><span style="{{ propK }}">{{ r.k }}</span><span class="vb-mono" style="text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:270px">{{ r.v }}</span></div></sc-for></div>
+        <div style="display:flex;align-items:center;gap:7px;margin:8px 14px;padding:5px 9px;background:var(--vscode-inputValidation-warningBackground);border-left:3px solid var(--vscode-inputValidation-warningBorder);font-size:11px"><span class="codicon codicon-warning" style="font-size:12px;flex:none"></span><span>Source text leaves your environment via the database engine.</span></div>
+        <div style="display:flex;justify-content:flex-end;gap:7px;padding:10px 14px;border-top:1px solid var(--vscode-panel-border)"><button onClick="{{ onCloseModelDialog }}" style="{{ secondaryBtn }};height:26px">Cancel</button><button onClick="{{ onCloseModelDialog }}" style="{{ secondaryBtn }};height:26px">View generated T-SQL</button><button onClick="{{ onConfirmModel }}" style="height:26px;padding:0 12px;background:var(--vscode-button-background);color:var(--vscode-button-foreground);border:0;border-radius:2px;cursor:pointer;font-size:12px" style-hover="background:var(--vscode-button-hoverBackground)">Generate embedding</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- TOASTS -->
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:34px;z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center" aria-live="polite">
+    <sc-for list="{{ toasts }}" as="t" hint-placeholder-count="0"><div style="{{ t.style }}"><span class="codicon {{ t.icon }}" style="font-size:14px;flex:none"></span><span style="font-size:12px">{{ t.text }}</span></div></sc-for>
+  </div>
+
+  <div class="vb-sr" aria-live="polite" ref="{{ setLiveEl }}"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.store=this._store();
+    let theme='dark'; try{ theme=this.store.get('vb.theme')||'dark'; }catch(e){}
+    this._seed();
+    this.state={
+      theme, reduced:(typeof matchMedia!=='undefined'&&matchMedia('(prefers-reduced-motion: reduce)').matches),
+      workspace:'profile', binding:'bound', narrow:false,
+      normType:'norm2',
+      inspector:null, inspectorScrollTop:0,
+      searchSource:'row', searchK:20, searchMetric:'cosine', searchVariants:{exact:true,approx:true,forced:true},
+      runMode:'single', searchState:'idle', searchElapsed:0, sqlTab:'exact', sqlOpen:false,
+      searchText:'annual subscription refund window', pasteJson:'', expr:'normalize(A + B - C)',
+      evidence:'confirmed', indexVer:'v3', rankSort:{col:'exactRank',dir:1}, rankW:{c0:62,c1:66,c2:52,c4:92,c5:92,c6:110}, rankSel:null,
+      menu:null, menuRect:null, popKind:null,
+      cmpExpr:'normalize(A + B - C)', idxScript:'create', modelDialog:null, reembedDone:false, chunkSize:800, chunkOverlap:15,
+      projColorBy:'category', projSel:null, projListScrollTop:0,
+      toasts:[]
+    };
+    this.pv={cx:0,cy:0,scale:60}; this.pcanvas=null; this.pctx=null; this.pmapEl=null; this.pW=600; this.pH=400; this.pdpr=1; this._pdrag=null; this.projListEl=null;
+    this.search=null; this.harness=null; this.sweep=null;
+    this.contentEl=null; this.inspectorScrollEl=null; this.liveEl=null;
+    this._to=[]; this._toastId=0; this._rdrag=null;
+    ['onCloseMenus','stop','onInspectorScroll','_gmove','_gup'].forEach(m=>this[m]=this[m].bind(this));
+  }
+  _store(){ try{ const t='__vb'+Math.random(); localStorage.setItem(t,'1'); localStorage.removeItem(t); return {get:k=>localStorage.getItem(k),set:(k,v)=>localStorage.setItem(k,v)}; }catch(e){ const m={}; return {get:k=>m[k]??null,set:(k,v)=>{m[k]=String(v)}}; } }
+  _rng(seed){ let s=seed>>>0; return ()=>{ s|=0; s=s+0x6D2B79F5|0; let t=Math.imul(s^s>>>15,1|s); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  _normal(R){ let u=0,v=0; while(u===0)u=R(); while(v===0)v=R(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+  _seed(){
+    const R=this._rng(770511);
+    this.DIM=1536; this.TOTAL=2412883; this.SAMPLE=5000;
+    this.cats=[{name:'Technical',color:'var(--vscode-charts-blue)'},{name:'Billing',color:'var(--vscode-charts-green)'},{name:'Legal',color:'var(--vscode-charts-purple)'},{name:'Support',color:'var(--vscode-charts-orange)'},{name:'Other',color:'var(--vscode-descriptionForeground)'}];
+    const titles=['Reset MFA device','Refund policy for annual plans','Data residency in EU','SSO with Entra ID','Rate limits per tenant','Export audit logs','Rotate API keys','GDPR deletion request','Webhook retry backoff','Vector index rebuild guide','Latency p99 targets','Chargeback dispute flow','SAML metadata setup','Bulk import CSV schema','Incident sev-1 runbook','Token refresh lifecycle','Regional failover steps','Seat-based licensing','Encryption at rest keys','PII redaction rules'];
+    this.rows=[]; for(let i=0;i<50;i++){ const cat=this.cats[i%5]; this.rows.push({ord:i,id:100000+i*7,label:titles[i%titles.length]+(i>=titles.length?' ('+(Math.floor(i/titles.length)+1)+')':''),category:cat.name,color:cat.color,norm:(0.94+this._normal(R)*0.06),created:'2026-0'+(1+i%6)+'-'+String(1+i%27).padStart(2,'0'),model:'TextEmbedding3Small'}); }
+    this.normHists={}; const mk=(center,spread,lo,hi,zeros)=>{ const bins=24; const arr=new Array(bins).fill(0); const vals=[]; for(let i=0;i<this.SAMPLE-zeros;i++){ let v=center+this._normal(R)*spread; if(v<lo)v=lo; if(v>hi)v=hi; vals.push(v); const bi=Math.min(bins-1,Math.max(0,Math.floor((v-lo)/(hi-lo)*bins))); arr[bi]++; } for(let z=0;z<zeros;z++){vals.push(0); arr[0]++;} vals.sort((a,b)=>a-b); const q=p=>vals[Math.floor(p*vals.length)]; return {bins:arr,lo,hi,max:Math.max(...arr),stats:{median:q(0.5),p5:q(0.05),p95:q(0.95),min:vals[0],max:vals[vals.length-1],nearZero:zeros+4}}; };
+    this.normHists.norm2=mk(1.0,0.11,0,1.6,4); this.normHists.norm1=mk(31,4,0,60,4); this.normHists.norminf=mk(0.075,0.02,0,0.18,4);
+    const hv=[]; for(let i=0;i<10;i++)hv.push({dim:'dim '+(1+Math.floor(R()*1536)),v:0.082-i*0.006*(0.8+R()*0.4)}); this.compHigh=hv.sort((a,b)=>b.v-a.v);
+    const lv=[]; for(let i=0;i<10;i++)lv.push({dim:'dim '+(1+Math.floor(R()*1536)),v:(i<3?0.0:0.0000004+R()*0.000012)}); this.compLow=lv.sort((a,b)=>a.v-b.v);
+    const dbins=24; const da=new Array(dbins).fill(0); const dv=[]; for(let i=0;i<10000;i++){ let v=0.62+this._normal(R)*0.16; if(v<0)v=0; if(v>1)v=1; dv.push(v); da[Math.min(dbins-1,Math.floor(v*dbins))]++; } dv.sort((a,b)=>a-b); this.distSample={bins:da,max:Math.max(...da),median:dv[5000],p5:dv[500],p95:dv[9500]};
+    this.findings=[
+      {id:'nonfinite',sev:'error',icon:'codicon-error',title:'Vectors contain non-finite components',count:8,method:'NaN / ±Inf scan · 5,000 sampled rows',why:'Non-finite components break distance math and can corrupt an index build. Investigate these rows at the source.',reason:'NaN',rcolor:'var(--vscode-errorForeground)'},
+      {id:'zero',sev:'warn',icon:'codicon-circle-slash',title:'Exact zero vectors',count:4,method:'all components = 0',why:'Zero vectors usually indicate a failed or empty embedding. Cosine distance to a zero vector is undefined.',reason:'zero',rcolor:'var(--vscode-inputValidation-warningBorder)'},
+      {id:'dup',sev:'warn',icon:'codicon-copy',title:'Exact duplicate groups (12) · rows',count:37,method:'SHA-256 of float32 bytes + byte verify',why:'Exact duplicates often mean reused or cached embeddings from identical source text. Not necessarily wrong.',reason:'dup',rcolor:'var(--vscode-inputValidation-warningBorder)'},
+      {id:'outlier',sev:'warn',icon:'codicon-target',title:'Centroid-distance outliers',count:17,method:'cosine distance from sample centroid · p99',why:'Outliers may be off-topic, mislabeled, or produced by a different model. Inspect the source text.',reason:'p99',rcolor:'var(--vscode-inputValidation-warningBorder)'},
+      {id:'lowvar',sev:'info',icon:'codicon-info',title:'Near-constant dimensions',count:23,method:'per-dimension variance < 1e-5',why:'Near-constant dimensions carry little signal. Common and often benign for a given model.',reason:'const',rcolor:'var(--vscode-descriptionForeground)'},
+      {id:'group',sev:'info',icon:'codicon-info',title:'Group “Legal” geometry differs',count:1,method:'median within-group distance vs overall',why:'A group whose within-distance diverges may use different source text, language, or model version.',reason:'group',rcolor:'var(--vscode-descriptionForeground)'}
+    ];
+    this.groups=[{name:'Technical',count:1840,norm:0.99,dist:0.58,outlier:1.2},{name:'Billing',count:1122,norm:1.01,dist:0.61,outlier:0.9},{name:'Legal',count:604,norm:0.97,dist:0.74,outlier:3.4},{name:'Support',count:988,norm:1.00,dist:0.60,outlier:1.1},{name:'Other',count:446,norm:0.96,dist:0.69,outlier:2.0}];
+    const centers={Technical:[-1.25,0.45],Billing:[0.95,0.85],Legal:[0.25,-1.35],Support:[1.15,-0.35],Other:[-0.6,-0.75]};
+    this.pca=[]; const tl=['Reset MFA device','Refund policy','Data residency EU','SSO with Entra ID','Rate limits','Export audit logs','Rotate API keys','GDPR deletion','Webhook retry','Index rebuild','Latency p99','Chargeback flow','SAML metadata','Bulk import CSV','Sev-1 runbook'];
+    for(let i=0;i<1200;i++){ const cat=this.cats[i%5]; const c=centers[cat.name]; const spread=cat.name==='Legal'?0.62:0.4; this.pca.push({ord:i,x:c[0]+this._normal(R)*spread,y:c[1]+this._normal(R)*spread,cat:cat.name,color:cat.color,label:tl[i%tl.length]+' #'+i}); }
+    this.pcaVar=[18.4,9.7,8.9];
+  }
+  _genSearch(){ const R=this._rng(4242); const pool=this.rows; const idxs=[]; while(idxs.length<24){ const i=Math.floor(R()*pool.length); if(idxs.indexOf(i)<0)idxs.push(i); }
+    const exact=idxs.slice(0,20).map((i,r)=>({rank:r+1,ord:pool[i].ord,key:pool[i].id,label:pool[i].label,cat:pool[i].category,color:pool[i].color,dist:0.082+r*0.018+R()*0.006}));
+    const drop=[14,19]; let ap=exact.filter(e=>drop.indexOf(e.rank)<0).map(e=>({...e,adist:e.dist*(1+R()*0.05)}));
+    const extra=idxs.slice(20,22).map((i,k)=>({ord:pool[i].ord,key:pool[i].id,label:pool[i].label,cat:pool[i].category,color:pool[i].color,adist:0.31+k*0.05+R()*0.02,approxOnly:true}));
+    ap=ap.concat(extra); ap.sort((a,b)=>a.adist-b.adist); ap.forEach((e,i)=>e.arank=i+1);
+    const by={}; exact.forEach(e=>by[e.ord]={ord:e.ord,key:e.key,label:e.label,cat:e.cat,color:e.color,exactRank:e.rank,exactDist:e.dist}); ap.forEach(e=>{ by[e.ord]=by[e.ord]||{ord:e.ord,key:e.key,label:e.label,cat:e.cat,color:e.color}; by[e.ord].approxRank=e.arank; by[e.ord].approxDist=e.adist; });
+    const rows=Object.keys(by).map(k=>by[k]).map(m=>{ const status=(m.exactRank&&m.approxRank)?'matched':(m.exactRank?'exactOnly':'approxOnly'); const delta=(m.exactRank&&m.approxRank)?(m.approxRank-m.exactRank):null; return {...m,status,delta}; });
+    const overlap=rows.filter(r=>r.status==='matched').length; const recall=Math.round(overlap/20*100);
+    return {rows,overlap,recall,exactMs:842,approxMs:17,forcedMs:19,denom:20,staleness:12.3}; }
+  _genHarness(){ const R=this._rng(9911); const recalls=[]; for(let i=0;i<50;i++){ let v=0.94+this._normal(R)*0.05; if(v>1)v=1; if(v<0.75)v=0.75; recalls.push(Math.round(v*20)/20); } recalls.sort((a,b)=>a-b);
+    const bins=new Array(10).fill(0); recalls.forEach(v=>{ bins[Math.min(9,Math.floor((v-0.75)/0.025))]++; });
+    const off=[]; for(let i=0;i<6;i++){ const r=this.rows[Math.floor(R()*this.rows.length)]; off.push({key:'#'+r.id,label:r.label,recall:recalls[i].toFixed(2),missing:Math.round((1-recalls[i])*20),ms:(14+Math.floor(R()*9))}); }
+    return {recalls,bins,median:recalls[25],p5:recalls[2],worst:recalls[0],off,staleness:12.3}; }
+  _genSweep(){ const ks=[10,20,50,100]; const recall=[0.95,0.90,0.88,0.86]; const ms=[14,17,24,38]; const notes=['','matches single-run mode','','graph frontier widens'];
+    return {rows:ks.map((k,i)=>({k,recall:recall[i],overlap:Math.round(recall[i]*k),ms:ms[i],speed:Math.round(842/ms[i]),note:notes[i]})),exactMs:842,staleness:12.3}; }
+  _sqlFor(v){ const T='dbo].[DocumentChunks'; const legacy=this.state.indexVer==='legacy';
+    if(v==='exact')return "-- Vector Workbench · exact ground truth · VECTOR_DISTANCE\nDECLARE @q VECTOR(1536) = CAST(N'[0.0123, -0.044, ...]' AS VECTOR(1536));\nDECLARE @p0 nvarchar(100) = N'Technical';\n\nSELECT TOP (20)\n       t.[chunk_id],\n       t.[chunk_label],\n       VECTOR_DISTANCE('cosine', @q, t.[embedding]) AS [distance]\nFROM ["+T+"] AS t\nWHERE t.[embedding] IS NOT NULL\n  AND t.[category] = @p0\nORDER BY [distance] ASC;";
+    if(v==='approx'){ if(legacy)return "-- Vector Workbench · approximate · legacy index (v2) — POST-FILTER SEMANTICS\n-- Predicate applies AFTER approximate retrieval. TOP_N oversampled ×5 (disclosed).\nDECLARE @q VECTOR(1536) = CAST(N'[0.0123, -0.044, ...]' AS VECTOR(1536));\nDECLARE @p0 nvarchar(100) = N'Technical';\n\nSELECT TOP (20) t.[chunk_id], t.[chunk_label], s.[distance]\nFROM VECTOR_SEARCH(\n       TABLE = ["+T+"] AS t,\n       COLUMN = [embedding],\n       SIMILAR_TO = @q,\n       METRIC = 'cosine',\n       TOP_N = 100  -- K × 5 oversample to survive post-filtering\n     ) AS s\nWHERE t.[category] = @p0   -- applied AFTER the ANN candidate set\nORDER BY s.[distance] ASC;";
+      return "-- Vector Workbench · approximate · VECTOR_SEARCH (index v3 · iterative filtering)\nDECLARE @q VECTOR(1536) = CAST(N'[0.0123, -0.044, ...]' AS VECTOR(1536));\nDECLARE @p0 nvarchar(100) = N'Technical';\n\nSELECT TOP (20) WITH APPROXIMATE\n       t.[chunk_id], t.[chunk_label], s.[distance]\nFROM VECTOR_SEARCH(\n       TABLE = ["+T+"] AS t,\n       COLUMN = [embedding],\n       SIMILAR_TO = @q,\n       METRIC = 'cosine'\n     ) AS s\nWHERE t.[category] = @p0   -- applied DURING graph traversal (iterative)\nORDER BY s.[distance] ASC;"; }
+    if(v==='forced')return "-- Vector Workbench · forced ANN · FORCE_ANN_ONLY (proves the ANN path)\nDECLARE @q VECTOR(1536) = CAST(N'[0.0123, -0.044, ...]' AS VECTOR(1536));\n\nSELECT TOP (20) WITH APPROXIMATE\n       t.[chunk_id], t.[chunk_label], s.[distance]\nFROM VECTOR_SEARCH(\n       TABLE = ["+T+"] AS t,\n       COLUMN = [embedding],\n       SIMILAR_TO = @q,\n       METRIC = 'cosine'\n     ) AS s WITH (FORCE_ANN_ONLY)\nORDER BY s.[distance] ASC;";
+    return "-- ============================================================\n-- Vector Workbench repro script · generated 2026-07-11\n-- Target: dbo.DocumentChunks.embedding · VECTOR(1536, float32)\n-- Index:  vec_DocumentChunks_embedding · DiskANN · cosine · "+(legacy?'v2 (legacy)':'v3 (latest)')+"\n-- Assumes: SELECT + VIEW DATABASE STATE. Nothing below modifies data.\n-- ============================================================\n\n-- 1 · Capability check\nSELECT SERVERPROPERTY('ProductVersion') AS product_version,\n       OBJECT_ID('sys.dm_db_vector_indexes') AS health_dmv_present;\n\n-- 2 · Index version verification\nSELECT i.name, JSON_VALUE(v.build_parameters,'$.Version') AS index_version\nFROM sys.indexes AS i JOIN sys.vector_indexes AS v\n  ON v.object_id = i.object_id AND v.index_id = i.index_id\nWHERE i.name = N'vec_DocumentChunks_embedding';\n\n-- 3 · Exact ground truth (as executed)\n"+this._sqlFor('exact')+"\n\n-- 4 · Approximate (as executed)\n"+this._sqlFor('approx')+"\n\n-- 5 · Forced ANN (evidence probe, as executed)\n"+this._sqlFor('forced')+"\n\n-- 6 · Index health at measurement time\nSELECT i.name, s.approximate_staleness_percent, s.last_background_task_succeeded\nFROM sys.dm_db_vector_indexes AS s\nJOIN sys.indexes AS i ON i.object_id = s.object_id AND i.index_id = s.index_id\nWHERE i.name = N'vec_DocumentChunks_embedding';"; }
+
+  componentDidMount(){ window.addEventListener('mousemove',this._gmove,true); window.addEventListener('mouseup',this._gup,true); this._ro=new ResizeObserver(()=>{ if(this.contentEl){ const w=this.contentEl.clientWidth; const nar=w<640; if(nar!==this.state.narrow)this.setState({narrow:nar}); } }); if(this.contentEl)this._ro.observe(this.contentEl); }
+  componentDidUpdate(){ const s=this.state; const L=this._last||(this._last={}); if(L.inspector!==s.inspector && this.inspectorScrollEl)this.inspectorScrollEl.scrollTop=0;
+    if(L.workspace!==s.workspace && s.workspace==='projection'){ const t=setTimeout(()=>{ this.projResize(); this.projFit(); },50); this._to.push(t); }
+    else if(s.workspace==='projection' && (L.projSel!==s.projSel||L.projColorBy!==s.projColorBy||L.theme!==s.theme)){ this.projDraw(); }
+    Object.assign(L,{inspector:s.inspector,workspace:s.workspace,projSel:s.projSel,projColorBy:s.projColorBy,theme:s.theme}); }
+  componentWillUnmount(){ this._to.forEach(clearTimeout); window.removeEventListener('mousemove',this._gmove,true); window.removeEventListener('mouseup',this._gup,true); try{this._ro.disconnect();}catch(e){} }
+  setContentEl(el){ this.contentEl=el; if(el&&this._ro){ try{this._ro.observe(el);}catch(e){} } }
+  setInspectorScroll(el){ this.inspectorScrollEl=el; }
+  setLiveEl(el){ this.liveEl=el; }
+  announce(m){ if(this.liveEl)this.liveEl.textContent=m; }
+  onInspectorScroll(e){ this.setState({inspectorScrollTop:e.target.scrollTop}); }
+  _gmove(e){ if(this._rdrag){ const d=e.clientX-this._rdrag.x; const nw=Math.max(36,Math.min(400,this._rdrag.w+d)); this.setState(s=>({rankW:{...s.rankW,[this._rdrag.col]:nw}})); } if(this._pdrag){ const dx=e.clientX-this._pdrag.x,dy=e.clientY-this._pdrag.y; if(Math.abs(dx)>3||Math.abs(dy)>3)this._pdrag.moved=true; this.pv.cx=this._pdrag.cx-dx/this.pv.scale; this.pv.cy=this._pdrag.cy+dy/this.pv.scale; this.projDraw(); } }
+  _gup(){ this._rdrag=null; if(this._pdrag){ if(!this._pdrag.moved){ const f=this.projPick(this._pdrag.sx,this._pdrag.sy); this.projSelect(f?f.ord:null); } this._pdrag=null; } }
+  stop(e){ e.stopPropagation(); }
+  onCloseMenus(){ this.setState({menu:null,popKind:null}); }
+  openMenu(name,e){ const r=e.currentTarget.getBoundingClientRect(); this.setState({menu:name,menuRect:r,popKind:null}); }
+  openPop(kind,e){ const r=e.currentTarget.getBoundingClientRect(); this.setState({popKind:kind,menuRect:r,menu:null}); }
+  setTheme(t){ this.setState({theme:t}); try{this.store.set('vb.theme',t);}catch(e){} }
+  setWorkspace(w){ if((w==='search'||w==='index')&&this.state.binding!=='bound'){ this.toast('Bind to a base table to use '+w,'codicon-lock'); return; } this.setState({workspace:w,menu:null}); }
+  toast(text,icon){ const id=++this._toastId; const style={display:'flex',alignItems:'center',gap:'8px',padding:'6px 12px',background:'var(--vscode-notifications-background)',color:'var(--vscode-foreground)',border:'1px solid var(--vscode-notifications-border)',borderRadius:'2px',boxShadow:'0 3px 12px var(--vscode-widget-shadow)'}; this.setState(s=>({toasts:[...s.toasts,{id,text,icon,style}]})); const t=setTimeout(()=>this.setState(s=>({toasts:s.toasts.filter(x=>x.id!==id)})),2600); this._to.push(t); }
+  // search actions
+  setSource(s){ this.setState({searchSource:s}); }
+  setRunMode(m){ this.setState({runMode:m,menu:null,searchState:'idle'}); }
+  setMetric(m){ this.setState({searchMetric:m,menu:null}); }
+  setSearchK(d){ this.setState(st=>({searchK:Math.max(1,Math.min(100,st.searchK+d))})); }
+  toggleVariant(v){ this.setState(st=>({searchVariants:{...st.searchVariants,[v]:!st.searchVariants[v]}})); }
+  toggleSql(){ this.setState(st=>({sqlOpen:!st.sqlOpen})); }
+  setSqlTab(t){ this.setState({sqlTab:t}); }
+  copySql(){ try{navigator.clipboard.writeText(this._sqlFor(this.state.sqlTab));}catch(e){} this.toast('SQL copied','codicon-copy'); }
+  openSqlEditor(){ this.toast('Opened in a new editor (mock)','codicon-link-external'); }
+  openRepro(){ this.setState({sqlOpen:true,sqlTab:'repro'}); this.announce('Repro script shown in the SQL drawer'); }
+  runComparison(){ if(this.state.binding!=='bound'){ this.toast('Bind to a base table to run search','codicon-lock'); return; } const mode=this.state.runMode; this.setState({searchState:'running',searchElapsed:0,menu:null}); this.announce('Running '+mode); const t0=Date.now(); this._runTimer=setInterval(()=>this.setState({searchElapsed:Date.now()-t0}),90);
+    const dur=this.state.reduced?200:(mode==='single'?900:(mode==='harness'?1600:1200));
+    const t=setTimeout(()=>{ clearInterval(this._runTimer); if(mode==='single'){ this.search=this._genSearch(); this.announce('Comparison complete. Recall '+this.search.recall+' percent.'); } else if(mode==='harness'){ this.harness=this._genHarness(); this.announce('Self-recall harness complete. Median recall '+this.harness.median.toFixed(2)); } else { this.sweep=this._genSweep(); this.announce('K-sweep complete.'); } this.setState({searchState:'done'}); },dur); this._to.push(t); }
+  sortRank(col){ this.setState(s=>({rankSort:{col,dir:s.rankSort.col===col?-s.rankSort.dir:1}})); }
+  rankResizeDown(col,e){ e.preventDefault(); e.stopPropagation(); this._rdrag={col,x:e.clientX,w:this.state.rankW[col]}; }
+  // findings inspector
+  openFinding(f){ this.setState({inspector:{kind:'finding',id:f.id,icon:f.icon,color:this._sevColor(f.sev),title:'Affected rows · '+f.count,desc:f.why,finding:f}}); this.announce('Inspecting '+f.title); }
+  onCloseInspector(){ this.setState({inspector:null}); }
+  _sevColor(s){ return s==='error'?'var(--vscode-errorForeground)':s==='warn'?'var(--vscode-inputValidation-warningBorder)':'var(--vscode-descriptionForeground)'; }
+  setNorm(n){ this.setState({normType:n}); }
+  setBinding(b){ this.setState({binding:b,menu:null}); }
+  setEvidence(ev){ this.setState({evidence:ev,menu:null}); }
+  setIndexVer(v){ this.setState({indexVer:v,menu:null}); }
+  fmt6(v){ if(v==null)return '—'; return Number(v.toPrecision(6)).toString(); }
+  // ---- compare / index / pipeline ----
+  setCmpExpr(e){ this.setState({cmpExpr:e.target.value}); }
+  showIndexScript(k){ this.setState({idxScript:k}); }
+  openModelDialog(kind){ this.setState({modelDialog:{kind}}); }
+  closeModelDialog(){ this.setState({modelDialog:null}); }
+  confirmModel(){ const k=this.state.modelDialog&&this.state.modelDialog.kind; this.setState({modelDialog:null,reembedDone:k==='reembed'?true:this.state.reembedDone}); this.toast('Embedding generated · dbo.TextEmbedding3Small','codicon-sparkle'); }
+  setChunkSize(d){ this.setState(s=>({chunkSize:Math.max(200,Math.min(2000,s.chunkSize+d))})); }
+  setChunkOverlap(d){ this.setState(s=>({chunkOverlap:Math.max(0,Math.min(50,s.chunkOverlap+d))})); }
+  _indexSql(k){ const legacy=this.state.indexVer==='legacy';
+    if(k==='migrate')return "-- Migrate vector index to the latest DiskANN format (v3)\n-- SERVICE IMPACT: dropping immediately disables approximate search on this\n-- table until the new index finishes building. Plan a maintenance window.\nDROP INDEX [vec_DocumentChunks_embedding] ON [dbo].[DocumentChunks];\nGO\nCREATE VECTOR INDEX [vec_DocumentChunks_embedding]\n  ON [dbo].[DocumentChunks]([embedding])\n  WITH (METRIC = 'cosine', TYPE = 'diskann');";
+    if(k==='health')return "-- Vector index health snapshot (current values only — no history DMV exists)\nSELECT i.name, s.approximate_staleness_percent, s.last_background_task_succeeded\nFROM sys.dm_db_vector_indexes AS s\nJOIN sys.indexes AS i ON i.object_id = s.object_id AND i.index_id = s.index_id\nWHERE i.name = N'vec_DocumentChunks_embedding';";
+    if(k==='support')return "-- Review suggestion: supporting index for the common filter column.\n-- Validate against your workload before creating.\nCREATE INDEX [ix_DocumentChunks_category]\n  ON [dbo].[DocumentChunks]([category]);";
+    if(k==='gates')return "-- Configuration gates — generated for review, never executed by this pane.\n-- Preview features (database-scoped; requires ALTER DATABASE permission):\nALTER DATABASE SCOPED CONFIGURATION SET PREVIEW_FEATURES = ON;\n-- REST model endpoints on box/MI (requires sysadmin; not needed on Azure SQL DB):\nEXEC sp_configure 'external rest endpoint enabled', 1; RECONFIGURE;\n-- Local ONNX runtimes (requires sysadmin):\nEXEC sp_configure 'external AI runtimes enabled', 1; RECONFIGURE;";
+    return "-- Create a DiskANN vector index (latest format)\n-- Requires: clustered primary key · ≥100 non-null rows · no partitioning.\n-- Note: TRUNCATE TABLE is blocked while a vector index exists.\nCREATE VECTOR INDEX [vec_DocumentChunks_embedding]\n  ON [dbo].[DocumentChunks]([embedding])\n  WITH (METRIC = 'cosine', TYPE = 'diskann');"; }
+  // ---- projection canvas ----
+  setProjCanvas(el){ this.pcanvas=el; this.pctx=el?el.getContext('2d'):null; }
+  setProjMap(el){ this.pmapEl=el; if(el&&!this._pro){ this._pro=new ResizeObserver(()=>this.projResize()); this._pro.observe(el); } }
+  setProjList(el){ this.projListEl=el; }
+  onProjScroll(e){ this.setState({projListScrollTop:e.target.scrollTop}); }
+  projResize(){ if(!this.pcanvas||!this.pmapEl)return; const r=this.pmapEl.getBoundingClientRect(); this.pW=Math.max(50,r.width); this.pH=Math.max(50,r.height); this.pdpr=window.devicePixelRatio||1; this.pcanvas.width=Math.round(this.pW*this.pdpr); this.pcanvas.height=Math.round(this.pH*this.pdpr); this.projDraw(); }
+  projW2S(p){ return [this.pW/2+(p[0]-this.pv.cx)*this.pv.scale, this.pH/2-(p[1]-this.pv.cy)*this.pv.scale]; }
+  projS2W(s){ return [this.pv.cx+(s[0]-this.pW/2)/this.pv.scale, this.pv.cy-(s[1]-this.pH/2)/this.pv.scale]; }
+  projFit(){ let a=1e9,b=1e9,c=-1e9,d=-1e9; this.pca.forEach(p=>{if(p.x<a)a=p.x;if(p.x>c)c=p.x;if(p.y<b)b=p.y;if(p.y>d)d=p.y;}); this.pv={cx:(a+c)/2,cy:(b+d)/2,scale:Math.min(this.pW*0.86/Math.max(0.01,c-a),this.pH*0.86/Math.max(0.01,d-b))}; this.projDraw(); }
+  projDraw(){ const ctx=this.pctx; if(!ctx||this.state.workspace!=='projection')return; const W=this.pW,H=this.pH; ctx.setTransform(this.pdpr,0,0,this.pdpr,0,0); const root=document.querySelector('#vb-root'); const rcs=getComputedStyle(root); const rv=(n)=>rcs.getPropertyValue(n).trim(); const resolve=(cl)=>cl&&cl.indexOf('var(')===0?(rv(cl.slice(4,-1).trim())||'#888'):cl; ctx.clearRect(0,0,W,H); ctx.fillStyle=rv('--vb-canvas')||'#181818'; ctx.fillRect(0,0,W,H);
+    const o=this.projW2S([0,0]); ctx.strokeStyle=rv('--vscode-panel-border'); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,o[1]); ctx.lineTo(W,o[1]); ctx.moveTo(o[0],0); ctx.lineTo(o[0],H); ctx.stroke();
+    const cb=this.state.projColorBy; const blue=resolve('var(--vscode-charts-blue)');
+    for(const p of this.pca){ const s=this.projW2S([p.x,p.y]); if(s[0]<-6||s[0]>W+6||s[1]<-6||s[1]>H+6)continue; let col=blue; if(cb==='category')col=resolve(p.color); else if(cb==='norm'){ const t=Math.min(1,Math.max(0,(p.y+2)/4)); col='hsl('+Math.round(210-t*150)+',68%,55%)'; } ctx.beginPath(); ctx.arc(s[0],s[1],2.4,0,6.2832); ctx.globalAlpha=0.82; ctx.fillStyle=col; ctx.fill(); }
+    ctx.globalAlpha=1; if(this.state.projSel!=null){ const p=this.pca.find(x=>x.ord===this.state.projSel); if(p){ const s=this.projW2S([p.x,p.y]); ctx.beginPath(); ctx.arc(s[0],s[1],6,0,6.2832); ctx.lineWidth=2; ctx.strokeStyle=rv('--vscode-focusBorder'); ctx.stroke(); } } }
+  _prel(e){ const r=this.pmapEl.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; }
+  onProjDown(e){ if(e.button!==0)return; const p=this._prel(e); this._pdrag={x:e.clientX,y:e.clientY,cx:this.pv.cx,cy:this.pv.cy,moved:false,sx:p[0],sy:p[1]}; }
+  onProjWheel(e){ e.preventDefault(); const p=this._prel(e); const f=e.deltaY<0?1.15:1/1.15; const before=this.projS2W(p); this.pv.scale=Math.max(6,Math.min(1200,this.pv.scale*f)); const after=this.projS2W(p); this.pv.cx+=before[0]-after[0]; this.pv.cy+=before[1]-after[1]; this.projDraw(); }
+  projPick(sx,sy){ let best=null,bd=49; for(const p of this.pca){ const s=this.projW2S([p.x,p.y]); const dd=(s[0]-sx)*(s[0]-sx)+(s[1]-sy)*(s[1]-sy); if(dd<bd){bd=dd;best=p;} } return best; }
+  projSelect(ord){ this.setState({projSel:ord}); if(ord!=null){ const p=this.pca.find(x=>x.ord===ord); this.announce('Selected point row '+ord+', group '+p.cat); if(this.projListEl){ const i=this.pca.findIndex(q=>q.ord===ord); const y=i*24; const el=this.projListEl; if(y<el.scrollTop||y+24>el.scrollTop+el.clientHeight){ el.scrollTop=Math.max(0,y-el.clientHeight/2); this.setState({projListScrollTop:el.scrollTop}); } } } }
+  setColorBy(c){ this.setState({projColorBy:c,menu:null}); }
+  onProjZoom(d){ const before=this.projS2W([this.pW/2,this.pH/2]); this.pv.scale=Math.max(6,Math.min(1200,this.pv.scale*(d>0?1.25:0.8))); const after=this.projS2W([this.pW/2,this.pH/2]); this.pv.cx+=before[0]-after[0]; this.pv.cy+=before[1]-after[1]; this.projDraw(); }
+
+  renderVals(){
+    const S=this.state;
+    const mono='var(--vscode-editor-font-family)';
+    const themeBtns=[['dark','Dark','Dark theme'],['light','Light','Light theme'],['hc','HC','High contrast']].map(([v,label,title])=>({label,title,onClick:()=>this.setTheme(v),style:{height:'18px',padding:'0 7px',fontSize:'10.5px',border:'1px solid '+(S.theme===v?'var(--vscode-focusBorder)':'transparent'),background:S.theme===v?'var(--vscode-button-background)':'transparent',color:S.theme===v?'var(--vscode-button-foreground)':'var(--vscode-foreground)',borderRadius:'2px',cursor:'pointer'}}));
+    const tabStyle=(active)=>({height:'24px',padding:'0 12px',background:'transparent',border:'0',borderBottom:'2px solid '+(active?'var(--vscode-panelTitle-activeBorder)':'transparent'),color:active?'var(--vscode-tab-activeForeground)':'var(--vscode-tab-inactiveForeground)',cursor:'pointer',fontSize:'12px'});
+    const resultTabs=[['results','Results',false],['vector','Vector',true],['messages','Messages',false],['plan','Query Plan',false]].map(([id,label,active])=>({label,selected:active,onClick:()=>active?null:this.toast('This prototype focuses on the Vector pane','codicon-info'),style:tabStyle(active)}));
+    const selBtn={height:'26px',maxWidth:'220px',padding:'0 7px',display:'inline-flex',alignItems:'center',gap:'6px',background:'var(--vscode-dropdown-background)',color:'var(--vscode-dropdown-foreground)',border:'1px solid var(--vscode-dropdown-border)',borderRadius:'2px',cursor:'pointer',fontSize:'12px'};
+    const selBtnSm={...selBtn,height:'24px',maxWidth:'190px'};
+    const selTxt={overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'};
+    const iconBtn={height:'26px',width:'26px',display:'inline-flex',alignItems:'center',justifyContent:'center',background:'transparent',color:'var(--vscode-foreground)',border:'1px solid transparent',borderRadius:'2px',cursor:'pointer'};
+    const iconBtnSm={height:'20px',width:'22px',display:'inline-flex',alignItems:'center',justifyContent:'center',background:'transparent',color:'var(--vscode-descriptionForeground)',border:'0',cursor:'pointer'};
+    const hdrBtn={height:'24px',padding:'0 8px',display:'inline-flex',alignItems:'center',gap:'5px',background:'transparent',color:'var(--vscode-foreground)',border:'1px solid var(--vscode-dropdown-border)',borderRadius:'2px',cursor:'pointer',fontSize:'11.5px',whiteSpace:'nowrap'};
+    const secondaryBtn={height:'22px',padding:'0 8px',display:'inline-flex',alignItems:'center',gap:'5px',background:'transparent',color:'var(--vscode-foreground)',border:'1px solid var(--vscode-dropdown-border)',borderRadius:'2px',cursor:'pointer',fontSize:'11.5px',whiteSpace:'nowrap'};
+    const stepBtn={width:'22px',height:'22px',background:'transparent',border:'0',color:'var(--vscode-foreground)',cursor:'pointer',fontSize:'13px'};
+    const ctlLabel={fontSize:'11px',color:'var(--vscode-descriptionForeground)',flex:'none'};
+    const inputStyle={flex:'1',minWidth:'120px',height:'24px',padding:'0 8px',background:'var(--vscode-input-background)',color:'var(--vscode-input-foreground)',border:'1px solid var(--vscode-input-border)',borderRadius:'2px',fontFamily:mono,fontSize:'12px',outline:'none'};
+    const secLabel={fontSize:'11px',textTransform:'uppercase',letterSpacing:'.06em',color:'var(--vscode-descriptionForeground)',display:'flex',alignItems:'center',gap:'8px',paddingBottom:'3px',borderBottom:'1px solid var(--vscode-panel-border)',marginBottom:'7px'};
+    const secLabelPad={...secLabel,margin:'6px 10px 4px',paddingBottom:'3px'};
+    const secMeta={fontSize:'10px',textTransform:'none',letterSpacing:'0',color:'var(--vscode-descriptionForeground)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'};
+
+    // header badges
+    const bindMap={detached:['codicon-debug-disconnect','Detached','var(--vscode-descriptionForeground)','Result-only analysis · no SQL executed'],bound:['codicon-key','dbo.DocumentChunks','var(--vscode-charts-green)','Bound and verified · opens binding menu']};
+    const bd=bindMap[S.binding]||bindMap.bound;
+    const scopeLabel='Sample 5,000';
+
+    // workspaces rail
+    const wdef=[['profile','Profile','codicon-pulse'],['search','Search','codicon-search-fuzzy'],['compare','Compare','codicon-git-compare'],['projection','Projection','codicon-graph-scatter'],['index','Index','codicon-database'],['pipeline','Pipeline','codicon-sparkle']];
+    const workspaces=wdef.map(([id,label,icon])=>{ const active=S.workspace===id; const lock=(id==='search'||id==='index')&&S.binding!=='bound'; return {label,icon,active,lock,title:lock?label+' — requires a verified table binding':label,onClick:()=>this.setWorkspace(id),style:{display:'flex',alignItems:'center',gap:'7px',height:'24px',padding:'0 10px',border:'0',background:active?'var(--vscode-list-activeSelectionBackground)':'transparent',color:active?'var(--vscode-list-activeSelectionForeground)':(lock?'var(--vscode-disabledForeground)':'var(--vscode-foreground)'),cursor:'pointer',fontSize:'12.5px',textAlign:'left'}}; });
+
+    // ---------- facts strip ----------
+    const factSeg=(first)=>({display:'flex',alignItems:'center',gap:'5px',padding:'0 10px',borderLeft:first?'0':'1px solid var(--vscode-panel-border)',whiteSpace:'nowrap',flex:'none'});
+    const F=(k,v,o={})=>({k,v,icon:o.icon||null,iconColor:o.iconColor||'var(--vscode-descriptionForeground)',vColor:o.vColor||'var(--vscode-foreground)',style:factSeg(o.first)});
+    let facts=null;
+    const sr=this.search||{};
+    if(S.workspace==='profile'){ facts=[F('Rows','5,000 sampled of 2,412,883',{first:true}),F('Dimensions','1,536'),F('Base type','float32 native'),F('Null / unavailable','12 / 0'),F('Near-zero','8',{icon:'codicon-warning',iconColor:'var(--vscode-inputValidation-warningBorder)',vColor:'var(--vscode-inputValidation-warningBorder)'})]; }
+    else if(S.workspace==='search'&&S.searchState==='done'){
+      if(S.runMode==='single')facts=[F('Recall@20',sr.recall+'% ('+sr.overlap+'/20)',{first:true,vColor:sr.recall>=90?'var(--vscode-charts-green)':'var(--vscode-inputValidation-warningBorder)'}),F('Overlap',sr.overlap+' of 20'),F('Exact',sr.exactMs+' ms'),F('Approx',sr.approxMs+' ms ('+Math.round(sr.exactMs/sr.approxMs)+'×)'),F('Staleness at run',sr.staleness+'%')];
+      else if(S.runMode==='harness'&&this.harness)facts=[F('Median recall@20',this.harness.median.toFixed(2),{first:true,vColor:'var(--vscode-charts-green)'}),F('p5',this.harness.p5.toFixed(2)),F('Worst',this.harness.worst.toFixed(2)),F('Queries','50 sampled rows'),F('Statements','100 · sequential'),F('Staleness at run','12.3%')];
+      else if(S.runMode==='sweep'&&this.sweep)facts=[F('K values','10 · 20 · 50 · 100',{first:true}),F('Exact baseline','842 ms · K=100'),F('Best trade-off','K=20 · 90% · 17 ms',{vColor:'var(--vscode-charts-green)'}),F('Staleness at run','12.3%')];
+    }
+
+    // ---------- profile ----------
+    const wsProfile=S.workspace==='profile';
+    const profileWrap=S.narrow?{flex:'1',minHeight:'0',overflow:'auto',display:'flex',flexDirection:'column'}:{flex:'1',minHeight:'0',display:'flex',flexDirection:'column'};
+    const profileCols=S.narrow?{display:'flex',flexDirection:'column',padding:'8px 10px 0',gap:'4px'}:{flex:'1',minHeight:'0',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 18px',padding:'8px 10px 0',overflow:'hidden'};
+    const profileCol=S.narrow?{}:{minHeight:'0',overflowY:'auto',overflowX:'hidden',paddingRight:'2px'};
+    const groupWrap={flex:'none',padding:'4px 10px 8px',borderTop:'1px solid var(--vscode-panel-border)',maxHeight:'190px',display:'flex',flexDirection:'column'};
+    const hist=this.normHists[S.normType]||this.normHists.norm2;
+    const barColor='var(--vscode-charts-blue)';
+    const normTabs=[['norm2','L2'],['norm1','L1'],['norminf','L∞']].map(([k,l])=>({label:l,onClick:()=>this.setNorm(k),style:{height:'20px',padding:'0 9px',fontSize:'11px',borderRadius:'2px',cursor:'pointer',border:'1px solid '+(S.normType===k?'var(--vscode-focusBorder)':'var(--vscode-panel-border)'),background:S.normType===k?'var(--vscode-button-background)':'transparent',color:S.normType===k?'var(--vscode-button-foreground)':'var(--vscode-foreground)'}}));
+    const normBars=hist.bins.map((c,i)=>{ const bw=(hist.hi-hist.lo)/hist.bins.length; const x0=hist.lo+i*bw; return {title:this.fmt6(x0)+'–'+this.fmt6(x0+bw)+': '+c.toLocaleString(),style:{flex:1,height:(c/hist.max*100)+'%',minHeight:c>0?'2px':'0',background:(i===0&&hist.stats.nearZero>0)?'var(--vscode-inputValidation-warningBorder)':barColor,opacity:0.85}}; });
+    const tick=(v,label)=>({title:label+' '+this.fmt6(v),style:{position:'absolute',bottom:'-1px',left:((v-hist.lo)/(hist.hi-hist.lo)*100)+'%',width:'1px',height:'6px',background:'var(--vscode-foreground)'}});
+    const normTicks=[tick(hist.stats.p5,'p5'),tick(hist.stats.median,'median'),tick(hist.stats.p95,'p95')];
+    const showUnitRef=S.normType==='norm2';
+    const unitRefStyle={position:'absolute',top:'-3px',bottom:'0',left:((1.0-hist.lo)/(hist.hi-hist.lo)*100)+'%',width:'0',borderLeft:'1px dashed var(--vscode-charts-green)'};
+    const normStats=[['median',hist.stats.median],['p5',hist.stats.p5],['p95',hist.stats.p95],['min',hist.stats.min],['max',hist.stats.max],['near-0',hist.stats.nearZero]].map(([k,v],i)=>({k,v:i===5?String(v):this.fmt6(v),color:(i===5&&v>0)?'var(--vscode-inputValidation-warningBorder)':'var(--vscode-foreground)'}));
+    const findings=this.findings.map(f=>({title:f.title,icon:f.icon,iconColor:this._sevColor(f.sev),method:f.method,count:f.count.toLocaleString(),onClick:()=>this.openFinding(f),style:{display:'flex',alignItems:'center',gap:'8px',height:'32px',padding:'0 4px',cursor:'pointer',borderBottom:'1px solid var(--vscode-panel-border)'}}));
+    const compMaxH=this.compHigh[0].v, compMaxL=Math.max(this.compLow[this.compLow.length-1].v,1e-6);
+    const compHigh=this.compHigh.slice(0,8).map(d=>({dim:d.dim,v:this.fmt6(d.v),bar:{width:(d.v/compMaxH*100)+'%',height:'100%',background:'var(--vscode-charts-blue)'}}));
+    const compLow=this.compLow.slice(0,8).map(d=>({dim:d.dim,v:d.v<1e-6?'~0':d.v.toExponential(1),bar:{width:Math.max(2,d.v/compMaxL*100)+'%',height:'100%',background:'var(--vscode-descriptionForeground)'}}));
+    const distBars=this.distSample.bins.map((c,i)=>({title:(i/24).toFixed(2)+'–'+((i+1)/24).toFixed(2)+': '+c.toLocaleString(),style:{flex:1,height:(c/this.distSample.max*100)+'%',minHeight:c>0?'2px':'0',background:'var(--vscode-charts-blue)',opacity:0.8}}));
+    const dtick=(v,label)=>({title:label+' '+this.fmt6(v),style:{position:'absolute',bottom:'-1px',left:(v*100)+'%',width:'1px',height:'6px',background:'var(--vscode-foreground)'}});
+    const distTicks=[dtick(this.distSample.p5,'p5'),dtick(this.distSample.median,'median'),dtick(this.distSample.p95,'p95')];
+    const distStats=[['median',this.distSample.median],['p5',this.distSample.p5],['p95',this.distSample.p95]].map(([k,v])=>({k,v:this.fmt6(v)}));
+    // group grid
+    const gridHeadRow={display:'grid',gridTemplateColumns:'1.5fr 0.7fr 0.9fr 1.1fr 0.7fr',gap:'8px',height:'22px',alignItems:'center',padding:'0 8px',fontSize:'11px',color:'var(--vscode-descriptionForeground)',borderBottom:'1px solid var(--vscode-panel-border)'};
+    const gh0={}, ghR={textAlign:'right'};
+    const gcR={textAlign:'right',fontSize:'11.5px'};
+    const groups=this.groups.map((g,i)=>({name:g.name,count:g.count.toLocaleString(),norm:g.norm.toFixed(2),dist:g.dist.toFixed(2),outlier:g.outlier.toFixed(1)+'%',outStyle:{...gcR,color:g.outlier>=3?'var(--vscode-inputValidation-warningBorder)':'var(--vscode-foreground)'},dot:{width:'8px',height:'8px',background:this.cats.find(c=>c.name===g.name).color,flex:'none'},style:{display:'grid',gridTemplateColumns:'1.5fr 0.7fr 0.9fr 1.1fr 0.7fr',gap:'8px',height:'24px',alignItems:'center',padding:'0 8px',fontSize:'12px',background:i%2?'var(--vb-zebra)':'transparent',borderBottom:'1px solid var(--vscode-panel-border)'}}));
+
+    // ---------- search ----------
+    const wsSearch=S.workspace==='search';
+    const srcTabs=[['row','Selected row'],['text','Text with model'],['paste','Paste vector'],['expr','Expression']].map(([k,label])=>({label,onClick:()=>this.setSource(k),style:{height:'24px',padding:'0 11px',background:'transparent',border:'0',borderBottom:'2px solid '+(S.searchSource===k?'var(--vscode-panelTitle-activeBorder)':'transparent'),color:S.searchSource===k?'var(--vscode-tab-activeForeground)':'var(--vscode-tab-inactiveForeground)',cursor:'pointer',fontSize:'12px'}}));
+    const qrow=this.rows[6];
+    const variantDefs=[['exact','Exact','ground truth · VECTOR_DISTANCE'],['approx','Approx','WITH APPROXIMATE'],['forced','Forced ANN','FORCE_ANN_ONLY evidence probe']].map(([k,label,title])=>({label,title,checkIcon:S.searchVariants[k]?'codicon-check':'codicon-circle-large-outline',boxColor:S.searchVariants[k]?'var(--vscode-charts-green)':'var(--vscode-descriptionForeground)',onClick:()=>this.toggleVariant(k),style:{height:'24px',padding:'0 7px',display:'inline-flex',alignItems:'center',gap:'4px',background:'transparent',border:'1px solid transparent',borderRadius:'2px',color:'var(--vscode-foreground)',cursor:'pointer',fontSize:'11.5px',whiteSpace:'nowrap',flex:'none'}}));
+    const modeLabels={single:'Single comparison',harness:'Self-recall · N=50',sweep:'K-sweep'};
+    const runModeLabel=modeLabels[S.runMode];
+    const runLabels={single:'Run comparison',harness:'Run harness',sweep:'Run sweep'};
+    const runLabel=runLabels[S.runMode];
+    const costLines={single:'cost: ≤3 statements',harness:'cost: 2×50 statements · cancellable between commands',sweep:'cost: 1 exact + 4 approximate statements'};
+    const runCostLine=costLines[S.runMode];
+    const searchRunning=S.searchState==='running', searchDone=S.searchState==='done', searchIdle=S.searchState==='idle';
+    const runBtn={height:'22px',padding:'0 10px',display:'inline-flex',alignItems:'center',gap:'5px',background:'var(--vscode-button-background)',color:'var(--vscode-button-foreground)',border:'0',borderRadius:'2px 0 0 2px',cursor:'pointer',fontSize:'12px',whiteSpace:'nowrap',flex:'none'};
+    const runChev={height:'22px',width:'20px',display:'inline-flex',alignItems:'center',justifyContent:'center',background:'var(--vscode-button-background)',color:'var(--vscode-button-foreground)',border:'0',borderLeft:'1px solid #ffffff44',borderRadius:'0 2px 2px 0',cursor:'pointer'};
+    const runElapsed=(S.searchElapsed/1000).toFixed(1)+'s';
+    // evidence rows
+    const legacy=S.indexVer==='legacy';
+    const evidenceRows=[];
+    const ER=(k,icon,color,v,meta,vColor)=>evidenceRows.push({k,icon,color,v,meta:meta||'',vColor:vColor||'var(--vscode-foreground)'});
+    if(searchDone){
+      if(S.evidence==='confirmed')ER('Execution path','codicon-pass','var(--vscode-charts-green)','ANN confirmed via FORCE_ANN_ONLY','vec_DocumentChunks_embedding · cosine');
+      else if(S.evidence==='unverified')ER('Execution path','codicon-question','var(--vscode-inputValidation-warningBorder)','Approximate requested — path unverified','FORCE_ANN_ONLY variant disabled','var(--vscode-inputValidation-warningBorder)');
+      else if(S.evidence==='fallback')ER('Execution path','codicon-info','var(--vscode-charts-blue)','Optimizer chose exact kNN','legitimate under WITH APPROXIMATE');
+      else ER('Execution path','codicon-error','var(--vscode-errorForeground)','No compatible vector index','approximate variants skipped','var(--vscode-errorForeground)');
+      if(legacy)ER('Filter semantics','codicon-warning','var(--vscode-inputValidation-warningBorder)','Post-filtered after approximate retrieval','legacy v2 · TOP_N oversampled ×5 (disclosed)','var(--vscode-inputValidation-warningBorder)');
+      else ER('Filter semantics','codicon-pass','var(--vscode-charts-green)','Iterative filtering (during traversal)','index v3 · WHERE after TVF alias');
+      ER('Index staleness at run','codicon-database','var(--vscode-charts-purple)','12.3%','sys.dm_db_vector_indexes · same session, same instant');
+      ER('Syntax probes','codicon-beaker','var(--vscode-charts-blue)',legacy?'TOP_N accepted · WITH APPROXIMATE rejected':'WITH APPROXIMATE accepted · legacy TOP_N rejected','probed on this connection');
+      ER('Recall denominator','codicon-info','var(--vscode-descriptionForeground)','20 exact neighbors · same filter, same metric','recall is undefined without it');
+    }
+    // rank grid
+    const W=S.rankW; const rankCols=[
+      {id:'c0',key:'exactRank',label:'Exact',w:W.c0,align:'right'},
+      {id:'c1',key:'approxRank',label:'Approx',w:W.c1,align:'right'},
+      {id:'c2',key:'delta',label:'Δ',w:W.c2,align:'right'},
+      {id:'c3',key:'label',label:'Neighbor',w:null,align:'left'},
+      {id:'c4',key:'exactDist',label:'Exact d',w:W.c4,align:'right'},
+      {id:'c5',key:'approxDist',label:'Approx d',w:W.c5,align:'right'},
+      {id:'c6',key:'status',label:'Status',w:W.c6,align:'left'}
+    ];
+    const rankHeadRow={display:'flex',height:'24px',flex:'none',alignItems:'stretch',borderBottom:'1px solid var(--vscode-panel-border)',background:'var(--vscode-editorGroupHeader-tabsBackground)'};
+    const sortIconFor=(key)=>S.rankSort.col===key?(S.rankSort.dir===1?'codicon-arrow-up':'codicon-arrow-down'):null;
+    const rankColsOut=rankCols.map(c=>({label:c.label,title:'Sort by '+c.label,sortIcon:sortIconFor(c.key),onSort:()=>this.sortRank(c.key),onResize:(e)=>c.id!=='c3'?this.rankResizeDown(c.id,e):null,style:{position:'relative',width:c.w?c.w+'px':'auto',flex:c.w?'none':'1',minWidth:c.w?'0':'120px',display:'flex',alignItems:'center',gap:'4px',justifyContent:c.align==='right'?'flex-end':'flex-start',padding:'0 8px',fontSize:'11px',color:'var(--vscode-descriptionForeground)',cursor:'pointer',borderRight:'1px solid var(--vscode-panel-border)',boxSizing:'border-box'}}));
+    let rankRows=[];
+    if(searchDone&&S.runMode==='single'&&this.search){
+      const sortKey=S.rankSort.col, dir=S.rankSort.dir;
+      const sorted=[...this.search.rows].sort((a,b)=>{ const va=a[sortKey], vb=b[sortKey]; const na=(va===null||va===undefined), nb=(vb===null||vb===undefined); if(na&&nb)return 0; if(na)return 1; if(nb)return -1; if(typeof va==='string')return dir*va.localeCompare(vb); return dir*(va-vb); });
+      const cellBase=(w,align)=>({width:w?w+'px':'auto',flex:w?'none':'1',minWidth:w?'0':'120px',display:'flex',alignItems:'center',gap:'6px',justifyContent:align==='right'?'flex-end':'flex-start',padding:'0 8px',overflow:'hidden',fontSize:'11.5px',boxSizing:'border-box'});
+      const stM={matched:['codicon-pass','var(--vscode-charts-green)','matched'],exactOnly:['codicon-warning','var(--vscode-inputValidation-warningBorder)','exact-only'],approxOnly:['codicon-info','var(--vscode-charts-blue)','approx-only']};
+      rankRows=sorted.map((r,i)=>{ const st=stM[r.status]; const sel=S.rankSel===r.ord; return {
+        exactRank:r.exactRank?('#'+r.exactRank):'—', approxRank:r.approxRank?('#'+r.approxRank):'—',
+        delta:(r.delta===null||r.delta===undefined)?'—':(r.delta===0?'0':(r.delta>0?'+'+r.delta:String(r.delta))),
+        deltaIcon:r.delta>0?'codicon-arrow-down':(r.delta<0?'codicon-arrow-up':null),
+        deltaColor:r.delta>0?'var(--vscode-inputValidation-warningBorder)':(r.delta<0?'var(--vscode-charts-green)':'var(--vscode-descriptionForeground)'),
+        label:r.label, key:'#'+r.key, exactDist:r.exactDist?this.fmt6(r.exactDist):'—', approxDist:r.approxDist?this.fmt6(r.approxDist):'—',
+        statusIcon:st[0], statusColor:st[1], statusLabel:st[2],
+        dot:{width:'8px',height:'8px',background:r.color,flex:'none'},
+        onClick:()=>this.setState({rankSel:sel?null:r.ord}),
+        c0:cellBase(W.c0,'right'),c1:cellBase(W.c1,'right'),c2:cellBase(W.c2,'right'),c3:cellBase(null,'left'),c4:cellBase(W.c4,'right'),c5:cellBase(W.c5,'right'),c6:cellBase(W.c6,'left'),
+        style:{display:'flex',height:'24px',alignItems:'stretch',cursor:'default',background:sel?'var(--vscode-list-activeSelectionBackground)':(i%2?'var(--vb-zebra)':'transparent'),color:sel?'var(--vscode-list-activeSelectionForeground)':'var(--vscode-foreground)',borderBottom:'1px solid var(--vscode-panel-border)'}}; });
+    }
+    // rank flow
+    let flowNodes=[],flowLines=[],rankFlowH=0;
+    if(searchDone&&S.runMode==='single'&&this.search){ const K=20,gap=15,top=6; rankFlowH=top*2+(K-1)*gap+8; for(let i=1;i<=K;i++)flowNodes.push({exY:top+(i-1)*gap,apY:top+(i-1)*gap});
+      this.search.rows.forEach(r=>{ if(r.exactRank&&r.approxRank){ const y1=top+(r.exactRank-1)*gap,y2=top+(r.approxRank-1)*gap; flowLines.push({d:'M 0 '+y1+' C 55 '+y1+' 55 '+y2+' 120 '+y2,color:r.delta===0?'var(--vscode-descriptionForeground)':(r.delta>0?'var(--vscode-inputValidation-warningBorder)':'var(--vscode-charts-green)'),w:r.delta===0?1:1.5,op:0.7}); } }); }
+    // harness
+    let harnessBars=[],harnessStats=[],offRows=[];
+    if(searchDone&&S.runMode==='harness'&&this.harness){ const H=this.harness; const hmax=Math.max(...H.bins,1);
+      harnessBars=H.bins.map((c,i)=>({title:(0.75+i*0.025).toFixed(3)+'–'+(0.75+(i+1)*0.025).toFixed(3)+': '+c,style:{flex:1,height:(c/hmax*100)+'%',minHeight:c>0?'2px':'0',background:'var(--vscode-charts-blue)',opacity:0.85}}));
+      harnessStats=[['median',H.median.toFixed(2)],['p5',H.p5.toFixed(2)],['worst',H.worst.toFixed(2)]].map(([k,v])=>({k,v}));
+      offRows=H.off.map((o,i)=>({key:o.key,label:o.label,recall:o.recall,missing:String(o.missing),ms:String(o.ms),recStyle:{textAlign:'right',padding:'0 8px',color:parseFloat(o.recall)<0.85?'var(--vscode-inputValidation-warningBorder)':'var(--vscode-foreground)',display:'flex',alignItems:'center',justifyContent:'flex-end',fontSize:'11.5px'},style:{display:'grid',gridTemplateColumns:'90px minmax(0,1fr) 90px 70px 80px',height:'24px',alignItems:'center',background:i%2?'var(--vb-zebra)':'transparent',borderBottom:'1px solid var(--vscode-panel-border)',fontSize:'11.5px'}})); }
+    const offHeadRow={display:'grid',gridTemplateColumns:'90px minmax(0,1fr) 90px 70px 80px',height:'22px',alignItems:'center',fontSize:'11px',color:'var(--vscode-descriptionForeground)',borderBottom:'1px solid var(--vscode-panel-border)',flex:'none'};
+    const oh0={padding:'0 8px'}, ohL={padding:'0 8px'}, ohR={padding:'0 8px',textAlign:'right'};
+    const oc0={padding:'0 8px',fontSize:'11px',color:'var(--vscode-descriptionForeground)'}, ocL={padding:'0 8px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}, ocR={padding:'0 8px',textAlign:'right'};
+    // sweep
+    let sweepViz=[],sweepRows=[];
+    if(searchDone&&S.runMode==='sweep'&&this.sweep){ const mx=Math.max(...this.sweep.rows.map(r=>r.ms));
+      sweepViz=this.sweep.rows.map(r=>({k:r.k,recallPct:Math.round(r.recall*100)+'%',ms:r.ms,recallBar:{width:(r.recall*100)+'%',height:'100%',background:'var(--vscode-charts-blue)'},timeBar:{width:(r.ms/mx*100)+'%',height:'100%',background:'var(--vscode-charts-orange)'}}));
+      sweepRows=this.sweep.rows.map((r,i)=>({k:String(r.k),recall:Math.round(r.recall*100)+'%',overlap:r.overlap+'/'+r.k,ms:String(r.ms),speed:r.speed+'×',note:r.note,style:{display:'grid',gridTemplateColumns:'50px 80px 74px 80px 80px minmax(0,1fr)',height:'24px',alignItems:'center',background:i%2?'var(--vb-zebra)':'transparent',borderBottom:'1px solid var(--vscode-panel-border)',fontSize:'11.5px'}})); }
+    const swHeadRow={display:'grid',gridTemplateColumns:'50px 80px 74px 80px 80px minmax(0,1fr)',height:'22px',alignItems:'center',fontSize:'11px',color:'var(--vscode-descriptionForeground)',borderBottom:'1px solid var(--vscode-panel-border)',flex:'none'};
+    // sql
+    const sqlTabs=[['exact','Exact'],['approx','Approximate'],['forced','Forced ANN'],['repro','Repro script']].map(([k,l])=>({label:l,onClick:()=>this.setSqlTab(k),style:{height:'22px',padding:'0 9px',fontSize:'11px',border:'0',borderBottom:'2px solid '+(S.sqlTab===k?'var(--vscode-panelTitle-activeBorder)':'transparent'),background:'transparent',color:S.sqlTab===k?'var(--vscode-tab-activeForeground)':'var(--vscode-tab-inactiveForeground)',cursor:'pointer'}}));
+
+    // ---------- inspector ----------
+    let inspector=null, inspectorRows=[], inspectorSpacer={};
+    if(S.inspector&&S.inspector.kind==='finding'){ const f=S.inspector.finding; inspector={icon:S.inspector.icon,color:S.inspector.color,title:S.inspector.title,desc:f.why};
+      const n=Math.min(f.count,50); const rowH=24; const R2=this._rng(f.id.length*97+f.count); const arr=[];
+      for(let i=0;i<n;i++){ const rr=this.rows[Math.floor(R2()*this.rows.length)]; arr.push({key:'#'+rr.id,label:rr.label,norm:f.id==='zero'?'0':this.fmt6(0.4+R2()*0.9),reason:f.reason}); }
+      const vh=this.inspectorScrollEl?this.inspectorScrollEl.clientHeight:420; const start=Math.max(0,Math.floor(S.inspectorScrollTop/rowH)-3); const end=Math.min(arr.length,start+Math.ceil(vh/rowH)+6);
+      inspectorSpacer={position:'relative',height:(arr.length*rowH)+'px'};
+      for(let i=start;i<end;i++){ const r=arr[i]; inspectorRows.push({key:r.key,label:r.label,norm:r.norm,reason:r.reason,titleTip:r.label,reasonStyle:{padding:'0 8px',fontSize:'10.5px',color:f.rcolor,display:'flex',alignItems:'center'},onClick:()=>this.toast('Selected '+r.key+' (Reveal / Compare / Use as query below)','codicon-list-selection'),style:{position:'absolute',top:(i*rowH)+'px',left:0,right:0,height:rowH+'px',display:'grid',gridTemplateColumns:'74px minmax(0,1fr) 74px 74px',alignItems:'center',cursor:'pointer',background:i%2?'var(--vb-zebra)':'transparent',borderBottom:'1px solid var(--vscode-panel-border)',fontSize:'11.5px',boxSizing:'border-box'}}); }
+    }
+    const insHeadRow={display:'grid',gridTemplateColumns:'74px minmax(0,1fr) 74px 74px',height:'22px',alignItems:'center',fontSize:'11px',color:'var(--vscode-descriptionForeground)',borderBottom:'1px solid var(--vscode-panel-border)',flex:'none'};
+    const ih0={padding:'0 8px'}, ihL={padding:'0 8px'}, ihR={padding:'0 8px',textAlign:'right'};
+    const ic0={padding:'0 8px',fontSize:'10.5px',color:'var(--vscode-descriptionForeground)'}, icL={padding:'0 8px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}, icR={padding:'0 8px',textAlign:'right'};
+
+    // ---------- menus / popovers ----------
+    let menuOpen=false, menuStyle={}, menuItems=[];
+    const mBase=(r,w)=>({position:'fixed',top:(r?r.bottom+3:60)+'px',left:Math.max(6,Math.min((r?r.left:8),(typeof window!=='undefined'?window.innerWidth:1200)-w-8))+'px',minWidth:w+'px',maxWidth:(w+140)+'px',background:'var(--vscode-dropdown-background)',border:'1px solid var(--vscode-dropdown-border)',borderRadius:'2px',boxShadow:'0 4px 16px var(--vscode-widget-shadow)',padding:'4px 0',zIndex:'42'});
+    const mItem=(label,o={})=>({item:true,label,detail:o.detail||null,icon:o.icon||'codicon-blank',iconColor:o.iconColor||'var(--vscode-foreground)',check:!!o.check,title:o.title||'',onClick:o.onClick,style:{display:'flex',alignItems:'center',gap:'8px',padding:'5px 12px',cursor:'pointer',fontSize:'12.5px',color:'var(--vscode-dropdown-foreground)'}});
+    if(S.menu==='result'){ menuOpen=true; menuStyle=mBase(S.menuRect,230); menuItems=[mItem('Chunk search (top 50)',{detail:'50 rows · 1 vector column',icon:'codicon-table',check:true})]; }
+    else if(S.menu==='col'){ menuOpen=true; menuStyle=mBase(S.menuRect,240); menuItems=[mItem('embedding',{detail:'VECTOR(1536, float32) · native',icon:'codicon-symbol-array',iconColor:'var(--vscode-charts-purple)',check:true})]; }
+    else if(S.menu==='binding'){ menuOpen=true; menuStyle=mBase(S.menuRect,250); menuItems=[{header:true,text:'Table binding'},mItem('Detached (result only)',{icon:'codicon-debug-disconnect',check:S.binding==='detached',onClick:()=>this.setBinding('detached')}),mItem('dbo.DocumentChunks.embedding',{detail:'bound · verified against catalog',icon:'codicon-key',iconColor:'var(--vscode-charts-green)',check:S.binding==='bound',onClick:()=>this.setBinding('bound')})]; }
+    else if(S.menu==='mode'){ menuOpen=true; menuStyle=mBase(S.menuRect,250); menuItems=[{header:true,text:'Run mode'},mItem('Single comparison',{detail:'one query vector · exact vs approximate',icon:'codicon-search-fuzzy',check:S.runMode==='single',onClick:()=>this.setRunMode('single')}),mItem('Self-recall harness · N=50',{detail:'leave-one-out over sampled rows · distribution',icon:'codicon-graph-line',check:S.runMode==='harness',onClick:()=>this.setRunMode('harness')}),mItem('K-sweep',{detail:'recall + wall time at K ∈ {10,20,50,100}',icon:'codicon-settings',check:S.runMode==='sweep',onClick:()=>this.setRunMode('sweep')})]; }
+    else if(S.menu==='metric'){ menuOpen=true; menuStyle=mBase(S.menuRect,220); menuItems=[['cosine','Cosine distance'],['euclidean','Euclidean distance'],['dot','Negative dot product']].map(([k,l])=>mItem(l,{icon:'codicon-symbol-ruler',check:S.searchMetric===k,onClick:()=>this.setMetric(k)})); }
+    else if(S.menu==='run'){ menuOpen=true; menuStyle=mBase(S.menuRect,230); menuItems=[mItem('Run exact only',{icon:'codicon-play',onClick:()=>this.runComparison()}),mItem('Run approximate only',{icon:'codicon-play',onClick:()=>this.runComparison()}),mItem('Run forced ANN probe',{icon:'codicon-play',onClick:()=>this.runComparison()})]; }
+    else if(S.menu==='colorby'){ menuOpen=true; menuStyle=mBase(S.menuRect,200); menuItems=[['category','Category'],['none','None'],['norm','Norm (numeric)']].map(([k,l])=>mItem(l,{icon:'codicon-symbol-color',check:S.projColorBy===k,onClick:()=>this.setColorBy(k)})); }
+    else if(S.menu==='overflow'){ menuOpen=true; menuStyle=mBase(S.menuRect,270); menuItems=[
+      mItem('Copy diagnostics summary',{icon:'codicon-copy',onClick:()=>{this.setState({menu:null});this.toast('Diagnostics summary copied','codicon-copy');}}),
+      {sep:true},{header:true,text:'Demo · index version'},
+      mItem('Index v3 (latest · iterative filtering)',{icon:'codicon-database',check:S.indexVer==='v3',onClick:()=>this.setIndexVer('v3')}),
+      mItem('Index v2 (legacy · post-filtered ×5)',{icon:'codicon-database',check:S.indexVer==='legacy',onClick:()=>this.setIndexVer('legacy')}),
+      {sep:true},{header:true,text:'Demo · evidence state'},
+      mItem('ANN confirmed (FORCE_ANN_ONLY ran)',{icon:'codicon-pass',check:S.evidence==='confirmed',onClick:()=>this.setEvidence('confirmed')}),
+      mItem('Approximate requested — unverified',{icon:'codicon-question',check:S.evidence==='unverified',onClick:()=>this.setEvidence('unverified')}),
+      mItem('Optimizer chose exact (fallback)',{icon:'codicon-info',check:S.evidence==='fallback',onClick:()=>this.setEvidence('fallback')}),
+      mItem('No compatible index',{icon:'codicon-error',check:S.evidence==='noindex',onClick:()=>this.setEvidence('noindex')})
+    ]; }
+    // popovers
+    let popover=null, popStyle={};
+    if(S.popKind){ popStyle={position:'fixed',top:(S.menuRect?S.menuRect.bottom+4:56)+'px',left:Math.max(6,Math.min((S.menuRect?S.menuRect.left-120:8),(typeof window!=='undefined'?window.innerWidth:1200)-330))+'px',width:'322px',background:'var(--vscode-editorWidget-background)',border:'1px solid var(--vscode-editorWidget-border)',borderRadius:'2px',boxShadow:'0 6px 20px var(--vscode-widget-shadow)',padding:'10px 12px',zIndex:'43'};
+      if(S.popKind==='cap')popover={title:'Vector capabilities',note:'Facts probed from the connection, not marketing labels.',rows:[['Vector transport','Native float32 binary','var(--vscode-charts-green)'],['Dimensions · base type','1,536 · float32',null],['Exact distance','Available',{c:'var(--vscode-charts-green)'}],['Approximate search','Available · preview',null],['Vector index','vec_DocumentChunks_embedding',null],['Index version',S.indexVer==='v3'?'v3 (latest)':'v2 (legacy)',null],['Health DMV','sys.dm_db_vector_indexes present','var(--vscode-charts-green)'],['Embedding model','dbo.TextEmbedding3Small · EMBEDDINGS',null],['API format','Azure OpenAI · external egress','var(--vscode-inputValidation-warningBorder)'],['external rest endpoint enabled','1 (box/MI gate)',null],['external AI runtimes enabled','0 · ONNX unavailable',null],['PREVIEW_FEATURES','ON (database-scoped)',null],['Diagnostic session','Isolated connection','var(--vscode-charts-blue)']].map(([k,v,c])=>({k,v,color:(typeof c==='string'?c:(c&&c.c)||'var(--vscode-foreground)'),icon:null,iconColor:''}))};
+      else if(S.popKind==='scope')popover={title:'Analysis scope',note:'Deterministic uniform-window sample · seeded · disclosed method. Local computations never see rows outside this sample.',rows:[['Sample rows','5,000 of 2,412,883',null],['Method','uniform windows · seed 770511',null],['Packed input','29.3 MiB of 64 MiB budget',null],['Rows scanned','25,000 cap · scan bytes disclosed',null],['Full-scan option','available · higher budget',null]].map(([k,v])=>({k,v,color:'var(--vscode-foreground)',icon:null,iconColor:''}))};
+      else if(S.popKind==='evidence')popover={title:'Evidence labels',note:'Every number names its source. Nothing green is unproven.',rows:[['Result','from the captured query result','var(--vscode-charts-blue)','codicon-table'],['Catalog','from system catalog / DMV','var(--vscode-charts-purple)','codicon-database'],['Executed','newly executed SQL, shown verbatim','var(--vscode-charts-green)','codicon-play'],['Local','computed locally on the sample','var(--vscode-charts-orange)','codicon-device-desktop'],['Interpretation','heuristic reading, never a verdict','var(--vscode-charts-yellow)','codicon-lightbulb']].map(([k,v,c,icon])=>({k,v,color:c,icon,iconColor:c}))};
+    }
+
+    // ---------- compare ----------
+    const wsCompare=S.workspace==='compare';
+    const propRow={display:'flex',justifyContent:'space-between',gap:'12px',alignItems:'center',minHeight:'22px',fontSize:'11.5px',borderBottom:'1px solid var(--vscode-panel-border)'};
+    const propK={color:'var(--vscode-descriptionForeground)',flex:'none',whiteSpace:'nowrap'};
+    const cmpBasket=[['A',this.rows[0]],['B',this.rows[1]],['C',this.rows[2]]].map(([k,r],i)=>({k,key:'#'+r.id,label:r.label,norm:this.fmt6(r.norm),dot:{width:'8px',height:'8px',background:r.color,flex:'none'},style:{display:'grid',gridTemplateColumns:'22px 74px 1fr 90px 76px',alignItems:'center',height:'24px',background:i%2?'var(--vb-zebra)':'transparent',borderBottom:'1px solid var(--vscode-panel-border)',fontSize:'11.5px'}}));
+    const cmpMetrics=[['Cosine distance','0.312800'],['Euclidean distance','0.789412'],['Negative dot product','−0.688100'],['L1 norm (A)','31.204'],['L2 norm (A)','0.994'],['L∞ norm (A)','0.087']].map(([k,v])=>({k,v}));
+    const cmpDiffs=[['dim 418','+0.211',1],['dim 1102','−0.188',0],['dim 77','+0.164',1],['dim 903','−0.151',0],['dim 512','+0.132',1]].map(([d,v,pos],i)=>({d,v,bar:{width:(78-i*11)+'%',height:'100%',background:pos?'var(--vscode-charts-blue)':'var(--vscode-charts-orange)'}}));
+    const cmpContrib=[['dim 233','+0.0192',1],['dim 418','+0.0147',1],['dim 61','+0.0121',1],['dim 1102','−0.0104',0],['dim 512','+0.0089',1]].map(([d,v,pos],i)=>({d,v,bar:{width:(78-i*12)+'%',height:'100%',background:pos?'var(--vscode-charts-green)':'var(--vscode-charts-red)'}}));
+    const mvals=[[0,0.3128,0.4413],[0.3128,0,0.5102],[0.4413,0.5102,0]];
+    const cmpMatrix=mvals.map((row,i)=>({label:['A','B','C'][i],cells:row.map((v,j)=>({v:i===j?'0':v.toFixed(4),style:{height:'26px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'10.5px',fontFamily:'var(--vscode-editor-font-family)',color:i===j?'var(--vscode-descriptionForeground)':'var(--vscode-foreground)',background:i===j?'var(--vscode-panel-border)':('color-mix(in srgb, var(--vscode-charts-blue) '+Math.round(v*60)+'%, transparent)'),border:'1px solid var(--vscode-panel-border)'}}))}));
+    const cmpSummary=[['Centroid','mean of A · B · C'],['Medoid','B · #'+this.rows[1].id],['Most isolated','C · 0.510'],['Closest pair','A ↔ B · 0.313'],['Avg pair distance','0.421'],['Compatible','3 of 3 · 1,536-D']].map(([k,v])=>({k,v}));
+    const arithNear=[this.rows[10],this.rows[3],this.rows[21]].map((r,i)=>({key:'#'+r.id,label:r.label,d:this.fmt6(0.09+i*0.05),style:{display:'grid',gridTemplateColumns:'74px 1fr 90px',alignItems:'center',height:'24px',background:i%2?'var(--vb-zebra)':'transparent',borderBottom:'1px solid var(--vscode-panel-border)',fontSize:'11.5px'}}));
+
+    // ---------- projection ----------
+    const wsProjection=S.workspace==='projection';
+    const projLegend=this.cats.map(c=>({name:c.name,dot:{width:'8px',height:'8px',background:c.color,flex:'none'}}));
+    const colorByLabel=({category:'Category',none:'None',norm:'Norm (numeric)'})[S.projColorBy];
+    const truthLine='PCA 2D · 5,000 sampled rows · PC1 '+this.pcaVar[0]+'% · PC2 '+this.pcaVar[1]+'% · next '+this.pcaVar[2]+'% not shown · distances and ranking are computed in the original 1,536-D space, not from these coordinates';
+    const plist=this.pca; const prowH=24; const pvh=this.projListEl?this.projListEl.clientHeight:420; const pstart=Math.max(0,Math.floor(S.projListScrollTop/prowH)-4); const pend=Math.min(plist.length,pstart+Math.ceil(pvh/prowH)+8);
+    const projListSpacer={position:'relative',height:(plist.length*prowH)+'px'};
+    const projRows=[]; for(let i=pstart;i<pend;i++){ const p=plist[i]; const sel=S.projSel===p.ord; projRows.push({ord:'#'+p.ord,label:p.label,onClick:()=>this.projSelect(p.ord),dot:{width:'7px',height:'7px',background:p.color,flex:'none'},style:{position:'absolute',top:(i*prowH)+'px',left:0,right:0,height:prowH+'px',display:'grid',gridTemplateColumns:'20px 52px 1fr',alignItems:'center',padding:'0 8px',cursor:'pointer',background:sel?'var(--vscode-list-activeSelectionBackground)':(i%2?'var(--vb-zebra)':'transparent'),color:sel?'var(--vscode-list-activeSelectionForeground)':'var(--vscode-foreground)',borderBottom:'1px solid var(--vscode-panel-border)',fontSize:'11.5px',boxSizing:'border-box'}}); }
+    let projSelProps=null; if(S.projSel!=null){ const p=this.pca.find(x=>x.ord===S.projSel); if(p){ const R3=this._rng(p.ord*13+7); projSelProps={label:p.label,rows:[['Group',p.cat],['‖v‖ (original)',this.fmt6(0.9+R3()*0.15)],['PC1 · PC2 (local)',this.fmt6(p.x)+', '+this.fmt6(p.y)],['Centroid distance',this.fmt6(0.3+R3()*0.5)],['Nearest (1,536-D)','#'+(100000+Math.floor(R3()*50)*7)+' · '+this.fmt6(0.08+R3()*0.2)]].map(([k,v])=>({k,v}))}; } }
+
+    // ---------- index ----------
+    const wsIndex=S.workspace==='index';
+    const idxProps=[
+      ['Index','vec_DocumentChunks_embedding',null,null],
+      ['Type · metric','DiskANN · cosine',null,null],
+      ['Version',legacy?'v2 (legacy format)':'v3 (latest format)',legacy?'var(--vscode-inputValidation-warningBorder)':'var(--vscode-charts-green)',null],
+      ['Rows indexed','2,412,883 · 0 pending',null,null],
+      ['Approximate staleness','7.2%',null,'Documentation guidance: 0–5% normal steady state; 20–30% during batch loads is expected and self-draining; sustained >10–15% during regular operations warrants investigation. Rebuild on recall degradation, not on staleness alone.'],
+      ['Quantized keys used','41% of capacity',null,null],
+      ['Last background task','succeeded · 4 min ago','var(--vscode-charts-green)',null],
+      ['Health history','unavailable — current snapshot only','var(--vscode-descriptionForeground)',null],
+      ['Health DMV','sys.dm_db_vector_indexes present',null,null],
+      ['Edition gate','Enterprise · permitted',null,null]
+    ].map(([k,v,c,tip])=>({k,v,color:c||'var(--vscode-foreground)',tip:tip||''}));
+    const sevIco={ok:['codicon-pass','var(--vscode-charts-green)'],warn:['codicon-warning','var(--vscode-inputValidation-warningBorder)'],info:['codicon-info','var(--vscode-descriptionForeground)'],err:['codicon-error','var(--vscode-errorForeground)']};
+    const idxFindingsRaw=legacy?[
+      ['warn','Legacy index format (v2)','migration recommended — earlier indexes cannot upgrade in place'],
+      ['warn','Filtered comparisons post-filter on this index','predicates apply after retrieval · TOP_N oversampled ×5 disclosed'],
+      ['ok','Metric matches search (cosine)','ANN can serve cosine queries'],
+      ['info','TRUNCATE TABLE blocked while index exists','drop → truncate → repopulate ≥100 rows → recreate'],
+      ['info','Not replicated to subscribers','vector indexes do not replicate'],
+      ['info','Filter column “category” has no supporting index','review suggestion, not a command']
+    ]:[
+      ['ok','Latest index format (v3)','full DML support · iterative filtering · optimizer ANN/kNN choice'],
+      ['ok','Metric matches search (cosine)','ANN can serve cosine queries'],
+      ['ok','FORCE_ANN_ONLY supported','the ANN path is provable on this target'],
+      ['warn','Approximate staleness 7.2%','review against documented bands — no universal rebuild threshold'],
+      ['info','TRUNCATE TABLE blocked while index exists','drop → truncate → repopulate ≥100 rows → recreate'],
+      ['info','Filter column “category” has no supporting index','review suggestion, not a command']
+    ];
+    const idxFindings=idxFindingsRaw.map(([sev,t,d])=>({icon:sevIco[sev][0],color:sevIco[sev][1],title:t,desc:d}));
+    const idxScripts=[['create','Generate create vector index script','codicon-file-code'],['migrate','Generate migration script (v2 → v3)','codicon-file-code'],['health','Generate health snapshot query','codicon-file-code'],['support','Generate supporting index (review)','codicon-file-code'],['gates','Generate configuration-gate scripts','codicon-file-code']].map(([k,label,icon])=>({label,icon,active:S.idxScript===k,onClick:()=>this.showIndexScript(k),style:{display:'flex',alignItems:'center',gap:'7px',height:'24px',padding:'0 8px',border:'0',background:S.idxScript===k?'var(--vscode-list-activeSelectionBackground)':'transparent',color:S.idxScript===k?'var(--vscode-list-activeSelectionForeground)':'var(--vscode-foreground)',cursor:'pointer',fontSize:'12px',textAlign:'left',width:'100%'}}));
+    const idxSqlText=this._indexSql(S.idxScript);
+
+    // ---------- pipeline ----------
+    const wsPipeline=S.workspace==='pipeline';
+    const provRows=[['Vector column','embedding'],['Source text column','chunk_text'],['External model','dbo.TextEmbedding3Small'],['Model type','EMBEDDINGS (only supported type)'],['API format','Azure OpenAI · external egress'],['Endpoint host','example.openai.azure.com'],['Dimensions','1,536'],['Expected metric','cosine'],['Expected normalization','unit norm'],['Chunk size / overlap',S.chunkSize+' chars / '+S.chunkOverlap+'%'],['Embedded-at column','embedded_at']].map(([k,v])=>({k,v}));
+    const reembed=S.reembedDone?[['Cosine (stored ↔ fresh)','0.0041'],['Euclidean','0.0906'],['Negative dot','−0.9959'],['Norm stored / fresh','0.996 / 1.000'],['Neighbor overlap','19 of 20'],['Rank movement','2 positions']].map(([k,v])=>({k,v})):null;
+    const chunkParts=[]; const ccol=['var(--vscode-charts-blue)','var(--vscode-charts-green)','var(--vscode-charts-purple)','var(--vscode-charts-orange)','var(--vscode-charts-blue)'];
+    for(let i=0;i<5;i++){ chunkParts.push({kind:'chunk',n:'chunk '+(i+1)+' · '+S.chunkSize,style:{flex:'1 1 0',minWidth:'0',height:'30px',border:'1px solid '+ccol[i],borderRadius:'2px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'10px',fontFamily:'var(--vscode-editor-font-family)',background:'color-mix(in srgb, '+ccol[i]+' 14%, transparent)',overflow:'hidden',whiteSpace:'nowrap'}}); if(i<4)chunkParts.push({kind:'ov',n:'',style:{width:(6+S.chunkOverlap*0.6)+'px',flex:'none',height:'30px',background:'repeating-linear-gradient(45deg, var(--vscode-descriptionForeground) 0 2px, transparent 2px 5px)',opacity:0.55}}); }
+    let modelDialog=null;
+    if(S.modelDialog){ const re=S.modelDialog.kind==='reembed'; modelDialog={title:re?'Re-embed selected row?':'Generate embeddings for 5 chunks?',rows:[['Model','dbo.TextEmbedding3Small'],['Model type','EMBEDDINGS'],['API format','Azure OpenAI'],['Endpoint host','example.openai.azure.com'],['Source',re?'Selected row · chunk_text':'5 chunks · '+S.chunkSize+' / '+S.chunkOverlap+'%'],['Rows / calls',re?'1':'5'],['Text characters',re?'842':'3,910'],['Approx payload',re?'1.7 KiB':'7.9 KiB'],['Execution','SQL Server calls the external endpoint — text leaves your environment'],['Result handling','kept in this panel · not written to the table']].map(([k,v])=>({k,v}))}; }
+
+    return {
+      theme:S.theme, resultTabs, themeBtns, selBtn, selBtnSm, selTxt, iconBtn, iconBtnSm, hdrBtn, secondaryBtn, stepBtn, ctlLabel, inputStyle, secLabel, secLabelPad, secMeta,
+      resultName:'Chunk search (top 50)',
+      onResultMenu:(e)=>this.openMenu('result',e), onColMenu:(e)=>this.openMenu('col',e),
+      capLabel:'Model enabled', onCapability:(e)=>this.openPop('cap',e),
+      bindIcon:bd[0], bindLabel:bd[1], bindColor:bd[2], bindTitle:bd[3], onBinding:(e)=>this.openMenu('binding',e),
+      scopeLabel, onScope:(e)=>this.openPop('scope',e), onOverflow:(e)=>this.openMenu('overflow',e),
+      workspaces, setContentEl:(el)=>this.setContentEl(el),
+      facts,
+      // profile
+      wsProfile, profileWrap, profileCols, profileCol, groupWrap,
+      normTabs, normBars, normTicks, normStats, showUnitRef, unitRefStyle, normAxisMin:this.fmt6(hist.lo), normAxisMax:this.fmt6(hist.hi),
+      findings, findingsCount:this.findings.length,
+      compHigh, compLow, distBars, distTicks, distStats,
+      gridHeadRow, gh0, ghR, gcR, groups,
+      // search
+      wsSearch, srcTabs, srcRow:S.searchSource==='row', srcText:S.searchSource==='text', srcPaste:S.searchSource==='paste', srcExpr:S.searchSource==='expr',
+      qRowKey:'#'+qrow.id, qRowLabel:qrow.label, searchText:S.searchText, pasteJson:S.pasteJson, expr:S.expr, onGenEmbed:()=>this.toast('Model-call confirmation opens here (next pass)','codicon-sparkle'),
+      runModeLabel, onModeMenu:(e)=>this.openMenu('mode',e), searchMetric:S.searchMetric, onMetricMenu:(e)=>this.openMenu('metric',e),
+      searchK:S.searchK, onKDown:()=>this.setSearchK(-1), onKUp:()=>this.setSearchK(1), variantDefs, onFilterInfo:()=>this.toast('Structured filter — composed into every variant, semantics disclosed in Evidence','codicon-filter'),
+      runCostLine, runLabel, onRun:()=>this.runComparison(), onRunMenu:(e)=>this.openMenu('run',e), runBtn, runChev,
+      searchRunning, searchDone, searchIdle, searchIdleOrDone:!searchRunning, runElapsed,
+      evidenceRows, onRepro:()=>this.openRepro(),
+      modeSingle:S.runMode==='single', modeHarness:S.runMode==='harness', modeSweep:S.runMode==='sweep',
+      rankHeadRow, rankCols:rankColsOut, rankRows, showFlow:!S.narrow&&S.runMode==='single', flowNodes, flowLines, rankFlowH,
+      harnessBars, harnessStats, offRows, offHeadRow, oh0, ohL, ohR, oc0, ocL, ocR,
+      sweepViz, sweepRows, swHeadRow,
+      sqlOpen:S.sqlOpen, sqlChevron:S.sqlOpen?'codicon-chevron-down':'codicon-chevron-right', sqlTabs, sqlText:this._sqlFor(S.sqlTab), onToggleSql:()=>this.toggleSql(), onCopySql:()=>this.copySql(), onOpenSqlEditor:()=>this.openSqlEditor(),
+      // inspector
+      inspector, inspectorRows, inspectorSpacer, insHeadRow, ih0, ihL, ihR, ic0, icL, icR,
+      setInspectorScroll:(el)=>this.setInspectorScroll(el), onInspectorScroll:this.onInspectorScroll, onCloseInspector:()=>this.onCloseInspector(),
+      onInsReveal:()=>this.toast('Revealed in Results grid','codicon-table'), onInsCompare:()=>this.toast('Added to Compare basket','codicon-add'), onInsQuery:()=>{this.setState({workspace:'search',searchSource:'row'});this.toast('Set as query vector','codicon-search-fuzzy');},
+      // compare
+      wsCompare, propRow, propK, cmpBasket, cmpMetrics, cmpDiffs, cmpContrib, cmpMatrix, cmpSummary, arithNear,
+      cmpExpr:S.cmpExpr, onCmpExpr:(e)=>this.setCmpExpr(e), onUseArith:()=>{this.setState({workspace:'search',searchSource:'expr'});this.toast('Query vector set from expression','codicon-search-fuzzy');},
+      // projection
+      wsProjection, projLegend, colorByLabel, truthLine, projListSpacer, projRows, projSelProps,
+      onColorByMenu:(e)=>this.openMenu('colorby',e), onProjFit:()=>this.projFit(), onProjZoomIn:()=>this.onProjZoom(1), onProjZoomOut:()=>this.onProjZoom(-1),
+      setProjCanvas:(el)=>this.setProjCanvas(el), setProjMap:(el)=>this.setProjMap(el), setProjList:(el)=>this.setProjList(el), onProjScroll:(e)=>this.onProjScroll(e), onProjDown:(e)=>this.onProjDown(e), onProjWheel:(e)=>this.onProjWheel(e),
+      // index
+      wsIndex, idxProps, idxFindings, idxScripts, idxSqlText,
+      onCopyIdxSql:()=>{try{navigator.clipboard.writeText(this._indexSql(S.idxScript));}catch(e){} this.toast('Script copied','codicon-copy');}, onOpenIdxSql:()=>this.toast('Opened in a new editor (mock)','codicon-link-external'),
+      // pipeline
+      wsPipeline, provRows, reembed, chunkParts, chunkSize:S.chunkSize, chunkOverlap:S.chunkOverlap,
+      onChunkSizeUp:()=>this.setChunkSize(50), onChunkSizeDown:()=>this.setChunkSize(-50), onChunkOverlapUp:()=>this.setChunkOverlap(5), onChunkOverlapDown:()=>this.setChunkOverlap(-5),
+      onReembed:()=>this.openModelDialog('reembed'), onChunkEmbed:()=>this.openModelDialog('chunks'),
+      modelDialog, onCloseModelDialog:()=>this.closeModelDialog(), onConfirmModel:()=>this.confirmModel(),
+      footerPrimary:'5,000 sampled of 2,412,883 · 1,536-D float32',
+      onEvidenceLegend:(e)=>this.openPop('evidence',e),
+      menuOpen, menuStyle, menuItems, onCloseMenus:this.onCloseMenus, stop:this.stop,
+      popover, popStyle,
+      setLiveEl:(el)=>this.setLiveEl(el),
+      toasts:S.toasts
+    };
+  }
+}
+</script>
+</body>
+</html>

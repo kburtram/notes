@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@0.0.35/dist/codicon.css">
+<style>
+html,body{height:100%;margin:0}
+*{box-sizing:border-box}
+#qs-root{--vscode-font-family:"Segoe WPC","Segoe UI",system-ui,-apple-system,sans-serif;--vscode-editor-font-family:"Cascadia Code","Consolas","Courier New",monospace}
+[data-theme="dark"]{
+--vscode-foreground:#cccccc;--vscode-editor-background:#1e1e1e;--vscode-editor-foreground:#d4d4d4;
+--vscode-editorWidget-background:#252526;--vscode-editorWidget-border:#454545;--vscode-panel-background:#1e1e1e;--vscode-panel-border:#2b2b2b;
+--vscode-contrastBorder:transparent;--vscode-focusBorder:#007fd4;--vscode-descriptionForeground:#9d9d9d;--vscode-disabledForeground:#7f7f7f;
+--vscode-input-background:#3c3c3c;--vscode-input-foreground:#cccccc;--vscode-input-border:#3c3c3c;
+--vscode-dropdown-background:#3c3c3c;--vscode-dropdown-foreground:#f0f0f0;--vscode-dropdown-border:#454545;
+--vscode-button-background:#0e639c;--vscode-button-foreground:#ffffff;--vscode-button-hoverBackground:#1177bb;--vscode-button-secondaryBackground:#3a3d41;
+--vscode-toolbar-hoverBackground:#5a5d5e50;--vscode-list-hoverBackground:#2a2d2e;--vscode-list-activeSelectionBackground:#04395e;--vscode-list-activeSelectionForeground:#ffffff;
+--vscode-editor-selectionBackground:#264f78;--vscode-editor-lineHighlightBackground:#2a2d2e66;--vscode-editorLineNumber-foreground:#858585;--vscode-editorLineNumber-activeForeground:#c6c6c6;
+--vscode-statusBar-background:#2d2d2d;--vscode-statusBar-foreground:#cccccc;--vscode-statusBarItem-warningBackground:#7a5c00;--vscode-statusBarItem-errorBackground:#a1260d;
+--vscode-inputValidation-warningBackground:#352a05;--vscode-inputValidation-warningBorder:#b89500;--vscode-inputValidation-errorBackground:#5a1d1d;--vscode-inputValidation-errorBorder:#be1100;--vscode-errorForeground:#f48771;
+--vscode-tab-activeBackground:#1e1e1e;--vscode-tab-inactiveBackground:#2d2d2d;--vscode-tab-activeForeground:#ffffff;--vscode-tab-inactiveForeground:#969696;--vscode-tab-border:#252526;--vscode-editorGroupHeader-tabsBackground:#252526;
+--vscode-sash-hoverBorder:#007fd4;--vscode-scrollbarSlider-background:#79797966;--vscode-scrollbarSlider-hoverBackground:#646464b3;--vscode-badge-background:#4d4d4d;--vscode-badge-foreground:#ffffff;
+--vscode-widget-shadow:#00000066;--vscode-charts-green:#89d185;--vscode-testing-iconPassed:#73c991;--vscode-notifications-background:#252526;--vscode-notifications-border:#454545;
+--sql-keyword:#569cd6;--sql-string:#ce9178;--sql-number:#b5cea8;--sql-comment:#6a9955;--sql-func:#dcdcaa;--null-bg:#7a5c0059;}
+[data-theme="light"]{
+--vscode-foreground:#3b3b3b;--vscode-editor-background:#ffffff;--vscode-editor-foreground:#000000;
+--vscode-editorWidget-background:#f8f8f8;--vscode-editorWidget-border:#c8c8c8;--vscode-panel-background:#ffffff;--vscode-panel-border:#e5e5e5;
+--vscode-contrastBorder:transparent;--vscode-focusBorder:#005fb8;--vscode-descriptionForeground:#717171;--vscode-disabledForeground:#a5a5a5;
+--vscode-input-background:#ffffff;--vscode-input-foreground:#3b3b3b;--vscode-input-border:#cecece;
+--vscode-dropdown-background:#ffffff;--vscode-dropdown-foreground:#3b3b3b;--vscode-dropdown-border:#cecece;
+--vscode-button-background:#005fb8;--vscode-button-foreground:#ffffff;--vscode-button-hoverBackground:#0258a8;--vscode-button-secondaryBackground:#e5e5e5;
+--vscode-toolbar-hoverBackground:#b8b8b850;--vscode-list-hoverBackground:#e8e8e8;--vscode-list-activeSelectionBackground:#0060c0;--vscode-list-activeSelectionForeground:#ffffff;
+--vscode-editor-selectionBackground:#add6ff;--vscode-editor-lineHighlightBackground:#e4e6f1a0;--vscode-editorLineNumber-foreground:#6e7681;--vscode-editorLineNumber-activeForeground:#171184;
+--vscode-statusBar-background:#dddddd;--vscode-statusBar-foreground:#3b3b3b;--vscode-statusBarItem-warningBackground:#f8d585;--vscode-statusBarItem-errorBackground:#e6c3c0;
+--vscode-inputValidation-warningBackground:#f6f5d2;--vscode-inputValidation-warningBorder:#b89500;--vscode-inputValidation-errorBackground:#f2dede;--vscode-inputValidation-errorBorder:#be1100;--vscode-errorForeground:#c72e0f;
+--vscode-tab-activeBackground:#ffffff;--vscode-tab-inactiveBackground:#ececec;--vscode-tab-activeForeground:#333333;--vscode-tab-inactiveForeground:#7a7a7a;--vscode-tab-border:#e5e5e5;--vscode-editorGroupHeader-tabsBackground:#f8f8f8;
+--vscode-sash-hoverBorder:#005fb8;--vscode-scrollbarSlider-background:#64646466;--vscode-scrollbarSlider-hoverBackground:#646464b3;--vscode-badge-background:#c4c4c4;--vscode-badge-foreground:#333333;
+--vscode-widget-shadow:#00000029;--vscode-charts-green:#388a34;--vscode-testing-iconPassed:#388a34;--vscode-notifications-background:#ffffff;--vscode-notifications-border:#cecece;
+--sql-keyword:#0000ff;--sql-string:#a31515;--sql-number:#098658;--sql-comment:#008000;--sql-func:#795e26;--null-bg:#f6e6a855;}
+[data-theme="hc"]{
+--vscode-foreground:#ffffff;--vscode-editor-background:#000000;--vscode-editor-foreground:#ffffff;
+--vscode-editorWidget-background:#0c0c0c;--vscode-editorWidget-border:#6fc3df;--vscode-panel-background:#000000;--vscode-panel-border:#6fc3df;
+--vscode-contrastBorder:#6fc3df;--vscode-focusBorder:#f38518;--vscode-descriptionForeground:#e0e0e0;--vscode-disabledForeground:#a0a0a0;
+--vscode-input-background:#000000;--vscode-input-foreground:#ffffff;--vscode-input-border:#6fc3df;
+--vscode-dropdown-background:#000000;--vscode-dropdown-foreground:#ffffff;--vscode-dropdown-border:#6fc3df;
+--vscode-button-background:#000000;--vscode-button-foreground:#ffffff;--vscode-button-hoverBackground:#0a0a0a;--vscode-button-secondaryBackground:#000000;
+--vscode-toolbar-hoverBackground:#00000000;--vscode-list-hoverBackground:#000000;--vscode-list-activeSelectionBackground:#000000;--vscode-list-activeSelectionForeground:#f38518;
+--vscode-editor-selectionBackground:#0e5a7d;--vscode-editor-lineHighlightBackground:#00000000;--vscode-editorLineNumber-foreground:#ffffff;--vscode-editorLineNumber-activeForeground:#f38518;
+--vscode-statusBar-background:#000000;--vscode-statusBar-foreground:#ffffff;--vscode-statusBarItem-warningBackground:#000000;--vscode-statusBarItem-errorBackground:#000000;
+--vscode-inputValidation-warningBackground:#000000;--vscode-inputValidation-warningBorder:#f38518;--vscode-inputValidation-errorBackground:#000000;--vscode-inputValidation-errorBorder:#f48771;--vscode-errorForeground:#f48771;
+--vscode-tab-activeBackground:#000000;--vscode-tab-inactiveBackground:#000000;--vscode-tab-activeForeground:#ffffff;--vscode-tab-inactiveForeground:#ffffff;--vscode-tab-border:#6fc3df;--vscode-editorGroupHeader-tabsBackground:#000000;
+--vscode-sash-hoverBorder:#f38518;--vscode-scrollbarSlider-background:#6fc3df80;--vscode-scrollbarSlider-hoverBackground:#6fc3dfcc;--vscode-badge-background:#000000;--vscode-badge-foreground:#ffffff;
+--vscode-widget-shadow:#00000000;--vscode-charts-green:#89d185;--vscode-testing-iconPassed:#89d185;--vscode-notifications-background:#000000;--vscode-notifications-border:#6fc3df;
+--sql-keyword:#569cd6;--sql-string:#ce9178;--sql-number:#b5cea8;--sql-comment:#7ca668;--sql-func:#dcdcaa;--null-bg:#6fc3df33;}
+#qs-root :focus-visible{outline:1px solid var(--vscode-focusBorder);outline-offset:-1px}
+#qs-root button{font-family:inherit}
+#qs-root ::-webkit-scrollbar{width:14px;height:14px}
+#qs-root ::-webkit-scrollbar-thumb{background:var(--vscode-scrollbarSlider-background);border:3px solid transparent;background-clip:content-box}
+#qs-root ::-webkit-scrollbar-thumb:hover{background:var(--vscode-scrollbarSlider-hoverBackground);background-clip:content-box}
+#qs-root ::-webkit-scrollbar-corner{background:transparent}
+#qs-ta{background:transparent;border:0;outline:0;resize:none;overflow:hidden;color:transparent;caret-color:var(--vscode-editor-foreground);font-family:var(--vscode-editor-font-family);font-size:14px;line-height:19px;padding:2px 0 2px 8px;white-space:pre;overflow-wrap:normal;tab-size:4;position:absolute;inset:0;width:100%;height:100%;spellcheck:false}
+#qs-ta::selection{background:var(--vscode-editor-selectionBackground)}
+@keyframes qs-spin{to{transform:rotate(360deg)}}
+@keyframes qs-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes qs-flash{0%{background:var(--vscode-editor-selectionBackground)}100%{background:transparent}}
+@keyframes qs-toastin{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important}}
+</style>
+</helmet>
+<div id="qs-root" data-theme="{{ theme }}" style="height:100vh;display:flex;flex-direction:column;background:var(--vscode-editor-background);color:var(--vscode-foreground);font-family:var(--vscode-font-family);font-size:13px;position:relative;overflow:hidden">
+
+  <!-- ===== MOCK TAB STRIP ===== -->
+  <div style="height:32px;flex:none;display:flex;align-items:stretch;background:var(--vscode-editorGroupHeader-tabsBackground);border-bottom:1px solid var(--vscode-editorWidget-border)">
+    <div style="display:flex;align-items:center;gap:8px;padding:0 10px 0 12px;background:var(--vscode-tab-activeBackground);border-right:1px solid var(--vscode-tab-border);border-top:1px solid var(--vscode-contrastBorder);max-width:340px">
+      <span class="codicon codicon-database" style="font-size:15px;color:var(--vscode-symbolIcon-classForeground,#4ec9b0)"></span>
+      <span style="color:var(--vscode-tab-activeForeground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="{{ tabTitle }}">{{ tabTitle }}</span>
+      <sc-if value="{{ dirty }}" hint-placeholder-val="{{ true }}"><span style="width:8px;height:8px;border-radius:50%;background:var(--vscode-tab-activeForeground);flex:none" title="Unsaved changes"></span></sc-if>
+      <span class="codicon codicon-pinned" style="font-size:13px;color:var(--vscode-descriptionForeground);opacity:.7;margin-left:2px"></span>
+      <span class="codicon codicon-close" style="font-size:15px;color:var(--vscode-descriptionForeground);cursor:pointer" title="Close (mock)"></span>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:2px;padding:0 8px;color:var(--vscode-descriptionForeground)">
+      <span style="font-size:11px;margin-right:4px;opacity:.8">Theme</span>
+      <sc-for list="{{ themeBtns }}" as="tb" hint-placeholder-count="3">
+        <button onClick="{{ tb.onClick }}" title="{{ tb.title }}" aria-label="{{ tb.title }}" style="{{ tb.style }}" style-hover="background:var(--vscode-toolbar-hoverBackground)">{{ tb.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- ===== TOOLBAR ===== -->
+  <div style="{{ toolbarStyle }}">
+    <!-- connection group -->
+    <div style="display:flex;align-items:center">
+      <button onClick="{{ onConnMain }}" title="{{ connBtn.title }}" aria-label="{{ connBtn.title }}" style="{{ connBtn.style }}" style-hover="background:var(--vscode-toolbar-hoverBackground)">
+        <span class="codicon {{ connBtn.icon }}" style="font-size:16px"></span><span>{{ connBtn.label }}</span>
+      </button>
+      <button onClick="{{ onConnMenu }}" title="Connection options" aria-label="Connection options" style="{{ tbIcon }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-chevron-down" style="font-size:14px"></span></button>
+    </div>
+    <div style="{{ sep }}"></div>
+    <!-- database group -->
+    <button onClick="{{ onDbBtn }}" disabled="{{ dbDisabled }}" title="{{ dbTitle }}" aria-label="{{ dbTitle }}" style="{{ dbBtn.style }}" style-hover="background:var(--vscode-toolbar-hoverBackground)">
+      <span class="codicon codicon-database" style="font-size:14px;flex:none"></span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:left">{{ dbBtn.label }}</span>
+      <sc-if value="{{ dbSwitching }}" hint-placeholder-val="{{ true }}"><span class="codicon codicon-loading" style="font-size:13px;animation:qs-spin 1s linear infinite"></span></sc-if>
+      <sc-if value="{{ dbNotSwitching }}" hint-placeholder-val="{{ true }}"><span class="codicon codicon-chevron-down" style="font-size:13px;opacity:.8"></span></sc-if>
+    </button>
+    <div style="{{ sep }}"></div>
+    <!-- execute group -->
+    <button onClick="{{ onExecute }}" disabled="{{ execDisabled }}" title="{{ execTitle }}" aria-label="Execute" style="{{ execBtn.style }}" style-hover="background:var(--vscode-toolbar-hoverBackground)">
+      <sc-if value="{{ isBusy }}" hint-placeholder-val="{{ true }}"><span class="codicon codicon-loading" style="font-size:15px;animation:qs-spin 1s linear infinite"></span></sc-if>
+      <sc-if value="{{ notBusy }}" hint-placeholder-val="{{ true }}"><span class="codicon codicon-play" style="font-size:15px;color:var(--vscode-charts-green)"></span></sc-if>
+      <span>Execute</span>
+    </button>
+    <button onClick="{{ onCancel }}" disabled="{{ cancelDisabled }}" title="Cancel executing query (Alt+Break)" aria-label="Cancel" style="{{ cancelBtn.style }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-debug-stop" style="font-size:15px"></span><span>Cancel</span></button>
+    <button onClick="{{ onParse }}" disabled="{{ execDisabled }}" title="Parse / syntax check (no execution)" aria-label="Parse" style="{{ ghostBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-check" style="font-size:15px"></span></button>
+    <div style="{{ sep }}"></div>
+    <!-- plan group -->
+    <button onClick="{{ onEstPlan }}" disabled="{{ execDisabled }}" title="Display Estimated Execution Plan (Ctrl+L)" aria-label="Estimated plan" style="{{ ghostBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-type-hierarchy-sub" style="font-size:15px"></span></button>
+    <button onClick="{{ onActualPlan }}" title="Include Actual Execution Plan (Ctrl+M)" aria-label="Include actual plan" style="{{ actualBtn.style }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-graph" style="font-size:15px"></span></button>
+    <div style="{{ sep }}"></div>
+    <!-- results routing -->
+    <div style="display:flex;border:1px solid var(--vscode-editorWidget-border);border-radius:3px;overflow:hidden">
+      <button onClick="{{ onGridMode }}" title="Results to Grid" aria-label="Results to grid" style="{{ gridModeBtn.style }}"><span class="codicon codicon-table" style="font-size:14px"></span></button>
+      <button onClick="{{ onTextMode }}" title="Results to Text" aria-label="Results to text" style="{{ textModeBtn.style }}"><span class="codicon codicon-list-selection" style="font-size:14px"></span></button>
+    </div>
+    <button onClick="{{ onSaveMenu }}" disabled="{{ noOutput }}" title="Save Results As…" aria-label="Save results" style="{{ ghostBtn2 }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-save-as" style="font-size:15px"></span><span class="codicon codicon-chevron-down" style="font-size:11px;opacity:.7"></span></button>
+    <div style="{{ sep }}"></div>
+    <button onClick="{{ onDiagMenu }}" title="Diagnostics / trace (observability seam)" aria-label="Diagnostics" style="{{ diagBtn.style }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-pulse" style="font-size:15px"></span></button>
+    <div style="flex:1"></div>
+    <button onClick="{{ onOverflow }}" title="More actions" aria-label="More actions" style="{{ tbIcon }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-ellipsis" style="font-size:16px"></span></button>
+  </div>
+
+  <!-- ===== EDITOR + RESULTS ===== -->
+  <div style="flex:1;display:flex;flex-direction:column;min-height:0">
+    <!-- editor pane -->
+    <div style="{{ editorPaneStyle }}">
+      <div ref="{{ setEditorScroll }}" style="position:absolute;inset:0;overflow:auto;background:var(--vscode-editor-background)">
+        <div style="display:flex;min-height:100%;min-width:max-content">
+          <!-- gutter -->
+          <div style="position:sticky;left:0;z-index:3;flex:none;width:52px;padding-top:2px;text-align:right;background:var(--vscode-editor-background);user-select:none;font-family:var(--vscode-editor-font-family);font-size:14px;line-height:19px">
+            <sc-for list="{{ codeLines }}" as="ln" hint-placeholder-count="2"><div style="{{ ln.gutterStyle }}">{{ ln.num }}</div></sc-for>
+          </div>
+          <!-- code column -->
+          <div style="position:relative;flex:1 0 auto">
+            <div style="{{ lineHiStyle }}"></div>
+            <div style="{{ flashStyle }}"></div>
+            <div style="position:relative;z-index:1;padding:2px 0 2px 8px;font-family:var(--vscode-editor-font-family);font-size:14px;line-height:19px;pointer-events:none;min-height:100%"><sc-for list="{{ codeLines }}" as="ln" hint-placeholder-count="2"><div style="height:19px;white-space:pre">​<sc-for list="{{ ln.tokens }}" as="tok" hint-placeholder-count="4"><span style="{{ tok.style }}">{{ tok.text }}</span></sc-for></div></sc-for>
+            </div>
+            <textarea id="qs-ta" ref="{{ setTextarea }}" value="{{ editorText }}" onChange="{{ onEditorChange }}" onSelect="{{ onEditorCursor }}" onKeyUp="{{ onEditorCursor }}" onClick="{{ onEditorCursor }}" spellcheck="false" wrap="off" aria-label="SQL editor"></textarea>
+          </div>
+        </div>
+      </div>
+      <!-- annotation scrollbar track -->
+      <div style="position:absolute;top:0;right:0;width:14px;height:100%;pointer-events:none">
+        <sc-for list="{{ annotations }}" as="an" hint-placeholder-count="0"><div style="{{ an.style }}"></div></sc-for>
+      </div>
+    </div>
+
+    <!-- splitter -->
+    <sc-if value="{{ showSplitter }}" hint-placeholder-val="{{ true }}">
+      <div onMouseDown="{{ onSplitDown }}" onDoubleClick="{{ onSplitReset }}" title="Drag to resize · double-click to reset" style="height:5px;flex:none;cursor:row-resize;background:var(--vscode-panel-border);position:relative;z-index:5" style-hover="background:var(--vscode-sash-hoverBorder)"></div>
+    </sc-if>
+
+    <!-- results pane -->
+    <sc-if value="{{ showResults }}" hint-placeholder-val="{{ true }}">
+    <div style="{{ resultsPaneStyle }}">
+      <!-- results tab strip -->
+      <div style="height:30px;flex:none;display:flex;align-items:stretch;background:var(--vscode-editorGroupHeader-tabsBackground);border-bottom:1px solid var(--vscode-panel-border)">
+        <button onClick="{{ onTabResults }}" style="{{ tabResultsStyle }}"><span class="codicon codicon-table" style="font-size:14px"></span><span>Results</span></button>
+        <button onClick="{{ onTabMessages }}" style="{{ tabMessagesStyle }}"><span class="codicon codicon-output" style="font-size:14px"></span><span>Messages</span>
+          <sc-if value="{{ hasErrors }}" hint-placeholder-val="{{ true }}"><span style="min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--vscode-statusBarItem-errorBackground);color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:600">{{ errorCount }}</span></sc-if>
+        </button>
+        <sc-if value="{{ hasPlan }}" hint-placeholder-val="{{ true }}"><button onClick="{{ onTabPlan }}" style="{{ tabPlanStyle }}"><span class="codicon codicon-graph" style="font-size:14px"></span><span>Execution Plan</span></button></sc-if>
+        <div style="flex:1"></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:0 10px;color:var(--vscode-descriptionForeground);font-size:11px">
+          <sc-if value="{{ isStreaming }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:4px;color:var(--vscode-foreground)"><span class="codicon codicon-loading" style="font-size:12px;animation:qs-spin 1s linear infinite"></span>Streaming {{ streamCountLabel }} rows…</span></sc-if>
+          <sc-if value="{{ multiSets }}" hint-placeholder-val="{{ true }}"><span style="padding:1px 6px;border:1px solid var(--vscode-panel-border);border-radius:8px;white-space:nowrap">{{ setCountLabel }}</span></sc-if>
+          <button onClick="{{ onSaveMenu }}" title="Save Results As…" aria-label="Save results" style="background:transparent;border:0;color:var(--vscode-descriptionForeground);cursor:pointer;padding:2px" style-hover="color:var(--vscode-foreground)"><span class="codicon codicon-save-as" style="font-size:14px"></span></button>
+        </div>
+      </div>
+
+      <!-- results body -->
+      <div style="flex:1;min-height:0;position:relative">
+
+        <!-- GRID / TEXT -->
+        <sc-if value="{{ showGridPane }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column">
+          <sc-if value="{{ noResultSets }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--vscode-descriptionForeground)">
+              <span class="codicon codicon-inbox" style="font-size:26px;opacity:.6"></span><span>No result sets — the batch returned no grid output.</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isGridMode }}" hint-placeholder-val="{{ true }}">
+          <div ref="{{ setGridScroll }}" onScroll="{{ onGridScroll }}" tabindex="0" onFocus="{{ onGridFocus }}" onBlur="{{ onGridBlur }}" aria-label="Results grid" style="flex:1;min-height:0;overflow:auto;outline:none;font-family:var(--vscode-editor-font-family)">
+            <sc-for list="{{ gridSets }}" as="set" hint-placeholder-count="1">
+              <div style="{{ set.wrapStyle }}">
+                <sc-if value="{{ set.showCaption }}" hint-placeholder-val="{{ true }}"><div style="{{ set.captionStyle }}"><span class="codicon codicon-table" style="font-size:12px;opacity:.7"></span>{{ set.caption }}</div></sc-if>
+                <sc-if value="{{ set.banner }}" hint-placeholder-val="{{ true }}"><div style="{{ set.bannerStyle }}"><span class="codicon codicon-warning" style="font-size:13px"></span>{{ set.banner }}</div></sc-if>
+                <div style="{{ set.tableStyle }}">
+                  <!-- header -->
+                  <div style="{{ set.headRowStyle }}">
+                    <div style="{{ set.gutterHeadStyle }}"></div>
+                    <sc-for list="{{ set.columns }}" as="col" hint-placeholder-count="4">
+                      <div onClick="{{ col.onSelect }}" style="{{ col.headStyle }}" title="{{ col.name }}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ col.name }}</span><div onMouseDown="{{ col.onResize }}" style="position:absolute;top:0;right:0;width:6px;height:100%;cursor:col-resize"></div></div>
+                    </sc-for>
+                  </div>
+                  <!-- body -->
+                  <div style="{{ set.bodyStyle }}">
+                    <sc-for list="{{ set.visRows }}" as="vr" hint-placeholder-count="12">
+                      <div style="{{ vr.rowStyle }}">
+                        <div onClick="{{ vr.onRowNum }}" style="{{ vr.gutterStyle }}">{{ vr.r }}</div>
+                        <sc-for list="{{ vr.cells }}" as="cell" hint-placeholder-count="4">
+                          <div onMouseDown="{{ cell.onDown }}" onMouseEnter="{{ cell.onEnter }}" onDoubleClick="{{ cell.onView }}" onContextMenu="{{ cell.onCtx }}" style="{{ cell.style }}" title="{{ cell.title }}">{{ cell.text }}<sc-if value="{{ cell.trunc }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:0;right:0;width:0;height:0;border-top:6px solid var(--vscode-descriptionForeground);border-left:6px solid transparent;opacity:.6"></span></sc-if></div>
+                        </sc-for>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ rowsAddedChip }}" hint-placeholder-val="{{ true }}"><div onClick="{{ onFollowTail }}" style="position:sticky;bottom:8px;float:right;margin:0 16px 8px 0;padding:3px 9px;background:var(--vscode-button-background);color:var(--vscode-button-foreground);border-radius:11px;font-size:11px;cursor:pointer;box-shadow:0 2px 6px var(--vscode-widget-shadow)">↓ {{ rowsAddedLabel }} new rows</div></sc-if>
+          </div>
+          </sc-if>
+          <!-- TEXT MODE -->
+          <sc-if value="{{ isTextMode }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;min-height:0;overflow:auto;padding:8px 12px;font-family:var(--vscode-editor-font-family);font-size:12px;line-height:16px;white-space:pre;color:var(--vscode-editor-foreground);user-select:text">{{ textOutput }}</div>
+          </sc-if>
+          <!-- selection summary chip -->
+          <sc-if value="{{ showSummary }}" hint-placeholder-val="{{ true }}">
+            <div style="position:absolute;right:16px;bottom:10px;padding:4px 10px;background:var(--vscode-editorWidget-background);border:1px solid var(--vscode-editorWidget-border);border-radius:3px;font-size:11px;font-family:var(--vscode-editor-font-family);color:var(--vscode-foreground);box-shadow:0 2px 8px var(--vscode-widget-shadow);pointer-events:none">{{ summaryText }}</div>
+          </sc-if>
+        </div>
+        </sc-if>
+
+        <!-- MESSAGES -->
+        <sc-if value="{{ showMessagesPane }}" hint-placeholder-val="{{ true }}">
+          <div ref="{{ setMsgScroll }}" style="position:absolute;inset:0;overflow:auto;padding:8px 12px;font-family:var(--vscode-editor-font-family);font-size:12px;line-height:17px;user-select:text">
+            <sc-for list="{{ messages }}" as="m" hint-placeholder-count="3">
+              <sc-if value="{{ m.isSep }}" hint-placeholder-val="{{ true }}"><div style="color:var(--vscode-descriptionForeground);opacity:.7;margin:6px 0;border-top:1px dashed var(--vscode-panel-border);padding-top:4px">{{ m.text }}</div></sc-if>
+              <sc-if value="{{ m.isError }}" hint-placeholder-val="{{ true }}"><div onClick="{{ m.onClick }}" style="{{ m.style }}" style-hover="text-decoration:underline">{{ m.text }}</div></sc-if>
+              <sc-if value="{{ m.isPlain }}" hint-placeholder-val="{{ true }}"><div style="{{ m.style }}">{{ m.text }}</div></sc-if>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- EXECUTION PLAN -->
+        <sc-if value="{{ showPlanPane }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;background:var(--vscode-editor-background)">
+            <div style="height:30px;flex:none;display:flex;align-items:center;gap:2px;padding:0 8px;border-bottom:1px solid var(--vscode-panel-border);color:var(--vscode-descriptionForeground);font-size:11px">
+              <span style="margin-right:8px">Query 1 · cost 100%</span>
+              <sc-if value="{{ planHeuristic }}" hint-placeholder-val="{{ true }}"><span style="padding:1px 6px;border:1px solid var(--vscode-inputValidation-warningBorder);background:var(--vscode-inputValidation-warningBackground);border-radius:3px;margin-right:8px">heuristic</span></sc-if>
+              <div style="flex:1"></div>
+              <button onClick="{{ onPlanZoomOut }}" title="Zoom out" style="{{ planTbBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-remove" style="font-size:13px"></span></button>
+              <button onClick="{{ onPlanZoomReset }}" title="Reset zoom" style="{{ planTbBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)">{{ planZoomLabel }}</button>
+              <button onClick="{{ onPlanZoomIn }}" title="Zoom in" style="{{ planTbBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-add" style="font-size:13px"></span></button>
+              <button onClick="{{ onPlanFit }}" title="Fit" style="{{ planTbBtn }}" style-hover="background:var(--vscode-toolbar-hoverBackground)"><span class="codicon codicon-screen-full" style="font-size:13px"></span></button>
+            </div>
+            <div ref="{{ setPlanEl }}" onMouseDown="{{ onPlanPanDown }}" onWheel="{{ onPlanWheel }}" style="flex:1;min-height:0;overflow:hidden;position:relative;cursor:grab;background:var(--vscode-editor-background)">
+              <div style="{{ planTransformStyle }}">
+                <svg width="1000" height="320" style="position:absolute;top:0;left:0;overflow:visible">
+                  <sc-for list="{{ planEdges }}" as="e" hint-placeholder-count="5"><path d="{{ e.d }}" fill="none" stroke="var(--vscode-descriptionForeground)" stroke-width="{{ e.w }}" opacity="0.55"></path></sc-for>
+                </svg>
+                <sc-for list="{{ planNodes }}" as="n" hint-placeholder-count="6">
+                  <div onMouseEnter="{{ n.onEnter }}" onMouseLeave="{{ n.onLeave }}" style="{{ n.style }}">
+                    <div style="display:flex;align-items:center;gap:6px"><span class="codicon {{ n.icon }}" style="font-size:15px;color:var(--vscode-symbolIcon-functionForeground,#b180d7)"></span><span style="font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ n.name }}</span></div>
+                    <div style="font-size:10px;color:var(--vscode-descriptionForeground);margin-top:3px">Cost: {{ n.cost }}%</div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ planHover }}" hint-placeholder-val="{{ true }}"><div style="{{ planHoverStyle }}">
+                  <div style="font-weight:600;margin-bottom:4px">{{ planHover.name }}</div>
+                  <sc-for list="{{ planHover.props }}" as="p" hint-placeholder-count="5"><div style="display:flex;justify-content:space-between;gap:16px;font-size:11px;padding:1px 0"><span style="color:var(--vscode-descriptionForeground)">{{ p.k }}</span><span>{{ p.v }}</span></div></sc-for>
+                </div></sc-if>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+    </sc-if>
+  </div>
+
+  <!-- ===== STATUS BAR ===== -->
+  <div style="{{ statusBarStyle }}">
+    <div style="{{ statusMsgStyle }}"><span class="codicon {{ statusIcon }}" style="font-size:14px"></span><span>{{ statusMessage }}</span></div>
+    <div style="flex:1"></div>
+    <sc-for list="{{ statusSegs }}" as="s" hint-placeholder-count="6"><div style="{{ s.style }}"><sc-if value="{{ s.icon }}" hint-placeholder-val="{{ true }}"><span class="codicon {{ s.icon }}" style="font-size:12px"></span></sc-if><span>{{ s.text }}</span></div></sc-for>
+  </div>
+
+  <!-- ===== OVERLAYS ===== -->
+  <!-- quick pick -->
+  <sc-if value="{{ quickPick }}" hint-placeholder-val="{{ true }}">
+    <div onMouseDown="{{ onCloseOverlays }}" style="position:absolute;inset:0;z-index:50;display:flex;justify-content:center;padding-top:8px">
+      <div onMouseDown="{{ stop }}" style="width:600px;max-width:92%;background:var(--vscode-editorWidget-background);border:1px solid var(--vscode-editorWidget-border);border-radius:5px;box-shadow:0 4px 16px var(--vscode-widget-shadow);overflow:hidden;height:fit-content">
+        <div style="padding:6px 8px;border-bottom:1px solid var(--vscode-editorWidget-border)"><input ref="{{ setQpInput }}" value="{{ quickFilter }}" onInput="{{ onQpFilter }}" placeholder="Select a connection profile or type to filter" style="width:100%;height:26px;padding:0 8px;background:var(--vscode-input-background);color:var(--vscode-input-foreground);border:1px solid var(--vscode-focusBorder);border-radius:2px;font-family:inherit;font-size:13px;outline:none"></div>
+        <div style="max-height:320px;overflow:auto;padding:4px 0">
+          <sc-for list="{{ qpItems }}" as="p" hint-placeholder-count="4">
+            <div onClick="{{ p.onClick }}" style="{{ p.style }}" style-hover="background:var(--vscode-list-hoverBackground)">
+              <span class="codicon {{ p.icon }}" style="font-size:16px;flex:none"></span>
+              <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.label }}</span><sc-if value="{{ p.accent }}" hint-placeholder-val="{{ true }}"><span style="{{ p.dot }}"></span></sc-if></div><div style="font-size:11px;color:var(--vscode-descriptionForeground);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.detail }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- generic popover menus -->
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ true }}">
+    <div onMouseDown="{{ onCloseOverlays }}" style="position:absolute;inset:0;z-index:48">
+      <div onMouseDown="{{ stop }}" style="{{ menuStyle }}">
+        <sc-for list="{{ menuItems }}" as="mi" hint-placeholder-count="4">
+          <sc-if value="{{ mi.sep }}" hint-placeholder-val="{{ true }}"><div style="height:1px;background:var(--vscode-editorWidget-border);margin:4px 0"></div></sc-if>
+          <sc-if value="{{ mi.header }}" hint-placeholder-val="{{ true }}"><div style="padding:4px 12px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--vscode-descriptionForeground)">{{ mi.text }}</div></sc-if>
+          <sc-if value="{{ mi.item }}" hint-placeholder-val="{{ true }}"><div onClick="{{ mi.onClick }}" title="{{ mi.title }}" style="{{ mi.style }}" style-hover="background:var(--vscode-list-hoverBackground)"><sc-if value="{{ mi.icon }}" hint-placeholder-val="{{ true }}"><span class="codicon {{ mi.icon }}" style="font-size:14px;width:16px;flex:none;opacity:.9"></span></sc-if><span style="flex:1">{{ mi.label }}</span><sc-if value="{{ mi.kbd }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:var(--vscode-descriptionForeground)">{{ mi.kbd }}</span></sc-if></div></sc-if>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- database dropdown -->
+  <sc-if value="{{ dbOpen }}" hint-placeholder-val="{{ true }}">
+    <div onMouseDown="{{ onCloseOverlays }}" style="position:absolute;inset:0;z-index:48">
+      <div onMouseDown="{{ stop }}" style="{{ dbMenuStyle }}">
+        <div style="padding:6px"><input ref="{{ setDbInput }}" value="{{ dbFilter }}" onInput="{{ onDbFilter }}" placeholder="Filter databases" style="width:100%;height:24px;padding:0 8px;background:var(--vscode-input-background);color:var(--vscode-input-foreground);border:1px solid var(--vscode-focusBorder);border-radius:2px;font-family:inherit;font-size:12px;outline:none"></div>
+        <div style="max-height:260px;overflow:auto;padding-bottom:4px">
+          <sc-for list="{{ dbItems }}" as="d" hint-placeholder-count="7"><div onClick="{{ d.onClick }}" style="{{ d.style }}" style-hover="background:var(--vscode-list-hoverBackground)"><span class="codicon codicon-database" style="font-size:13px;opacity:.8"></span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ d.name }}</span><sc-if value="{{ d.current }}" hint-placeholder-val="{{ true }}"><span class="codicon codicon-check" style="font-size:13px"></span></sc-if></div></sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- context menu -->
+  <sc-if value="{{ ctxMenu }}" hint-placeholder-val="{{ true }}">
+    <div onMouseDown="{{ onCloseOverlays }}" onContextMenu="{{ onCtxSwallow }}" style="position:absolute;inset:0;z-index:52">
+      <div onMouseDown="{{ stop }}" style="{{ ctxStyle }}">
+        <sc-for list="{{ ctxItems }}" as="ci" hint-placeholder-count="5"><div onClick="{{ ci.onClick }}" style="{{ ci.style }}" style-hover="background:var(--vscode-list-hoverBackground)"><span style="flex:1">{{ ci.label }}</span><sc-if value="{{ ci.kbd }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:var(--vscode-descriptionForeground)">{{ ci.kbd }}</span></sc-if></div></sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- view cell modal -->
+  <sc-if value="{{ viewCell }}" hint-placeholder-val="{{ true }}">
+    <div onMouseDown="{{ onCloseViewCell }}" style="position:absolute;inset:0;z-index:54;background:#00000066;display:flex;align-items:center;justify-content:center">
+      <div onMouseDown="{{ stop }}" style="width:560px;max-width:92%;max-height:80%;display:flex;flex-direction:column;background:var(--vscode-editorWidget-background);border:1px solid var(--vscode-editorWidget-border);border-radius:5px;box-shadow:0 8px 30px var(--vscode-widget-shadow)">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--vscode-editorWidget-border)"><span class="codicon codicon-symbol-string" style="font-size:15px"></span><span style="font-weight:600;flex:1">Cell — {{ viewCell.col }}</span><span style="font-size:11px;color:var(--vscode-descriptionForeground)">{{ viewCell.type }}</span><span class="codicon codicon-close" onClick="{{ onCloseViewCell }}" style="font-size:16px;cursor:pointer"></span></div>
+        <div style="flex:1;min-height:0;overflow:auto;padding:12px 14px;font-family:var(--vscode-editor-font-family);font-size:12.5px;line-height:18px;white-space:pre-wrap;word-break:break-word;user-select:text">{{ viewCell.value }}</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--vscode-editorWidget-border)"><sc-if value="{{ viewCell.flags }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;color:var(--vscode-descriptionForeground)">{{ viewCell.flags }}</span></sc-if><div style="flex:1"></div><button onClick="{{ onCopyCell }}" style="height:26px;padding:0 12px;background:var(--vscode-button-background);color:var(--vscode-button-foreground);border:0;border-radius:2px;cursor:pointer;font-size:13px" style-hover="background:var(--vscode-button-hoverBackground)">Copy value</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- transaction warning modal -->
+  <sc-if value="{{ txnModal }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;z-index:56;background:#00000066;display:flex;align-items:center;justify-content:center">
+      <div style="width:460px;max-width:92%;background:var(--vscode-notifications-background);border:1px solid var(--vscode-notifications-border);border-radius:5px;box-shadow:0 8px 30px var(--vscode-widget-shadow);padding:18px 20px">
+        <div style="display:flex;gap:10px;margin-bottom:14px"><span class="codicon codicon-warning" style="font-size:20px;color:var(--vscode-inputValidation-warningBorder)"></span><div style="font-size:13px;line-height:18px">This connection has an open transaction (@@TRANCOUNT = 1). Commit or roll back before disconnecting?</div></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px">
+          <button onClick="{{ onTxnCancel }}" style="height:28px;padding:0 12px;background:var(--vscode-button-secondaryBackground);color:var(--vscode-foreground);border:1px solid var(--vscode-editorWidget-border);border-radius:2px;cursor:pointer;font-size:13px">Cancel</button>
+          <button onClick="{{ onTxnRollback }}" style="height:28px;padding:0 12px;background:var(--vscode-button-secondaryBackground);color:var(--vscode-foreground);border:1px solid var(--vscode-editorWidget-border);border-radius:2px;cursor:pointer;font-size:13px">Rollback</button>
+          <button onClick="{{ onTxnCommit }}" style="height:28px;padding:0 12px;background:var(--vscode-button-background);color:var(--vscode-button-foreground);border:0;border-radius:2px;cursor:pointer;font-size:13px" style-hover="background:var(--vscode-button-hoverBackground)">Commit</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- diagnostics popover -->
+  <sc-if value="{{ diagOpen }}" hint-placeholder-val="{{ true }}">
+    <div onMouseDown="{{ onCloseOverlays }}" style="position:absolute;inset:0;z-index:48">
+      <div onMouseDown="{{ stop }}" style="{{ diagPopStyle }}">
+        <div style="font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px"><span class="codicon codicon-pulse" style="font-size:14px"></span>Diagnostics</div>
+        <sc-for list="{{ diagRows }}" as="d" hint-placeholder-count="4"><div style="display:flex;justify-content:space-between;gap:16px;padding:2px 0;font-size:11px"><span style="color:var(--vscode-descriptionForeground)">{{ d.k }}</span><span style="font-family:var(--vscode-editor-font-family)">{{ d.v }}</span></div></sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- toasts -->
+  <div style="position:absolute;right:16px;bottom:34px;z-index:60;display:flex;flex-direction:column;gap:8px;align-items:flex-end" aria-live="polite">
+    <sc-for list="{{ toasts }}" as="t" hint-placeholder-count="0"><div style="{{ t.style }}"><span class="codicon {{ t.icon }}" style="font-size:15px;flex:none"></span><span style="font-size:12px">{{ t.text }}</span></div></sc-for>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.store = this._makeStore();
+    let theme='dark', split=0.55;
+    try{ theme=this.store.get('qs.theme')||'dark'; const s=parseFloat(this.store.get('qs.split')); if(s>=0.2&&s<=0.85) split=s; }catch(e){}
+    this.KW=new Set('select from where join inner left right outer full cross on group by order having insert into values update set delete create table alter drop and or not null as distinct top use go exec execute declare begin end if else case when then is in like between union all count sum avg min max cast convert with over partition asc desc primary key foreign references default identity nvarchar varchar int bigint bit datetime print raiserror'.split(' '));
+    this.SYS_COLS=['name','database_id','source_database_id','owner_sid','create_date','compatibility_level','collation_name','user_access','user_access_desc','is_read_only','is_auto_close_on','is_auto_shrink_on','state','state_desc','is_in_standby','is_cleanly_shutdown'];
+    this.SYS_NUM=new Set(['database_id','compatibility_level','user_access','is_read_only','is_auto_close_on','is_auto_shrink_on','state','is_in_standby','is_cleanly_shutdown']);
+    const R=(n,id,dt,cl,cmp)=>[n,id,null,'0x01',dt,cmp||170,cl||'SQL_Latin1_General_CP1_CI_AS',0,'MULTI_USER',0,0,0,0,'ONLINE',0,0];
+    this.SYS_ROWS=[R('master',1,'2003-04-08 09:13:36.390'),R('tempdb',2,'2026-07-04 16:52:02.430'),R('model',3,'2003-04-08 09:13:36.390'),R('msdb',4,'2026-01-29 18:40:16.640'),R('WideWorldImportersDb',5,'2026-02-19 02:40:58.337','Latin1_General_100_CI_AS',130),R('ShowplanJsonTest',6,'2026-03-19 00:58:57.543'),R('Sts2TestDb',7,'2026-06-15 17:16:54.323')];
+    this.OBJ_COLS=['object_id','name','type_desc']; this.OBJ_NUM=new Set(['object_id']);
+    this.OBJ_ROWS=[[1001,'Sales.Orders','USER_TABLE'],[1002,'Sales.OrderLines','USER_TABLE'],[1003,'Application.People','USER_TABLE']];
+    this.BIG_COLS=['id','guid','created_at','amount','status','payload']; this.BIG_NUM=new Set(['id','amount']);
+    this.DATABASES=['master','tempdb','model','msdb','WideWorldImportersDb','ShowplanJsonTest','Sts2TestDb'];
+    this.profiles=[
+      {id:'p1',label:'localhost — sa',server:'localhost (17.0 RTM)',short:'localhost (17.0 RTM)',login:'sa',spid:159,database:'Sts2TestDb',encrypted:true,accent:null,detail:'SQL Login · localhost · Sts2TestDb'},
+      {id:'p2',label:'localhost — sa (yellow)',server:'localhost (17.0 RTM)',short:'localhost (17.0 RTM)',login:'sa',spid:159,database:'Sts2TestDb',encrypted:true,accent:'#F3E28A',detail:'SQL Login · localhost · Sts2TestDb · yellow group'},
+      {id:'p3',label:'perf-lab\\sql2025 — integrated (teal)',server:'perf-lab\\sql2025 (17.0 RTM)',short:'perf-lab\\sql2025',login:'sa',spid:204,database:'PerfHarness',encrypted:true,accent:'#55C8C2',detail:'Integrated · perf-lab\\sql2025 · PerfHarness · teal group'}
+    ];
+    this.state={
+      theme, reduced:false,
+      connection:'disconnected', profile:null, database:null,
+      execution:'idle', results:'absent', resultSets:[], messages:[], activeTab:'results', viewMode:'grid',
+      hasPlan:false, actualPlan:false, planHeuristic:false, collapsed:false, split,
+      editorText:'select *\nfrom sys.databases;', cursor:{ln:2,col:32,selLen:0}, dirty:false,
+      elapsed:0, streamTarget:0,
+      quickPick:false, quickFilter:'', dbOpen:false, dbFilter:'', dbSwitching:false, dbRect:null,
+      menu:null, menuRect:null, diagOpen:false, diagRect:null,
+      toasts:[], sel:null, viewCell:null, ctxMenu:null, mockTxn:false, txnModal:false,
+      gridScrollTop:0, gridViewportH:340, followTail:true, newRows:0,
+      planHover:null, planZoom:1, planPanX:20, planPanY:10, flashLine:0, gridFocused:false
+    };
+    this.textareaEl=null; this.editorScrollEl=null; this.gridScrollEl=null; this.msgScrollEl=null; this.planEl=null; this.qpInput=null; this.dbInput=null;
+    this._runId=0; this._timer=null; this._to=[]; this._toastId=0; this._diagCounters={queries:0,rowsStreamed:0};
+    this._colDrag=null; this._splitDrag=false; this._selDrag=false; this._planPan=null;
+    // bind
+    ['onEditorChange','onEditorCursor','onGridScroll','onSplitDown','onSplitReset','onCloseOverlays','stop','onGridFocus','onGridBlur','onFollowTail','_onKey','_onUp','_onMove','onPlanPanDown','onPlanWheel','onCtxSwallow'].forEach(m=>this[m]=this[m].bind(this));
+  }
+  _makeStore(){ try{ const t='__qs'+Math.random(); localStorage.setItem(t,'1'); localStorage.removeItem(t); return {get:k=>localStorage.getItem(k),set:(k,v)=>localStorage.setItem(k,v)}; }catch(e){ const m={}; return {get:k=>m[k]??null,set:(k,v)=>{m[k]=String(v)}}; } }
+  componentDidMount(){
+    this.setState({reduced: matchMedia('(prefers-reduced-motion: reduce)').matches});
+    window.addEventListener('keydown', this._onKey, true);
+    window.addEventListener('mousemove', this._onMove, true);
+    window.addEventListener('mouseup', this._onUp, true);
+    this._ro = new ResizeObserver(()=>{ if(this.gridScrollEl) this.setState({gridViewportH:this.gridScrollEl.clientHeight}); });
+    setTimeout(()=>{ if(this.gridScrollEl){ this._ro.observe(this.gridScrollEl); this.setState({gridViewportH:this.gridScrollEl.clientHeight}); } },60);
+  }
+  componentDidUpdate(_,ps){ if(this.gridScrollEl && !ps.showResults){ try{this._ro.observe(this.gridScrollEl);}catch(e){} } }
+  componentWillUnmount(){ window.removeEventListener('keydown',this._onKey,true); window.removeEventListener('mousemove',this._onMove,true); window.removeEventListener('mouseup',this._onUp,true); this._stopTimer(); this._to.forEach(clearTimeout); try{this._ro.disconnect();}catch(e){} }
+
+  // ---------- refs ----------
+  setTextarea(el){ this.textareaEl=el; }
+  setEditorScroll(el){ this.editorScrollEl=el; }
+  setGridScroll(el){ this.gridScrollEl=el; if(el&&this._ro){ try{this._ro.observe(el);}catch(e){} } }
+  setMsgScroll(el){ this.msgScrollEl=el; }
+  setPlanEl(el){ this.planEl=el; }
+  setQpInput(el){ this.qpInput=el; if(el) setTimeout(()=>el.focus(),10); }
+  setDbInput(el){ this.dbInput=el; if(el) setTimeout(()=>el.focus(),10); }
+
+  // ---------- utils ----------
+  _delay(ms){ return new Promise(r=>{ const t=setTimeout(r,ms); this._to.push(t); }); }
+  rand(a,b){ return a+Math.random()*(b-a); }
+  fmtEl(ms){ const s=Math.floor(ms/1000); const p=n=>String(n).padStart(2,'0'); return p(Math.floor(s/3600))+':'+p(Math.floor(s%3600/60))+':'+p(s%60); }
+  isoNow(){ const d=new Date(); const p=(n,l=2)=>String(n).padStart(l,'0'); const o=-d.getTimezoneOffset(); const sg=o>=0?'+':'-'; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds())+'.'+p(d.getMilliseconds(),3)+sg+p(Math.floor(Math.abs(o)/60))+':'+p(Math.abs(o)%60); }
+  hexRgb(h){ h=h.replace('#',''); if(h.length===3)h=h.split('').map(c=>c+c).join(''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+  mix(a,b,t){ const A=this.hexRgb(a),B=this.hexRgb(b); const c=A.map((x,i)=>Math.round(x+(B[i]-x)*t)); return 'rgb('+c[0]+','+c[1]+','+c[2]+')'; }
+  lum(h){ const [r,g,b]=this.hexRgb(h).map(v=>{v/=255; return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);}); return 0.2126*r+0.7152*g+0.0722*b; }
+  contrastText(h){ return this.lum(h)>0.45?'#1e1e1e':'#f4f4f4'; }
+  posLC(text,idx){ let ln=1,last=0; for(let i=0;i<idx;i++){ if(text[i]==='\n'){ln++;last=i+1;} } return {ln,col:idx-last+1}; }
+  lineStart(text,line){ let n=1,i=0; while(n<line&&i<text.length){ if(text[i]==='\n')n++; i++; } return i; }
+  tokenize(line){ const out=[]; const re=/(--.*$)|('(?:[^']|'')*')|(\b\d+(?:\.\d+)?\b)|(0x[0-9a-fA-F]+)|([A-Za-z_@#][A-Za-z0-9_@#$]*)|(\s+)|([^\sA-Za-z0-9_]+)/g; let m; while((m=re.exec(line))){ let type='op'; if(m[1])type='comment'; else if(m[2])type='string'; else if(m[3])type='number'; else if(m[4])type='number'; else if(m[5]){ type=this.KW.has(m[5].toLowerCase())?'kw': (line[re.lastIndex]==='('?'func':'id'); } else if(m[6])type='ws'; const st={kw:{color:'var(--sql-keyword)'},string:{color:'var(--sql-string)'},number:{color:'var(--sql-number)'},comment:{color:'var(--sql-comment)',fontStyle:'italic'},func:{color:'var(--sql-func)'},id:{},op:{},ws:{}}[type]; out.push({text:m[0]||'',style:st}); } if(!out.length)out.push({text:' ',style:{}}); return out; }
+  gen10k(n){ const rows=[]; const base=Date.parse('2026-07-04T00:00:00'); const stat=['OPEN','CLOSED','PENDING']; for(let i=1;i<=n;i++){ const g=(i*2654435761>>>0).toString(16).padStart(8,'0'); const guid=g+'-'+g.slice(0,4)+'-4'+g.slice(1,4)+'-a'+g.slice(2,5)+'-'+g+g.slice(0,4); const dt=new Date(base-Math.floor(this.rand(0,90))*86400000-Math.floor(this.rand(0,86400))*1000); const p=n=>String(n).padStart(2,'0'); const ca=dt.getFullYear()+'-'+p(dt.getMonth()+1)+'-'+p(dt.getDate())+' '+p(dt.getHours())+':'+p(dt.getMinutes())+':'+p(dt.getSeconds())+'.'+String(dt.getMilliseconds()).padStart(3,'0'); const amount=Math.random()<0.08?null:this.rand(1,9999).toFixed(2); const long=i%40===0; const payload=(long?'Extended diagnostic payload for order reconciliation — includes serialized line-item deltas, tax adjustments, and courier handoff notes captured at ingest time for row '+i+'. ':'')+'lorem ipsum dolor sit amet '+((i*7)%97); rows.push([i,guid,ca,amount,stat[i%3],payload]); } return rows; }
+
+  // ---------- toasts ----------
+  toast(text,icon='codicon-info',kind='info'){ const id=++this._toastId; const bg=kind==='error'?'var(--vscode-statusBarItem-errorBackground)':'var(--vscode-notifications-background)'; const style={display:'flex',alignItems:'center',gap:'8px',padding:'8px 12px',minWidth:'220px',maxWidth:'340px',background:bg,color:kind==='error'?'#fff':'var(--vscode-foreground)',border:'1px solid var(--vscode-notifications-border)',borderRadius:'4px',boxShadow:'0 3px 12px var(--vscode-widget-shadow)',animation:this.state.reduced?'none':'qs-toastin .18s ease'}; this.setState(s=>({toasts:[...s.toasts,{id,text,icon,style}]})); const t=setTimeout(()=>this.setState(s=>({toasts:s.toasts.filter(x=>x.id!==id)})),3200); this._to.push(t); }
+
+  // ---------- theme ----------
+  setTheme(t){ this.setState({theme:t}); try{this.store.set('qs.theme',t);}catch(e){} }
+
+  // ---------- overlays ----------
+  stop(e){ e.stopPropagation(); }
+  onCtxSwallow(e){ e.preventDefault(); this.setState({ctxMenu:null}); }
+  onCloseOverlays(){ this.setState({quickPick:false,menu:null,dbOpen:false,diagOpen:false,ctxMenu:null}); }
+  openMenu(name,e){ const r=e.currentTarget.getBoundingClientRect(); this.setState({menu:name,menuRect:r,quickPick:false,dbOpen:false,diagOpen:false}); }
+
+  // ---------- connection ----------
+  onConnMain(){ if(this.state.connection==='connected'){ this.doDisconnect(); } else if(this.state.connection==='lost'){ this.reconnect(); } else { this.setState({quickPick:true,quickFilter:'',menu:null}); } }
+  onConnMenu(e){ this.openMenu('conn',e); }
+  onQpFilter(e){ this.setState({quickFilter:e.target.value}); }
+  async pickProfile(p){ if(!p){ this.setState({quickPick:false}); this.toast('Connection dialog not implemented in prototype','codicon-info'); return; } this.setState({quickPick:false,connection:'connecting'}); this.setStatusEphemeral(); await this._delay(this.rand(400,900)); this.setState({connection:'connected',profile:p,database:p.database,dirty:true}); this.toast('Connected to '+p.short,'codicon-plug'); }
+  async reconnect(){ const p=this.state.profile; if(!p)return; this.setState({connection:'connecting'}); await this._delay(this.rand(400,900)); this.setState(s=>({connection:'connected',resultSets:s.resultSets.map(r=>({...r,truncatedReason:r.truncatedReason==='connectionLost'?null:r.truncatedReason}))})); this.toast('Reconnected to '+p.short,'codicon-plug'); }
+  async doDisconnect(){ if(this.state.mockTxn){ this.setState({txnModal:true,menu:null}); return; } this._reallyDisconnect(); }
+  _reallyDisconnect(){ this._runId++; this._stopTimer(); this.setState({connection:'disconnected',profile:null,database:null,menu:null,execution:'idle',mockTxn:false}); this.toast('Disconnected','codicon-plug'); }
+  changeConnection(){ const cur=this.state.profile; const teal=this.profiles[2]; const target=(cur&&cur.id==='p3')?this.profiles[1]:teal; this.setState({menu:null}); this._changeTo(target); }
+  async _changeTo(p){ this.setState({connection:'connecting'}); await this._delay(this.rand(400,800)); this.setState({connection:'connected',profile:p,database:p.database}); this.appendMessages([{kind:'info',text:'Connection changed to '+p.short+' — login '+p.login+' ('+p.spid+').'}]); this.toast('Connection changed · '+p.label,'codicon-plug'); }
+
+  // ---------- database ----------
+  onDbBtn(e){ if(this.dbDisabled())return; const r=e.currentTarget.getBoundingClientRect(); this.setState({dbOpen:!this.state.dbOpen,dbRect:r,dbFilter:'',menu:null,quickPick:false}); }
+  onDbFilter(e){ this.setState({dbFilter:e.target.value}); }
+  async selectDb(name){ this.setState({dbOpen:false,dbSwitching:true}); await this._delay(300); this.setState({database:name,dbSwitching:false}); this.appendMessages([{kind:'info',text:"Changed database context to '"+name+"'."}]); }
+  dbDisabled(){ const c=this.state.connection; return c!=='connected' || this.state.execution==='executing'; }
+  execDisabled(){ const ex=this.state.execution; return this.state.connection!=='connected' || ex==='executing' || ex==='cancelRequested'; }
+  cancelDisabled(){ const ex=this.state.execution; return !(ex==='executing'||ex==='cancelRequested'); }
+
+  // ---------- editor ----------
+  onEditorChange(e){ this.setState({editorText:e.target.value,dirty:true}); this._updateCursor(e.target); }
+  onEditorCursor(e){ this._updateCursor(e.target); }
+  _updateCursor(ta){ if(!ta)return; const t=ta.value; const p=this.posLC(t,ta.selectionStart); this.setState({cursor:{ln:p.ln,col:p.col,selLen:ta.selectionEnd-ta.selectionStart}}); }
+  navigateToLine(line){ const ta=this.textareaEl; if(!ta){ this.setState({flashLine:line}); return; } const start=this.lineStart(ta.value,line); ta.focus(); ta.setSelectionRange(start,start); this._updateCursor(ta); this.setState({flashLine:line}); if(!this.state.reduced){ const t=setTimeout(()=>this.setState({flashLine:0}),700); this._to.push(t);} }
+
+  // ---------- execution ----------
+  onExecute(){ if(this.execDisabled())return; const ta=this.textareaEl; let selText=null, selInfo=null; if(ta && ta.selectionEnd>ta.selectionStart){ selText=ta.value.slice(ta.selectionStart,ta.selectionEnd); selInfo=this.posLC(ta.value,ta.selectionStart); } const full=this.state.editorText; const text=(selText&&selText.trim())?selText:full; if(selText&&selText.trim()){ const stmts=(selText.match(/;/g)||[]).length||1; this.toast('Executing selection ('+stmts+' statement'+(stmts>1?'s':'')+')','codicon-list-selection'); } this.run(this.detectScenario(text)); }
+  detectScenario(t){ const s=t.toLowerCase(); if(s.includes('10k')||s.includes('10000')||s.includes('generate_series'))return'big'; if(s.includes('missing_table')||s.includes('nonexistent'))return'error'; if(s.includes('sys.objects')||(s.match(/select/g)||[]).length>=2||s.includes('\ngo'))return'multi'; if(s.includes('update')&&s.includes('1 = 0'))return'norows'; return'databases'; }
+  _startTimer(){ this._stopTimer(); this._t0=Date.now(); this._timer=setInterval(()=>this.setState({elapsed:Date.now()-this._t0}),97); }
+  _stopTimer(){ if(this._timer){ clearInterval(this._timer); this._timer=null; } }
+  appendMessages(arr){ this.setState(s=>({messages:[...s.messages,...arr]})); const t=setTimeout(()=>{ if(this.msgScrollEl && this.state.activeTab==='messages') this.msgScrollEl.scrollTop=this.msgScrollEl.scrollHeight; },20); this._to.push(t); }
+  async run(kind){
+    if(this.execDisabled())return;
+    const runId=++this._runId; this._stopTimer();
+    const wantPlan=this.state.actualPlan || kind==='estimated';
+    this.setState({execution:'executing',results:'streaming',resultSets:[],messages:[],activeTab:'results',viewMode:this.state.viewMode,hasPlan:false,planHeuristic:false,sel:null,elapsed:0,gridScrollTop:0,newRows:0,followTail:true,menu:null,diagOpen:false});
+    if(this.gridScrollEl)this.gridScrollEl.scrollTop=0;
+    this._startTimer(); this._diagCounters.queries++;
+    const alive=()=> runId===this._runId && this.state.connection==='connected';
+    const stamp='Completion time: '+this.isoNow();
+    if(kind==='databases'||kind==='estimated'){
+      await this._delay(this.rand(250,700)); if(!alive())return this._terminate(runId);
+      if(kind!=='estimated'){ this._addSet({name:'r1',columns:this.SYS_COLS,num:this.SYS_NUM,rows:this.SYS_ROWS,complete:true}); }
+      await this._delay(120);
+      if(kind==='estimated'){ this.appendMessages([{kind:'info',text:'Estimated execution plan generated. Statement(s) were parsed and estimated; no rows were affected (SHOWPLAN is ON).'},{kind:'info',text:stamp}]); this.setState({hasPlan:true,activeTab:'plan',planHeuristic:false}); const tp=setTimeout(()=>this.fitPlan(),70); this._to.push(tp); }
+      else { this.appendMessages([{kind:'info',text:'(7 rows affected)'},{kind:'info',text:stamp}]); if(wantPlan)this.setState({hasPlan:true,planHeuristic:true}); }
+      this._succeed(runId);
+    } else if(kind==='multi'){
+      await this._delay(this.rand(250,600)); if(!alive())return this._terminate(runId);
+      this._addSet({name:'r1',columns:this.SYS_COLS,num:this.SYS_NUM,rows:this.SYS_ROWS,complete:true,caption:'Result 1 — 7 rows'});
+      this.appendMessages([{kind:'info',text:'(7 rows affected)'}]);
+      await this._delay(this.rand(300,600)); if(!alive())return this._terminate(runId);
+      this._addSet({name:'r2',columns:this.OBJ_COLS,num:this.OBJ_NUM,rows:this.OBJ_ROWS,complete:true,caption:'Result 2 — 3 rows'});
+      this.appendMessages([{kind:'info',text:'(3 rows affected)'},{kind:'info',text:stamp}]);
+      if(wantPlan)this.setState({hasPlan:true,planHeuristic:true}); this._succeed(runId);
+    } else if(kind==='error'){
+      await this._delay(this.rand(250,600)); if(!alive())return this._terminate(runId);
+      this.appendMessages([{kind:'error',no:208,level:16,state:1,line:1,text:"Msg 208, Level 16, State 1, Line 1\nInvalid object name 'missing_table'.",navigable:{line:1}}]);
+      this.setState({activeTab:'messages',results:'complete'}); this._stopTimer();
+      this.setState({execution:'failed'}); this._finalToast(runId,'failed');
+    } else if(kind==='norows'){
+      await this._delay(this.rand(250,600)); if(!alive())return this._terminate(runId);
+      this.appendMessages([{kind:'info',text:'(0 rows affected)'},{kind:'info',text:stamp}]); this._succeed(runId);
+    } else if(kind==='big'){
+      await this._delay(this.rand(250,500)); if(!alive())return this._terminate(runId);
+      const total=10000; const setId=this._addSet({name:'big',columns:this.BIG_COLS,num:this.BIG_NUM,rows:[],complete:false,rowCount:0});
+      const all=this.gen10k(total); const page=500;
+      for(let off=0;off<total;off+=page){
+        if(!alive())return this._terminate(runId,setId,off);
+        const chunk=all.slice(off,off+page); this._appendRows(setId,chunk); this._diagCounters.rowsStreamed+=chunk.length;
+        await this._delay(this.rand(40,70));
+      }
+      if(!alive())return this._terminate(runId,setId,total);
+      this._completeSet(setId); this.appendMessages([{kind:'info',text:'(10000 rows affected)'},{kind:'info',text:stamp}]);
+      if(wantPlan)this.setState({hasPlan:true,planHeuristic:true}); this._succeed(runId);
+    }
+  }
+  _addSet(spec){ const id='rs'+Math.random().toString(36).slice(2,7); const widths=this._widths(spec.columns,spec.num,spec.rows||[]); const set={id,columns:spec.columns,num:spec.num,rows:spec.rows||[],rowCount:spec.rowCount??((spec.rows||[]).length),complete:!!spec.complete,caption:spec.caption||null,truncatedReason:null,widths}; this.setState(s=>({resultSets:[...s.resultSets,set]})); return id; }
+  _appendRows(id,rows){ this.setState(s=>({resultSets:s.resultSets.map(r=>r.id===id?{...r,rows:[...r.rows,...rows],rowCount:r.rowCount+rows.length}:r)})); this._maybeFollowTail(); if(!this.state.followTail)this.setState(s=>({newRows:s.newRows+rows.length})); }
+  _completeSet(id){ this.setState(s=>({resultSets:s.resultSets.map(r=>r.id===id?{...r,complete:true}:r)})); }
+  _maybeFollowTail(){ const el=this.gridScrollEl; if(!el)return; const atBottom=el.scrollHeight-el.scrollTop-el.clientHeight<40; if(atBottom){ this.setState({followTail:true,newRows:0}); const t=setTimeout(()=>{ if(this.gridScrollEl&&this.state.followTail)this.gridScrollEl.scrollTop=this.gridScrollEl.scrollHeight; },0); this._to.push(t);} else this.setState({followTail:false}); }
+  onFollowTail(){ this.setState({followTail:true,newRows:0}); if(this.gridScrollEl)this.gridScrollEl.scrollTop=this.gridScrollEl.scrollHeight; }
+  _widths(cols,num,rows){ const w={}; const sample=rows.slice(0,60); cols.forEach((c,i)=>{ let max=c.length; sample.forEach(r=>{ const v=r[i]==null?'NULL':String(r[i]); if(v.length>max)max=v.length; }); w[c]=Math.max(54,Math.min(300,Math.round(max*7.3+26))); }); return w; }
+  _succeed(runId){ if(runId!==this._runId)return; this._stopTimer(); this.setState({execution:'succeeded',results:'complete'}); this._finalToast(runId,'succeeded'); }
+  _terminate(runId,setId,partial){ if(runId!==this._runId && this.state.connection==='connected')return; this._stopTimer(); const lost=this.state.connection!=='connected'; this.setState(s=>({execution:lost?'connectionLost':'canceled',results:'partial',resultSets:s.resultSets.map(r=>(!r.complete)?{...r,truncatedReason:lost?'connectionLost':'cancelled',_partialOf:10000}:r)})); }
+  _finalToast(runId,st){ /* status bar carries the message */ }
+  setStatusEphemeral(){}
+  onCancel(){ if(this.cancelDisabled())return; this._runId++; this.setState({execution:'cancelRequested'}); this.appendMessages([{kind:'warning',text:'Query was canceled by the user.'}]); const t=setTimeout(()=>this._terminate(this._runId-0),120); this._to.push(t); }
+  onParse(){ if(this.execDisabled())return; this.setState({activeTab:'messages'}); this.appendMessages([{kind:'info',text:'Command(s) completed — syntax checked (PARSEONLY). No binding or name resolution performed.'}]); this.toast('Syntax checked','codicon-check'); if(this.state.results==='absent')this.setState({results:'complete'}); }
+  onEstPlan(){ if(this.execDisabled())return; this.run('estimated'); }
+  onActualPlan(){ const v=!this.state.actualPlan; this.setState({actualPlan:v}); this.toast('Include Actual Execution Plan: '+(v?'On':'Off'),'codicon-graph'); }
+
+  // ---------- results view ----------
+  onGridMode(){ this.setState({viewMode:'grid'}); }
+  onTextMode(){ this.setState({viewMode:'text'}); }
+  onTabResults(){ this.setState({activeTab:'results'}); }
+  onTabMessages(){ this.setState({activeTab:'messages'}); const t=setTimeout(()=>{ if(this.msgScrollEl)this.msgScrollEl.scrollTop=this.msgScrollEl.scrollHeight; },20); this._to.push(t); }
+  onTabPlan(){ this.setState({activeTab:'plan'}); const t=setTimeout(()=>this.fitPlan(),40); this._to.push(t); }
+  toggleResults(){ if(this.state.results==='absent')return; this.setState(s=>({collapsed:!s.collapsed})); if(!this.state.collapsed && this.state.execution==='succeeded'){} }
+  onSaveMenu(e){ this.openMenu('save',e); }
+  saveAs(fmt){ this.setState({menu:null}); this.toast('Saved results as '+fmt+' (mock)','codicon-save'); }
+
+  // ---------- splitter ----------
+  onSplitDown(e){ e.preventDefault(); this._splitDrag=true; this._splitTop=e.currentTarget.parentElement.getBoundingClientRect(); }
+  onSplitReset(){ this.setState({split:0.55}); try{this.store.set('qs.split',0.55);}catch(e){} }
+  onMove(){}
+  _onMove(e){ if(this._splitDrag){ const r=this._splitTop; let ratio=(e.clientY-r.top)/r.height; ratio=Math.max(0.2,Math.min(0.85,ratio)); this.setState({split:ratio}); } if(this._colDrag){ const d=e.clientX-this._colDrag.x; const nw=Math.max(40,Math.min(600,this._colDrag.w+d)); this.setState(s=>({resultSets:s.resultSets.map(rs=>rs.id===this._colDrag.set?{...rs,widths:{...rs.widths,[this._colDrag.col]:nw}}:rs)})); } if(this._selDrag){ /* handled via cell enter */ } if(this._planPan){ this.setState({planPanX:this._planPan.px+(e.clientX-this._planPan.x),planPanY:this._planPan.py+(e.clientY-this._planPan.y)}); } }
+  _onUp(){ if(this._splitDrag){ this._splitDrag=false; try{this.store.set('qs.split',this.state.split);}catch(e){} } this._colDrag=null; this._selDrag=false; this._planPan=null; }
+
+  // ---------- grid selection ----------
+  onGridFocus(){ this.setState({gridFocused:true}); }
+  onGridBlur(){ this.setState({gridFocused:false}); }
+  onGridScroll(e){ this.setState({gridScrollTop:e.target.scrollTop}); this._maybeFollowTail(); }
+  cellDown(si,r,c,shift){ this._selDrag=true; this.setState(s=>{ const sel=s.sel; if(shift&&sel&&sel.set===si){ return {sel:{...sel,r2:r,c2:c}}; } return {sel:{set:si,r1:r,c1:c,r2:r,c2:c}}; }); }
+  cellEnter(si,r,c){ if(!this._selDrag)return; this.setState(s=>{ const sel=s.sel; if(!sel||sel.set!==si)return{}; return {sel:{...sel,r2:r,c2:c}}; }); }
+  rowSelect(si,r){ const set=this.state.resultSets[si]; this.setState({sel:{set:si,r1:r,c1:0,r2:r,c2:set.columns.length-1}}); }
+  colSelect(si,c){ const set=this.state.resultSets[si]; this.setState({sel:{set:si,r1:0,c1:c,r2:set.rowCount-1,c2:c}}); }
+  selectAll(){ if(this.state.activeTab!=='results')return; const si=this._activeSetIndex(); const set=this.state.resultSets[si]; if(!set)return; this.setState({sel:{set:si,r1:0,c1:0,r2:set.rowCount-1,c2:set.columns.length-1}}); }
+  _activeSetIndex(){ if(this.state.sel)return this.state.sel.set; return this.state.resultSets.length?0:-1; }
+  colResizeDown(si,col,e){ e.preventDefault(); e.stopPropagation(); const set=this.state.resultSets[si]; this._colDrag={set:set.id,col,x:e.clientX,w:set.widths[col]}; }
+  _selRect(sel){ return {r1:Math.min(sel.r1,sel.r2),r2:Math.max(sel.r1,sel.r2),c1:Math.min(sel.c1,sel.c2),c2:Math.max(sel.c1,sel.c2)}; }
+  copySelection(withHeaders){ const sel=this.state.sel; if(!sel){ this.setState({ctxMenu:null}); return; } const set=this.state.resultSets[sel.set]; const R=this._selRect(sel); const lines=[]; if(withHeaders){ const h=[]; for(let c=R.c1;c<=R.c2;c++)h.push(set.columns[c]); lines.push(h.join('\t')); } const rows=set.rows; for(let r=R.r1;r<=R.r2&&r<rows.length;r++){ const cells=[]; for(let c=R.c1;c<=R.c2;c++){ const v=rows[r][c]; cells.push(v==null?'NULL':String(v)); } lines.push(cells.join('\t')); } const tsv=lines.join('\n'); try{ navigator.clipboard.writeText(tsv); }catch(e){} this.setState({ctxMenu:null}); this.toast((withHeaders?'Copied with headers':'Copied')+' — '+(R.r2-R.r1+1)+'×'+(R.c2-R.c1+1),'codicon-copy'); }
+  openViewCell(si,r,c){ const set=this.state.resultSets[si]; const raw=set.rows[r][c]; const isNull=raw==null; const val=isNull?'NULL':String(raw); const type=set.num&&set.num.has(set.columns[c])?'int':(set.columns[c].includes('date')?'datetime':(set.columns[c]==='owner_sid'?'varbinary':'nvarchar')); const flags=[]; if(isNull)flags.push('NULL'); if(val.length>60)flags.push('long value'); this.setState({viewCell:{col:set.columns[c],value:val,type,flags:flags.join(' · '),raw:val},ctxMenu:null}); }
+  onCloseViewCell(){ this.setState({viewCell:null}); }
+  onCopyCell(){ try{ navigator.clipboard.writeText(this.state.viewCell.raw); }catch(e){} this.toast('Cell value copied','codicon-copy'); }
+  cellCtx(si,r,c,e){ e.preventDefault(); const sel=this.state.sel; if(!sel||sel.set!==si||r<Math.min(sel.r1,sel.r2)||r>Math.max(sel.r1,sel.r2)||c<Math.min(sel.c1,sel.c2)||c>Math.max(sel.c1,sel.c2)){ this.setState({sel:{set:si,r1:r,c1:c,r2:r,c2:c}}); } this.setState({ctxMenu:{x:e.clientX,y:e.clientY,si,r,c}}); }
+
+  // ---------- messages ----------
+  msgClick(m){ if(m.navigable)this.navigateToLine(m.navigable.line); }
+
+  // ---------- overflow actions ----------
+  overflowAction(a){ this.setState({menu:null}); if(a==='10k'){ if(this.state.connection!=='connected'){this.toast('Connect first','codicon-warning','error');return;} this.run('big'); } else if(a==='multi'){ if(this.state.connection!=='connected'){this.toast('Connect first','codicon-warning','error');return;} this.run('multi'); } else if(a==='error'){ if(this.state.connection!=='connected'){this.toast('Connect first','codicon-warning','error');return;} this.run('error'); } else if(a==='norows'){ if(this.state.connection!=='connected'){this.toast('Connect first','codicon-warning','error');return;} this.run('norows'); } else if(a==='lost'){ this.simulateLost(); } else if(a==='txn'){ const nv=!this.state.mockTxn; this.setState({mockTxn:nv}); this.toast('Mock open transaction: '+(nv?'On':'Off'),'codicon-warning'); } else if(a==='comment'){ this.applyComment(true); } else if(a==='uncomment'){ this.applyComment(false); } else if(a==='change'){ this.changeConnection(); } }
+  simulateLost(){ if(this.state.connection!=='connected'){ this.toast('Connect first','codicon-warning','error'); return; } this._runId++; this._stopTimer(); this.setState(s=>({connection:'lost',execution: s.execution==='executing'?'connectionLost':s.execution, results: s.resultSets.some(r=>!r.complete)?'partial':s.results, resultSets:s.resultSets.map(r=>!r.complete?{...r,truncatedReason:'connectionLost'}:r)})); this.appendMessages([{kind:'warning',text:'Connection to server was lost. Any active query was terminated.'}]); this.toast('Connection lost','codicon-debug-disconnect','error'); }
+  applyComment(add){ const ta=this.textareaEl; if(!ta)return; const v=ta.value; const s=ta.selectionStart, e=ta.selectionEnd; const ls=this.lineStart(v,this.posLC(v,s).ln); let le=e; while(le<v.length&&v[le]!=='\n')le++; const block=v.slice(ls,le); const lines=block.split('\n'); const out=add?lines.map(l=>'-- '+l):lines.map(l=>l.replace(/^(\s*)-- ?/,'$1')); const nv=v.slice(0,ls)+out.join('\n')+v.slice(le); this.setState({editorText:nv,dirty:true}); }
+
+  onOverflow(e){ this.openMenu('overflow',e); }
+  onDiagMenu(e){ const r=e.currentTarget.getBoundingClientRect(); this.setState({diagOpen:!this.state.diagOpen,diagRect:r,menu:null}); }
+
+  // txn modal
+  onTxnCancel(){ this.setState({txnModal:false}); }
+  onTxnCommit(){ this.setState({txnModal:false,mockTxn:false}); this.toast('COMMIT executed (mock)','codicon-check'); this._reallyDisconnect(); }
+  onTxnRollback(){ this.setState({txnModal:false,mockTxn:false}); this.toast('ROLLBACK executed (mock)','codicon-discard'); this._reallyDisconnect(); }
+
+  // plan
+  onPlanPanDown(e){ if(e.button!==0)return; this._planPan={x:e.clientX,y:e.clientY,px:this.state.planPanX,py:this.state.planPanY}; }
+  onPlanWheel(e){ if(!e.ctrlKey && !e.metaKey)return; e.preventDefault(); const d=e.deltaY<0?1.1:0.9; this.setState(s=>({planZoom:Math.max(0.4,Math.min(2.4,s.planZoom*d))})); }
+  onPlanZoomIn(){ this.setState(s=>({planZoom:Math.min(2.4,s.planZoom*1.15)})); }
+  onPlanZoomOut(){ this.setState(s=>({planZoom:Math.max(0.4,s.planZoom/1.15)})); }
+  onPlanZoomReset(){ this.setState({planZoom:1}); }
+  onPlanFit(){ this.fitPlan(); }
+  fitPlan(){ const el=this.planEl; if(!el){ const t=setTimeout(()=>this.fitPlan(),60); this._to.push(t); return; } const cw=el.clientWidth||820, ch=el.clientHeight||160; const W=1035,H=235; const z=Math.max(0.35,Math.min(1.3,Math.min(cw/W,ch/H))); this.setState({planZoom:z,planPanX:Math.max(8,(cw-W*z)/2),planPanY:Math.max(6,(ch-H*z)/2-38*z)}); }
+  planNodeEnter(n,e){ this.setState({planHover:{...n}}); }
+  planNodeLeave(){ this.setState({planHover:null}); }
+
+  // ---------- keyboard ----------
+  _onKey(e){ const k=e.key; const ctrl=e.ctrlKey||e.metaKey;
+    if(k==='F5'){ e.preventDefault(); this.onExecute(); return; }
+    if(ctrl && k==='Enter'){ e.preventDefault(); this.onExecute(); return; }
+    if(ctrl && (k==='e'||k==='E')){ e.preventDefault(); this.onExecute(); return; }
+    if((e.altKey && (k==='b'||k==='B')) || (e.altKey && k==='Pause')){ e.preventDefault(); this.onCancel(); return; }
+    if(ctrl && (k==='r'||k==='R')){ e.preventDefault(); this.toggleResults(); return; }
+    if(ctrl && (k==='l'||k==='L')){ e.preventDefault(); this.onEstPlan(); return; }
+    if(ctrl && (k==='m'||k==='M')){ e.preventDefault(); this.onActualPlan(); return; }
+    if(ctrl && (k==='s'||k==='S')){ e.preventDefault(); this.setState({dirty:false}); this.toast('Saved (mock)','codicon-save'); return; }
+    if(k==='F6'){ e.preventDefault(); this._cycleFocus(); return; }
+    if(k==='Escape'){ this.onCloseOverlays(); if(this.state.viewCell)this.setState({viewCell:null}); return; }
+    if(this.state.gridFocused && ctrl && (k==='c'||k==='C')){ e.preventDefault(); this.copySelection(false); return; }
+    if(this.state.gridFocused && ctrl && (k==='a'||k==='A')){ e.preventDefault(); this.selectAll(); return; }
+  }
+  _cycleFocus(){ const order=[this.textareaEl,this.gridScrollEl]; const a=document.activeElement; let i=order.indexOf(a); const next=order[(i+1)%order.length]||this.textareaEl; if(next)next.focus(); }
+
+  // =========================================================
+  renderVals(){
+    const S=this.state; const P=S.profile; const conn=S.connection; const ex=S.execution;
+    const connected=conn==='connected', lost=conn==='lost', connecting=conn==='connecting';
+    const executing=ex==='executing'||ex==='cancelRequested';
+    const hasOutput=S.results!=='absent';
+    const tb=(dis)=>({height:'26px',minWidth:'26px',padding:'0 8px',display:'inline-flex',alignItems:'center',gap:'6px',background:'transparent',color:dis?'var(--vscode-disabledForeground)':'var(--vscode-foreground)',border:'1px solid transparent',borderRadius:'3px',fontSize:'13px',cursor:dis?'default':'pointer',whiteSpace:'nowrap'});
+    const tbIcon={height:'26px',width:'22px',display:'inline-flex',alignItems:'center',justifyContent:'center',background:'transparent',color:'var(--vscode-foreground)',border:'1px solid transparent',borderRadius:'3px',cursor:'pointer'};
+    const sep={width:'1px',height:'20px',background:'var(--vscode-editorWidget-border)',margin:'0 6px',flex:'none'};
+
+    // ---- title ----
+    let tabTitle='SQLQuery1.sql';
+    if(connected&&P)tabTitle='SQLQuery1.sql ('+P.login+' ('+P.spid+'))';
+    else if(lost)tabTitle='SQLQuery1.sql (lost)';
+
+    // ---- theme buttons ----
+    const themeBtns=[['dark','Dark','Dark theme'],['light','Light','Light theme'],['hc','HC','High contrast']].map(([v,label,title])=>({label,title,onClick:()=>this.setTheme(v),style:{height:'20px',padding:'0 8px',fontSize:'11px',border:'1px solid '+(S.theme===v?'var(--vscode-focusBorder)':'transparent'),background:S.theme===v?'var(--vscode-button-background)':'transparent',color:S.theme===v?'var(--vscode-button-foreground)':'var(--vscode-foreground)',borderRadius:'2px',cursor:'pointer'}}));
+
+    // ---- toolbar accent ----
+    const accent=connected&&P&&P.accent?P.accent:null;
+    const toolbarStyle={height:'35px',flex:'none',display:'flex',alignItems:'center',gap:'1px',padding:'0 6px',background:'var(--vscode-editorWidget-background)',borderBottom:'1px solid var(--vscode-editorWidget-border)',borderTop:accent?'2px solid '+accent:'2px solid transparent'};
+
+    // ---- connect button ----
+    let connBtn;
+    if(connected)connBtn={icon:'codicon-plug',label:'Disconnect',title:'Disconnect from '+(P?P.short:''),style:tb(false)};
+    else if(lost)connBtn={icon:'codicon-warning',label:'Reconnect',title:'Connection lost — click to reconnect',style:{...tb(false),color:'var(--vscode-inputValidation-warningBorder)'}};
+    else if(connecting)connBtn={icon:'codicon-loading',label:'Connecting…',title:'Connecting',style:tb(true)};
+    else connBtn={icon:'codicon-plug',label:'Connect',title:'Connect to a server (opens profile picker)',style:{...tb(false),background:'var(--vscode-button-background)',color:'var(--vscode-button-foreground)'}};
+
+    // ---- db button ----
+    const dbDis=this.dbDisabled();
+    const dbBtn={label:connected?(S.database||'—'):'Database',style:{...tb(dbDis),width:'180px',border:'1px solid var(--vscode-dropdown-border)',background:'var(--vscode-dropdown-background)',color:dbDis?'var(--vscode-disabledForeground)':'var(--vscode-dropdown-foreground)'}};
+
+    // ---- execute ----
+    const execDis=!connected||executing;
+    const execBtn={style:{...tb(execDis)}};
+    const cancelDis=!executing;
+    const cancelBtn={style:{...tb(cancelDis),color:cancelDis?'var(--vscode-disabledForeground)':'#fff',background:cancelDis?'transparent':'var(--vscode-statusBarItem-errorBackground)'}};
+    const ghostBtn=tb(execDis); const ghostBtn2=tb(!hasOutput);
+    const actualBtn={style:{...tb(false),background:S.actualPlan?'var(--vscode-button-background)':'transparent',color:S.actualPlan?'var(--vscode-button-foreground)':'var(--vscode-foreground)'}};
+    const modeBtn=(active)=>({height:'26px',width:'30px',display:'inline-flex',alignItems:'center',justifyContent:'center',background:active?'var(--vscode-button-background)':'transparent',color:active?'var(--vscode-button-foreground)':'var(--vscode-foreground)',border:'0',cursor:'pointer'});
+    const diagBtn={style:{...tbIcon,color:S.diagOpen?'var(--vscode-button-foreground)':'var(--vscode-foreground)',background:S.diagOpen?'var(--vscode-button-background)':'transparent'}};
+
+    // ---- editor lines ----
+    const lines=S.editorText.split('\n');
+    const codeLines=lines.map((l,i)=>({num:i+1,tokens:this.tokenize(l),gutterStyle:{height:'19px',paddingRight:'12px',color:(i+1)===S.cursor.ln?'var(--vscode-editorLineNumber-activeForeground)':'var(--vscode-editorLineNumber-foreground)'}}));
+    const lineHiStyle={position:'absolute',left:'0',right:'0',top:(2+(S.cursor.ln-1)*19)+'px',height:'19px',background:'var(--vscode-editor-lineHighlightBackground)',zIndex:'0',pointerEvents:'none'};
+    const flashStyle={position:'absolute',left:'0',right:'0',top:(2+((S.flashLine||1)-1)*19)+'px',height:'19px',background:S.flashLine?'var(--vscode-editor-selectionBackground)':'transparent',zIndex:'0',pointerEvents:'none',animation:(S.flashLine&&!S.reduced)?'qs-flash .7s ease':'none',opacity:S.flashLine?1:0};
+    const annotations=[]; if(ex==='failed'){ annotations.push({style:{position:'absolute',top:'2px',right:'3px',width:'8px',height:'4px',background:'var(--vscode-errorForeground)'}}); }
+
+    // ---- panes ----
+    const collapsed=S.collapsed||!hasOutput;
+    const editorPaneStyle={position:'relative',flex: collapsed?'1 1 auto':('0 0 '+(S.split*100)+'%'),minHeight:'0'};
+    const showResults=hasOutput&&!S.collapsed;
+    const showSplitter=showResults;
+    const resultsPaneStyle={flex:'1 1 auto',minHeight:'0',display:'flex',flexDirection:'column',background:'var(--vscode-panel-background)'};
+
+    // ---- results tabs ----
+    const tabStyle=(active)=>({height:'30px',padding:'0 12px',display:'inline-flex',alignItems:'center',gap:'6px',background:'transparent',border:'0',borderBottom:'1px solid '+(active?'var(--vscode-panelTitle-activeBorder,var(--vscode-focusBorder))':'transparent'),color:active?'var(--vscode-panelTitle-activeForeground,var(--vscode-foreground))':'var(--vscode-tab-inactiveForeground)',cursor:'pointer',fontSize:'12px'});
+    const tab=S.activeTab;
+    const errCount=S.messages.filter(m=>m.kind==='error').length;
+
+    // ---- grid data ----
+    const sel=S.sel;
+    const selR = sel?this._selRect(sel):null;
+    const single = !!sel && sel.r1===sel.r2 && sel.c1===sel.c2;
+    const gridSets=S.resultSets.map((set,si)=>{
+      const multi=S.resultSets.length>1;
+      const totalW=set.columns.reduce((a,c)=>a+set.widths[c],0)+52;
+      const virtualize = S.resultSets.length===1 && set.rowCount>200;
+      let start=0,end=set.rowCount;
+      if(virtualize){ const vh=S.gridViewportH||340; start=Math.max(0,Math.floor(S.gridScrollTop/24)-8); end=Math.min(set.rowCount,start+Math.ceil(vh/24)+16); }
+      const padTop=start*24, padBot=Math.max(0,(set.rowCount-end)*24);
+      const columns=set.columns.map((c,ci)=>({name:c,onSelect:()=>this.colSelect(si,ci),onResize:(e)=>this.colResizeDown(si,c,e),headStyle:{position:'relative',width:set.widths[c]+'px',flex:'none',height:'24px',display:'flex',alignItems:'center',padding:'0 8px',fontSize:'12px',fontWeight:'600',color:'var(--vscode-foreground)',borderRight:'1px solid var(--vscode-panel-border)',borderBottom:'1px solid var(--vscode-panel-border)',background:'var(--vscode-editorWidget-background)',boxSizing:'border-box',justifyContent:(set.num&&set.num.has(c))?'flex-end':'flex-start'}}));
+      const visRows=[];
+      for(let r=start;r<end;r++){ const row=set.rows[r]; if(!row)continue; const cells=set.columns.map((c,ci)=>{ const raw=row[ci]; const isNull=raw==null; const txt=isNull?'NULL':String(raw); const inSel=selR&&sel.set===si&&r>=selR.r1&&r<=selR.r2&&ci>=selR.c1&&ci<=selR.c2; const isAnchor=sel&&sel.set===si&&r===sel.r1&&ci===sel.c1&&single; const trunc=txt.length>Math.floor(set.widths[c]/7.2)&&txt.length>10; const st={position:'relative',width:set.widths[c]+'px',flex:'none',height:'24px',display:'flex',alignItems:'center',padding:'0 8px',fontSize:'12px',borderRight:'1px solid var(--vscode-panel-border)',borderBottom:'1px solid var(--vscode-panel-border)',boxSizing:'border-box',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',cursor:'cell',justifyContent:(set.num&&set.num.has(c))?'flex-end':'flex-start',color:isNull?'var(--vscode-descriptionForeground)':'var(--vscode-editor-foreground)',fontStyle:isNull?'italic':'normal',background:isNull?'var(--null-bg)':(inSel?'var(--vscode-editor-selectionBackground)':'transparent'),outline:(isAnchor||(inSel&&r===selR.r1&&ci===selR.c1))?'1px solid var(--vscode-focusBorder)':'none',outlineOffset:'-1px'}; return {text:txt,style:st,title:trunc?'Value truncated for display. Double-click or View Cell to see the full value.':'',trunc, onDown:(e)=>this.cellDown(si,r,ci,e.shiftKey), onEnter:()=>this.cellEnter(si,r,ci), onView:()=>this.openViewCell(si,r,ci), onCtx:(e)=>this.cellCtx(si,r,ci,e)}; }); visRows.push({r:r+1,cells,rowStyle:{display:'flex'},gutterStyle:{position:'sticky',left:'0',zIndex:'1',width:'52px',flex:'none',height:'24px',display:'flex',alignItems:'center',justifyContent:'flex-end',padding:'0 8px',fontSize:'11px',color:'var(--vscode-editorLineNumber-foreground)',background:'var(--vscode-panel-background)',borderRight:'1px solid var(--vscode-panel-border)',borderBottom:'1px solid var(--vscode-panel-border)',userSelect:'none',cursor:'pointer',boxSizing:'border-box'},onRowNum:()=>this.rowSelect(si,r)}); }
+      let banner=null; if(set.truncatedReason==='cancelled')banner='Results incomplete — query cancelled ('+set.rowCount.toLocaleString()+' of ~10,000 rows).'; else if(set.truncatedReason==='connectionLost')banner='Result set incomplete — connection lost ('+set.rowCount.toLocaleString()+' rows retained).';
+      return {id:set.id,showCaption:!!(multi&&set.caption),caption:set.caption||'',banner,bannerStyle:{display:'flex',alignItems:'center',gap:'6px',padding:'4px 10px',fontSize:'11px',background:'var(--vscode-inputValidation-warningBackground)',color:'var(--vscode-foreground)',borderBottom:'1px solid var(--vscode-inputValidation-warningBorder)'},captionStyle:{position:'sticky',top:'0',zIndex:'2',height:'22px',display:'flex',alignItems:'center',gap:'6px',padding:'0 10px',fontSize:'11px',fontWeight:'600',color:'var(--vscode-descriptionForeground)',background:'var(--vscode-panel-background)',borderBottom:'1px solid var(--vscode-panel-border)'},wrapStyle:{minWidth:totalW+'px'},tableStyle:{minWidth:totalW+'px'},headRowStyle:{display:'flex',position:'sticky',top: (multi&&set.caption)?'22px':'0',zIndex:'2'},gutterHeadStyle:{position:'sticky',left:'0',zIndex:'3',width:'52px',flex:'none',height:'24px',background:'var(--vscode-editorWidget-background)',borderRight:'1px solid var(--vscode-panel-border)',borderBottom:'1px solid var(--vscode-panel-border)',boxSizing:'border-box'},bodyStyle:{paddingTop:padTop+'px',paddingBottom:padBot+'px'},columns,visRows};
+    });
+
+    // ---- selection summary ----
+    let showSummary=false, summaryText='';
+    if(sel && !single && S.activeTab==='results' && S.viewMode==='grid'){ const set=S.resultSets[sel.set]; if(set){ const R=selR; let sum=0,cnt=0,nums=0,nulls=0; for(let r=R.r1;r<=R.r2&&r<set.rows.length;r++)for(let c=R.c1;c<=R.c2;c++){ const v=set.rows[r][c]; cnt++; if(v==null){nulls++;continue;} const n=Number(v); if(set.num&&set.num.has(set.columns[c])&&!isNaN(n)){sum+=n;nums++;} } if(nums>0){ showSummary=true; summaryText='Σ '+(Math.round(sum*100)/100).toLocaleString()+'   Avg '+(Math.round(sum/nums*100)/100).toLocaleString()+'   Count '+cnt+'   Nulls '+nulls; } } }
+
+    // ---- text output ----
+    let textOutput='';
+    if(S.viewMode==='text'&&S.resultSets.length){ const parts=S.resultSets.map(set=>{ const w=set.columns.map(c=>Math.max(c.length, ...set.rows.slice(0,200).map(r=>{const v=r[set.columns.indexOf(c)];return (v==null?'NULL':String(v)).length;}))); const pad=(s,i)=>String(s).padEnd(w[i]); const head=set.columns.map((c,i)=>pad(c,i)).join('  '); const rule=set.columns.map((c,i)=>'-'.repeat(w[i])).join('  '); const body=set.rows.slice(0,1000).map(r=>r.map((v,i)=>pad(v==null?'NULL':v,i)).join('  ')).join('\n'); return head+'\n'+rule+'\n'+body+'\n\n('+set.rowCount+' row'+(set.rowCount===1?'':'s')+' affected)'; }); textOutput=parts.join('\n\n'); }
+
+    // ---- messages ----
+    const messages=S.messages.map(m=>{ const isError=m.kind==='error'; const isSep=m.kind==='sep'; return {text:m.text,isError,isSep,isPlain:!isError&&!isSep,onClick:()=>this.msgClick(m),style:{whiteSpace:'pre-wrap',padding:'1px 0',cursor:isError&&m.navigable?'pointer':'default',color:isError?'var(--vscode-errorForeground)':(m.kind==='warning'?'var(--vscode-inputValidation-warningBorder)':'var(--vscode-editor-foreground)')}}; });
+
+    // ---- plan ----
+    const nodeW=170,nodeH=46;
+    const rawNodes=[{id:'select',name:'SELECT',icon:'codicon-arrow-small-left',cost:0,x:20,y:130,rows:7,phys:'Result',log:'Result',io:'0.0'},{id:'compute',name:'Compute Scalar',icon:'codicon-symbol-operator',cost:0,x:220,y:130,rows:7,phys:'Compute Scalar',log:'Compute Scalar',io:'0.0'},{id:'nl',name:'Nested Loops',icon:'codicon-git-merge',cost:14,x:420,y:130,rows:7,phys:'Nested Loops',log:'Inner Join',io:'0.003'},{id:'scan1',name:'Clustered Index Scan (sysdbreg)',icon:'codicon-list-tree',cost:44,x:640,y:60,rows:7,phys:'Clustered Index Scan',log:'Index Scan',io:'0.012'},{id:'filter',name:'Filter',icon:'codicon-filter',cost:2,x:640,y:200,rows:7,phys:'Filter',log:'Filter',io:'0.0'},{id:'scan2',name:'Clustered Index Scan (sysprivs)',icon:'codicon-list-tree',cost:40,x:840,y:200,rows:34,phys:'Clustered Index Scan',log:'Index Scan',io:'0.011'}];
+    const nodeById={}; rawNodes.forEach(n=>nodeById[n.id]=n);
+    const planNodes=rawNodes.map(n=>({name:n.name,icon:n.icon,cost:n.cost,onEnter:(e)=>this.planNodeEnter({name:n.name,props:[{k:'Physical Operation',v:n.phys},{k:'Logical Operation',v:n.log},{k:'Estimated I/O Cost',v:n.io},{k:'Estimated Rows',v:String(n.rows)},{k:'Estimated Operator Cost',v:n.cost+'%'}],x:n.x,y:n.y},e),onLeave:()=>this.planNodeLeave(),style:{position:'absolute',left:n.x+'px',top:n.y+'px',width:nodeW+'px',height:nodeH+'px',padding:'6px 8px',background:'var(--vscode-editorWidget-background)',border:'1px solid var(--vscode-editorWidget-border)',borderRadius:'3px',boxSizing:'border-box',cursor:'default',boxShadow:'0 1px 3px var(--vscode-widget-shadow)'}}));
+    const edgesDef=[['compute','select'],['nl','compute'],['scan1','nl'],['filter','nl'],['scan2','filter']];
+    const planEdges=edgesDef.map(([from,to])=>{ const a=nodeById[from],b=nodeById[to]; const x1=a.x, y1=a.y+nodeH/2; const x2=b.x+nodeW, y2=b.y+nodeH/2; const mx=(x1+x2)/2; return {d:'M'+x1+','+y1+' C'+mx+','+y1+' '+mx+','+y2+' '+x2+','+y2, w:Math.max(1,Math.min(9,Math.log2(a.rows+1)*1.6))}; });
+    const planTransformStyle={position:'absolute',top:'0',left:'0',transform:'translate('+S.planPanX+'px,'+S.planPanY+'px) scale('+S.planZoom+')',transformOrigin:'0 0'};
+    let planHoverStyle=null; if(S.planHover){ planHoverStyle={position:'absolute',left:(S.planHover.x)+'px',top:(S.planHover.y+nodeH+6)+'px',width:'240px',padding:'8px 10px',background:'var(--vscode-editorWidget-background)',border:'1px solid var(--vscode-editorWidget-border)',borderRadius:'4px',boxShadow:'0 4px 14px var(--vscode-widget-shadow)',zIndex:'5',pointerEvents:'none'}; }
+    const planTbBtn={height:'22px',minWidth:'26px',padding:'0 6px',display:'inline-flex',alignItems:'center',justifyContent:'center',background:'transparent',border:'1px solid transparent',borderRadius:'2px',color:'var(--vscode-foreground)',cursor:'pointer',fontSize:'11px'};
+
+    // ---- status bar ----
+    let statusMessage='Ready — not connected', statusIcon='codicon-circle-outline', msgTint=null;
+    if(connecting){statusMessage='Connecting…';statusIcon='codicon-loading';}
+    else if(lost){statusMessage='Connection lost.';statusIcon='codicon-debug-disconnect';msgTint='warning';}
+    else if(executing){statusMessage=ex==='cancelRequested'?'Cancelling…':'Executing query…';statusIcon='codicon-loading';}
+    else if(ex==='succeeded'){statusMessage='Query executed successfully.';statusIcon='codicon-pass-filled';}
+    else if(ex==='failed'){statusMessage='Query completed with errors.';statusIcon='codicon-error';msgTint='error';}
+    else if(ex==='canceled'){ if(S.results==='partial'){statusMessage='Results incomplete — query cancelled.';}else{statusMessage='Query was cancelled by user.';} statusIcon='codicon-circle-slash';msgTint='warning';}
+    else if(ex==='connectionLost'){statusMessage='Connection lost — query terminated.';statusIcon='codicon-debug-disconnect';msgTint='warning';}
+    else if(connected){statusMessage='Connected.';statusIcon='codicon-pass';}
+
+    // status bar bg tint
+    let sbBg='var(--vscode-statusBar-background)', sbFg='var(--vscode-statusBar-foreground)';
+    if(accent && S.theme!=='hc'){ if(S.theme==='light'){ sbBg=this.mix(accent,'#ffffff',0.15); sbFg=this.contrastText(accent); } else { sbBg=this.mix(accent,'#252526',0.62); sbFg='#f4f4f4'; } }
+    const statusBarStyle={height:'24px',flex:'none',display:'flex',alignItems:'stretch',background:sbBg,color:sbFg,fontSize:'12px',borderTop:'1px solid var(--vscode-contrastBorder)'};
+    const msgIconColor= ex==='succeeded'?'var(--vscode-testing-iconPassed)': (msgTint==='error'?'#fff':(msgTint==='warning'?'#fff':sbFg));
+    const statusMsgStyle={display:'flex',alignItems:'center',gap:'6px',padding:'0 12px',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',flexShrink:1,minWidth:0,color: msgTint?'#fff':sbFg,background: msgTint==='error'?'var(--vscode-statusBarItem-errorBackground)':(msgTint==='warning'?'var(--vscode-statusBarItem-warningBackground)':'transparent')};
+
+    // status segments (right)
+    const segStyle={display:'flex',alignItems:'center',gap:'5px',padding:'0 9px',flex:'none',whiteSpace:'nowrap',borderLeft:'1px solid '+(accent&&S.theme!=='hc'?(S.theme==='light'?'#0003':'#fff3'):'var(--vscode-panel-border)')};
+    const segs=[];
+    if(connected||lost){
+      if(P){ segs.push({icon: P.encrypted?'codicon-lock':null,text:P.short,style:segStyle}); segs.push({icon:null,text:P.login+' ('+P.spid+')',style:segStyle}); segs.push({icon:null,text:S.database||P.database,style:segStyle}); }
+      segs.push({icon:null,text:this.fmtEl(S.elapsed),style:segStyle});
+    }
+    segs.push({icon:null,text:'Ln '+S.cursor.ln+', Col '+S.cursor.col,style:segStyle});
+    if(sel){ const set=S.resultSets[sel.set]; const R=selR; segs.push({icon:null,text:'Row '+(R.r1+1)+', Col '+(R.c1+1),style:segStyle}); }
+    const totalRows=S.resultSets.reduce((a,r)=>a+r.rowCount,0);
+    if(hasOutput&&(S.resultSets.length||totalRows))segs.push({icon:null,text:totalRows.toLocaleString()+' row'+(totalRows===1?'':'s'),style:segStyle});
+    if(S.diagOpen||S._trace){}
+
+    // ---- quick pick items ----
+    const qf=S.quickFilter.toLowerCase();
+    const qpItems=[...this.profiles.filter(p=>!qf||p.label.toLowerCase().includes(qf)||p.detail.toLowerCase().includes(qf)).map(p=>({label:p.label,detail:p.detail,icon:'codicon-server-environment',accent:!!p.accent,dot:{width:'9px',height:'9px',borderRadius:'2px',background:p.accent||'transparent',flex:'none'},onClick:()=>this.pickProfile(p),style:{display:'flex',alignItems:'center',gap:'10px',padding:'6px 12px',cursor:'pointer'}})), {label:'+ New connection…',detail:'Open the connection dialog',icon:'codicon-add',accent:false,dot:{},onClick:()=>this.pickProfile(null),style:{display:'flex',alignItems:'center',gap:'10px',padding:'6px 12px',cursor:'pointer',borderTop:'1px solid var(--vscode-editorWidget-border)',marginTop:'4px'}}];
+
+    // ---- menus ----
+    let menuOpen=false, menuStyle={}, menuItems=[];
+    const mBase=(r,w)=>({position:'fixed',top:(r?r.bottom+2:40)+'px',left:(r?Math.max(6,Math.min(r.left,window.innerWidth-w-8)):8)+'px',minWidth:w+'px',background:'var(--vscode-dropdown-background)',border:'1px solid var(--vscode-dropdown-border)',borderRadius:'4px',boxShadow:'0 4px 14px var(--vscode-widget-shadow)',padding:'4px 0',zIndex:'49'});
+    const mItem=(label,icon,onClick,opt={})=>({item:true,label,icon:icon||null,onClick,kbd:opt.kbd||null,title:opt.title||'',style:{display:'flex',alignItems:'center',gap:'8px',padding:'5px 12px',cursor:opt.disabled?'default':'pointer',color:opt.disabled?'var(--vscode-disabledForeground)':'var(--vscode-dropdown-foreground)',fontSize:'13px'}});
+    if(S.menu==='conn'){ menuOpen=true; menuStyle=mBase(S.menuRect,200); menuItems=[ mItem('Connect…','codicon-plug',()=>{this.setState({menu:null,quickPick:true,quickFilter:''});},{disabled:connected}), mItem('Disconnect','codicon-debug-disconnect',()=>{this.setState({menu:null});this.doDisconnect();},{disabled:!connected}), mItem('Change Connection…','codicon-arrow-swap',()=>this.overflowAction('change'),{disabled:!connected}), mItem('Reconnect','codicon-refresh',()=>{this.setState({menu:null});this.reconnect();},{disabled:!(lost||connected)}) ]; }
+    else if(S.menu==='save'){ menuOpen=true; menuStyle=mBase(S.menuRect,180); menuItems=[{header:true,text:'Save Results As'},mItem('CSV','codicon-file',()=>this.saveAs('CSV')),mItem('JSON','codicon-file',()=>this.saveAs('JSON')),mItem('Markdown','codicon-file',()=>this.saveAs('Markdown'))]; }
+    else if(S.menu==='overflow'){ menuOpen=true; menuStyle=mBase(S.menuRect,240); menuItems=[ mItem('Comment Selection','codicon-comment',()=>this.overflowAction('comment'),{kbd:'Ctrl+K Ctrl+C'}), mItem('Uncomment Selection','codicon-comment',()=>this.overflowAction('uncomment'),{kbd:'Ctrl+K Ctrl+U'}), mItem('Toggle SQLCMD Mode','codicon-terminal',()=>{},{disabled:true,title:'Coming later'}), {sep:true}, {header:true,text:'Prototype demos'}, mItem('Run 10,000-row query','codicon-database',()=>this.overflowAction('10k')), mItem('Multiple result sets','codicon-split-horizontal',()=>this.overflowAction('multi')), mItem('Error result','codicon-error',()=>this.overflowAction('error')), mItem('No-row result','codicon-circle-slash',()=>this.overflowAction('norows')), {sep:true}, mItem('Simulate connection lost','codicon-debug-disconnect',()=>this.overflowAction('lost')), mItem((S.mockTxn?'✓ ':'')+'Mock open transaction','codicon-warning',()=>this.overflowAction('txn')) ]; }
+
+    // db dropdown
+    const dbMenuStyle={position:'fixed',top:(S.dbRect?S.dbRect.bottom+2:40)+'px',left:Math.max(6,Math.min((S.dbRect?S.dbRect.left:8),window.innerWidth-228))+'px',width:'220px',background:'var(--vscode-dropdown-background)',border:'1px solid var(--vscode-dropdown-border)',borderRadius:'4px',boxShadow:'0 4px 14px var(--vscode-widget-shadow)',zIndex:'49'};
+    const df=S.dbFilter.toLowerCase();
+    const dbItems=this.DATABASES.filter(d=>!df||d.toLowerCase().includes(df)).map(d=>({name:d,current:d===S.database,onClick:()=>this.selectDb(d),style:{display:'flex',alignItems:'center',gap:'8px',padding:'5px 10px',cursor:'pointer',fontSize:'13px',color:'var(--vscode-dropdown-foreground)',background:d===S.database?'var(--vscode-list-activeSelectionBackground)':'transparent'}}));
+
+    // context menu
+    let ctxStyle={}, ctxItems=[];
+    if(S.ctxMenu){ ctxStyle={position:'fixed',top:Math.min(S.ctxMenu.y,window.innerHeight-200)+'px',left:Math.min(S.ctxMenu.x,window.innerWidth-200)+'px',minWidth:'190px',background:'var(--vscode-dropdown-background)',border:'1px solid var(--vscode-dropdown-border)',borderRadius:'4px',boxShadow:'0 4px 14px var(--vscode-widget-shadow)',padding:'4px 0',zIndex:'53'}; const ci=(label,onClick,kbd)=>({label,onClick,kbd:kbd||null,style:{display:'flex',alignItems:'center',padding:'5px 12px',cursor:'pointer',fontSize:'13px',color:'var(--vscode-dropdown-foreground)'}}); ctxItems=[ci('Copy',()=>this.copySelection(false),'Ctrl+C'),ci('Copy with Headers',()=>this.copySelection(true)),ci('Select All',()=>{this.selectAll();this.setState({ctxMenu:null});},'Ctrl+A'),ci('Save Results As…',()=>{this.setState({ctxMenu:null});this.toast('Choose format from toolbar Save menu','codicon-info');}),ci('View Cell',()=>this.openViewCell(S.ctxMenu.si,S.ctxMenu.r,S.ctxMenu.c))]; }
+
+    // diagnostics popover
+    const diagPopStyle={position:'fixed',top:(S.diagRect?S.diagRect.bottom+2:40)+'px',left:Math.max(6,Math.min((S.diagRect?S.diagRect.left-120:8),window.innerWidth-248))+'px',width:'240px',background:'var(--vscode-editorWidget-background)',border:'1px solid var(--vscode-editorWidget-border)',borderRadius:'4px',boxShadow:'0 4px 14px var(--vscode-widget-shadow)',padding:'10px 12px',zIndex:'49',fontSize:'12px'};
+    const diagRows=[{k:'Trace',v:'recording digests'},{k:'Replay',v:'not armed'},{k:'Queries run',v:String(this._diagCounters.queries)},{k:'Rows streamed',v:this._diagCounters.rowsStreamed.toLocaleString()},{k:'Backend',v:'STS2 (mock)'},{k:'Metadata session',v:connected?'dedicated · ready':'idle'}];
+
+    // view cell
+    const viewCell=S.viewCell;
+
+    return {
+      theme:S.theme, tabTitle, dirty:S.dirty, themeBtns,
+      toolbarStyle, tbIcon, sep, ghostBtn, ghostBtn2, planTbBtn,
+      connBtn, onConnMain:()=>this.onConnMain(), onConnMenu:(e)=>this.onConnMenu(e),
+      dbBtn, dbDisabled:dbDis, dbNotSwitching:!S.dbSwitching, dbSwitching:S.dbSwitching, dbTitle: dbDis?(connected?'Cannot change database while executing':'Connect to enable database selection'):'Change database context', onDbBtn:(e)=>this.onDbBtn(e),
+      execBtn, execDisabled:execDis, execTitle: execDis?(connected?'A query is already running':'Connect to a server to execute (F5 · Ctrl+Enter)'):'Execute (F5 · Ctrl+Enter) — runs selection if any, else whole document', isBusy:executing, notBusy:!executing, onExecute:()=>this.onExecute(),
+      cancelBtn, cancelDisabled:cancelDis, onCancel:()=>this.onCancel(),
+      onParse:()=>this.onParse(), onEstPlan:()=>this.onEstPlan(), actualBtn, onActualPlan:()=>this.onActualPlan(),
+      gridModeBtn:{style:modeBtn(S.viewMode==='grid')}, textModeBtn:{style:modeBtn(S.viewMode==='text')}, onGridMode:()=>this.onGridMode(), onTextMode:()=>this.onTextMode(),
+      noOutput:!hasOutput, onSaveMenu:(e)=>this.onSaveMenu(e), diagBtn, onDiagMenu:(e)=>this.onDiagMenu(e), onOverflow:(e)=>this.onOverflow(e),
+      // editor
+      codeLines, editorText:S.editorText, onEditorChange:this.onEditorChange, onEditorCursor:this.onEditorCursor, setTextarea:(el)=>this.setTextarea(el), setEditorScroll:(el)=>this.setEditorScroll(el), lineHiStyle, flashStyle, annotations,
+      // panes
+      editorPaneStyle, showSplitter, onSplitDown:this.onSplitDown, onSplitReset:this.onSplitReset, showResults, resultsPaneStyle,
+      // tabs
+      tabResultsStyle:tabStyle(tab==='results'), tabMessagesStyle:tabStyle(tab==='messages'), tabPlanStyle:tabStyle(tab==='plan'), hasPlan:S.hasPlan, hasErrors:errCount>0, errorCount:errCount,
+      onTabResults:()=>this.onTabResults(), onTabMessages:()=>this.onTabMessages(), onTabPlan:()=>this.onTabPlan(),
+      isStreaming:S.results==='streaming'&&S.resultSets.some(r=>!r.complete), streamCountLabel:totalRows.toLocaleString(), multiSets:S.resultSets.length>1, setCountLabel:S.resultSets.length+' result sets',
+      // grid
+      showGridPane: tab==='results', isGridMode:S.viewMode==='grid', isTextMode:S.viewMode==='text', noResultSets: tab==='results'&&S.resultSets.length===0&&S.results!=='streaming', gridSets, setGridScroll:(el)=>this.setGridScroll(el), onGridScroll:this.onGridScroll, onGridFocus:this.onGridFocus, onGridBlur:this.onGridBlur,
+      rowsAddedChip:S.newRows>0&&!S.followTail, rowsAddedLabel:S.newRows.toLocaleString(), onFollowTail:this.onFollowTail,
+      showSummary, summaryText, textOutput,
+      // messages
+      showMessagesPane: tab==='messages', messages, setMsgScroll:(el)=>this.setMsgScroll(el),
+      // plan
+      showPlanPane: tab==='plan'&&S.hasPlan, planHeuristic:S.planHeuristic, planNodes, planEdges, planTransformStyle, planHover:S.planHover, planHoverStyle, planZoomLabel:Math.round(S.planZoom*100)+'%', setPlanEl:(el)=>this.setPlanEl(el), onPlanPanDown:this.onPlanPanDown, onPlanWheel:this.onPlanWheel, onPlanZoomIn:()=>this.onPlanZoomIn(), onPlanZoomOut:()=>this.onPlanZoomOut(), onPlanZoomReset:()=>this.onPlanZoomReset(), onPlanFit:()=>this.onPlanFit(),
+      // status
+      statusBarStyle, statusMsgStyle, statusMessage, statusIcon, statusSegs:segs,
+      // overlays
+      quickPick:S.quickPick, quickFilter:S.quickFilter, qpItems, onQpFilter:(e)=>this.onQpFilter(e), setQpInput:(el)=>this.setQpInput(el),
+      menuOpen, menuStyle, menuItems,
+      dbOpen:S.dbOpen, dbMenuStyle, dbItems, dbFilter:S.dbFilter, onDbFilter:(e)=>this.onDbFilter(e), setDbInput:(el)=>this.setDbInput(el),
+      ctxMenu:S.ctxMenu, ctxStyle, ctxItems, onCtxSwallow:this.onCtxSwallow,
+      viewCell, onCloseViewCell:()=>this.onCloseViewCell(), onCopyCell:()=>this.onCopyCell(),
+      txnModal:S.txnModal, onTxnCancel:()=>this.onTxnCancel(), onTxnCommit:()=>this.onTxnCommit(), onTxnRollback:()=>this.onTxnRollback(),
+      diagOpen:S.diagOpen, diagPopStyle, diagRows,
+      toasts:S.toasts,
+      onCloseOverlays:this.onCloseOverlays, stop:this.stop
+    };
+  }
+}
+</script>
+</body>
+</html>

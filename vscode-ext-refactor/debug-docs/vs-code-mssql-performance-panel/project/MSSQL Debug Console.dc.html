@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+/* ===== VS Code theme token mapping (light default, dark override) ===== */
+[data-app]{
+  --bg:#ffffff; --sidebar-bg:#f8f8f8; --panel:#ffffff; --panel-alt:#f3f3f3; --widget:#ffffff;
+  --hover:#f0f0f0; --active-row:#e6f0fb; --nav-active-bg:rgba(0,95,184,.10); --selection:#cfe3fb;
+  --line:#e5e5e5; --line-strong:#d4d4d4; --fg:#1f1f1f; --fg-soft:#3b3b3b; --muted:#6c6c6c;
+  --link:#005fb8; --focus:#005fb8; --accent:#005fb8; --accent-fg:#ffffff; --badge-bg:#e4e4e4; --badge-fg:#3b3b3b;
+  --input-bg:#ffffff; --input-border:#cecece;
+  --ok:#14822c; --ok-bg:#e8f5ec; --ok-border:#bfe3c8;
+  --warn:#a86500; --warn-bg:#fbf1df; --warn-border:#eeddb5;
+  --err:#c4271b; --err-bg:#fdecea; --err-border:#f3c9c4;
+  --info:#005fb8; --info-bg:#e8f0fb; --info-border:#c4dbf5;
+  --p-ext:#0f766e; --p-webview:#2563eb; --p-sts:#7c3aed; --p-sql:#0e7a3b; --p-harness:#64748b; --p-wire:#c2410c;
+  --chart-grid:#ececec; --chart-axis:#cfcfcf; --band:rgba(0,95,184,.08);
+  --shadow:0 1px 2px rgba(0,0,0,.06); --radius:6px;
+  --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  --font-mono:"Cascadia Code",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+[data-app][data-theme="dark"]{
+  --bg:#1f1f1f; --sidebar-bg:#181818; --panel:#1f1f1f; --panel-alt:#252526; --widget:#252526;
+  --hover:#2a2a2a; --active-row:#04395e; --nav-active-bg:rgba(0,120,212,.22); --selection:#264f78;
+  --line:#2b2b2b; --line-strong:#3c3c3c; --fg:#e4e4e4; --fg-soft:#cccccc; --muted:#9d9d9d;
+  --link:#4daafc; --focus:#0078d4; --accent:#0078d4; --accent-fg:#ffffff; --badge-bg:#3d3d3d; --badge-fg:#e4e4e4;
+  --input-bg:#2b2b2b; --input-border:#3c3c3c;
+  --ok:#4ec06a; --ok-bg:#12261a; --ok-border:#245c32;
+  --warn:#d7a500; --warn-bg:#2a2410; --warn-border:#5c4e1a;
+  --err:#f14c4c; --err-bg:#2d1a1a; --err-border:#5c2b2b;
+  --info:#4daafc; --info-bg:#12283d; --info-border:#204d73;
+  --p-ext:#2dd4bf; --p-webview:#60a5fa; --p-sts:#a78bfa; --p-sql:#4ade80; --p-harness:#94a3b8; --p-wire:#fb923c;
+  --chart-grid:#2b2b2b; --chart-axis:#3c3c3c; --band:rgba(77,170,252,.12);
+  --shadow:0 1px 2px rgba(0,0,0,.3); --radius:6px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0}
+[data-app] ::-webkit-scrollbar{width:11px;height:11px}
+[data-app] ::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:6px;border:3px solid transparent;background-clip:content-box}
+[data-app] ::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+[data-app] ::-webkit-scrollbar-corner{background:transparent}
+[data-app] ::selection{background:var(--selection)}
+[data-nav]{color:var(--fg-soft)}
+[data-nav]:hover{background:var(--hover)}
+[data-nav][data-active="true"]{background:var(--nav-active-bg);color:var(--fg);box-shadow:inset 2px 0 0 var(--accent)}
+[data-row]:hover{background:var(--hover)}
+[data-row][data-selected="true"]{background:var(--active-row)}
+[data-row][data-selected="true"]:hover{background:var(--active-row)}
+[data-tab]{color:var(--muted)}
+[data-tab]:hover{color:var(--fg)}
+[data-tab][data-active="true"]{color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
+[data-seg]{color:var(--muted)}
+[data-seg][data-active="true"]{background:var(--panel);color:var(--fg);box-shadow:var(--shadow)}
+[data-chip]:hover{background:var(--hover)}
+[data-ghost]:hover{background:var(--hover)}
+[data-app][data-reduce="true"] [data-pulse]{animation:none!important}
+@media (max-width:1080px){ [data-ov-grid]{grid-template-columns:1fr!important} }
+@keyframes diagPulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes barIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+[data-pulse]{animation:diagPulse 1.6s ease-in-out infinite}
+</style>
+</helmet>
+<div data-app data-theme="{{ theme }}" data-reduce="{{ reduceAttr }}" style="height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--fg);font-family:var(--font-ui);font-size:12px;line-height:1.4;overflow:hidden; {{ accentVars }}">
+
+  <!-- ===================== TOP BAR ===================== -->
+  <header style="flex:none;height:44px;display:flex;align-items:center;gap:10px;padding:0 12px;background:var(--sidebar-bg);border-bottom:1px solid var(--line);z-index:5">
+    <div style="display:flex;align-items:center;gap:8px;min-width:0">
+      <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 8h3l1.5-4 3 8 1.5-4h4"/></svg>
+      <span style="font-weight:600;font-size:13px;white-space:nowrap">MSSQL Debug Console</span>
+    </div>
+
+    <!-- session selector -->
+    <button data-ghost onClick="{{ act.openProvenance }}" style="display:flex;align-items:center;gap:7px;height:28px;padding:0 9px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);color:var(--fg);cursor:pointer;font-family:var(--font-ui);font-size:12px;max-width:340px;min-width:0">
+      <span data-pulse="{{ liveDotAttr }}" style="flex:none;width:8px;height:8px;border-radius:50%;background:{{ sessionDotColor }}"></span>
+      <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">{{ sessionLabel }}</span>
+      <span style="color:var(--muted);font-family:var(--font-mono);font-size:11px;white-space:nowrap">{{ sessionMeta }}</span>
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+    </button>
+
+    <!-- live / history segmented -->
+    <div style="display:flex;align-items:center;height:28px;padding:2px;gap:2px;background:var(--panel-alt);border:1px solid var(--line);border-radius:6px">
+      <button data-seg data-active="{{ liveActive }}" onClick="{{ act.setLive }}" style="display:flex;align-items:center;gap:5px;height:100%;padding:0 9px;border:0;border-radius:4px;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:11px;font-weight:600">
+        <span style="width:6px;height:6px;border-radius:50%;background:{{ liveTintColor }}"></span>Live
+      </button>
+      <button data-seg data-active="{{ histActive }}" onClick="{{ act.setHistory }}" style="height:100%;padding:0 10px;border:0;border-radius:4px;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:11px;font-weight:600">History</button>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <!-- global search -->
+    <div style="display:flex;align-items:center;gap:6px;height:28px;padding:0 9px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:5px;width:240px;max-width:26vw">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="4.5"/><path d="M11 11l3.2 3.2"/></svg>
+      <input value="{{ searchText }}" onInput="{{ act.onSearch }}" placeholder="Search events, types, corr id, digests…" style="flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--fg);font-family:var(--font-ui);font-size:12px" />
+    </div>
+
+    <!-- capture chip -->
+    <button data-ghost onClick="{{ act.toggleCapture }}" style="display:flex;align-items:center;gap:6px;height:28px;padding:0 9px;border:1px solid {{ captureBorder }};border-radius:5px;background:{{ captureBg }};color:{{ captureColor }};cursor:pointer;font-family:var(--font-ui);font-size:11px;font-weight:600;white-space:nowrap">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>
+      {{ captureLabel }}
+    </button>
+
+    <!-- gap indicator -->
+    <button data-ghost onClick="{{ act.goTraceGap }}" style="display:flex;align-items:center;gap:6px;height:28px;padding:0 9px;border:1px solid var(--warn-border);border-radius:5px;background:var(--warn-bg);color:var(--warn);cursor:pointer;font-family:var(--font-ui);font-size:11px;font-weight:600;white-space:nowrap">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5l6.5 11.5H1.5z"/><path d="M8 6.2v3.2M8 11.2v.02"/></svg>
+      Backfill {{ gapCount }} gaps
+    </button>
+
+    <!-- export -->
+    <button data-ghost onClick="{{ act.openExport }}" style="display:flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:1px solid var(--accent);border-radius:5px;background:var(--accent);color:var(--accent-fg);cursor:pointer;font-family:var(--font-ui);font-size:11px;font-weight:600;white-space:nowrap">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v7.5M5.2 6.7L8 9.5l2.8-2.8M3 13.5h10"/></svg>
+      Export
+    </button>
+
+    <!-- theme toggle -->
+    <button data-ghost onClick="{{ act.toggleTheme }}" title="Toggle theme" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);color:var(--fg);cursor:pointer">
+      <span style="display:{{ sunDisplay }}"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15M3.05 3.05l1.1 1.1M11.85 11.85l1.1 1.1M12.95 3.05l-1.1 1.1M4.15 11.85l-1.1 1.1"/></svg></span>
+      <span style="display:{{ moonDisplay }}"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 9.6A5.6 5.6 0 016.4 2.8a5.6 5.6 0 100 10.4 5.6 5.6 0 006.8-3.6z"/></svg></span>
+    </button>
+  </header>
+
+  <!-- ===================== BODY ===================== -->
+  <div style="flex:1;display:flex;min-height:0">
+
+    <!-- LEFT RAIL -->
+    <nav style="flex:none;width:210px;background:var(--sidebar-bg);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow-y:auto;padding:8px 0">
+      <div style="padding:4px 14px 6px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">Common</div>
+      <button data-nav data-active="{{ nav.overview }}" onClick="{{ go.overview }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Overview</button>
+      <button data-nav data-active="{{ nav.trace }}" onClick="{{ go.trace }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M6 3.5h8M6 8h8M6 12.5h8"/><circle cx="2.5" cy="3.5" r="1"/><circle cx="2.5" cy="8" r="1"/><circle cx="2.5" cy="12.5" r="1"/></svg>Consolidated Trace</button>
+      <button data-nav data-active="{{ nav.waterfall }}" onClick="{{ go.waterfall }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2.5" width="7" height="2.6" rx="1.3"/><rect x="5" y="6.7" width="8.5" height="2.6" rx="1.3"/><rect x="3.5" y="10.9" width="5" height="2.6" rx="1.3"/></svg>Waterfall</button>
+      <button data-nav data-active="{{ nav.perf }}" onClick="{{ go.perf }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2v12h12"/><path d="M4 11l3-4 2.5 2 4-6"/></svg>Perf &amp; Sessions</button>
+      <button data-nav data-active="{{ nav.completions }}" onClick="{{ go.completions }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M8 2l1.4 4L13 7.4 9.4 8.8 8 13l-1.4-4.2L3 7.4 6.6 6z"/></svg>Completions</button>
+      <button data-nav data-active="{{ nav.replay }}" onClick="{{ go.replay }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.7 8a5.3 5.3 0 019-3.8M13.3 8a5.3 5.3 0 01-9 3.8"/><path d="M11.4 1.7v2.7H8.7M4.6 14.3v-2.7h2.7"/></svg>Replay Lab</button>
+
+      <div style="padding:12px 14px 6px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">Feature pages</div>
+      <button data-nav data-active="{{ nav.sql }}" onClick="{{ go.sql }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><ellipse cx="8" cy="4" rx="5" ry="2"/><path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4"/><path d="M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/></svg>SQL Activity</button>
+      <button data-nav data-active="{{ nav.connections }}" onClick="{{ go.connections }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 2v3M10.5 2v3M4 5h8v2.2a4 4 0 01-8 0z M8 11.2V14"/></svg>Connections</button>
+      <button data-nav data-active="{{ nav.query }}" onClick="{{ go.query }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M4 3l9 5-9 5z"/></svg>Query &amp; Results</button>
+      <button data-nav data-active="{{ nav.oe }}" onClick="{{ go.oe }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2.5" width="3.2" height="3.2" rx=".6"/><rect x="10.8" y="6" width="3.2" height="3.2" rx=".6"/><rect x="10.8" y="10.5" width="3.2" height="3.2" rx=".6"/><path d="M3.6 5.7v6.1h7.2M3.6 7.6h7.2"/></svg>Object Explorer</button>
+
+      <div style="padding:12px 14px 6px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">Session</div>
+      <button data-nav data-active="{{ nav.exports }}" onClick="{{ go.exports }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M8 1.6l6 3v7l-6 3-6-3v-7z"/><path d="M2.2 4.7L8 7.6l5.8-2.9M8 7.6v7.3"/></svg>Exports</button>
+      <button data-nav data-active="{{ nav.settings }}" onClick="{{ go.settings }}" style="display:flex;align-items:center;gap:9px;height:30px;padding:0 12px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;text-align:left;width:100%">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.5 3.5l1.4 1.4M11.1 11.1l1.4 1.4M12.5 3.5l-1.4 1.4M4.9 11.1l-1.4 1.4"/></svg>Settings</button>
+
+      <div style="flex:1"></div>
+      <div style="margin:8px 12px 2px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel)">
+        <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Provenance</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--fg-soft)">{{ provCommit }}</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">{{ provEnv }}</div>
+      </div>
+    </nav>
+
+    <!-- PAGE AREA -->
+    <main style="flex:1;min-width:0;overflow:auto;background:var(--bg)">
+
+      <!-- ============ OVERVIEW ============ -->
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:16px 18px 40px;max-width:1400px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px">
+          <div>
+            <h1 style="margin:0;font-size:16px;font-weight:600">Overview</h1>
+            <div style="color:var(--muted);font-size:12px;margin-top:2px">Session triage — what's captured, what's slow, what changed. {{ overviewSourceLine }}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;font-family:var(--font-mono)">{{ sessionId }}</div>
+        </div>
+
+        <!-- KPI grid -->
+        <div style="display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));margin:14px 0 18px">
+          <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="11">
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:9px 11px;min-width:0;box-shadow:var(--shadow)">
+              <div style="color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.label }}</div>
+              <div style="font-size:20px;font-weight:700;margin-top:3px;white-space:nowrap;color:{{ k.color }}">{{ k.value }}</div>
+              <div style="color:var(--muted);font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.note }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div data-ov-grid style="display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.85fr);gap:14px;align-items:start">
+          <!-- recent actions -->
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--line)">
+              <div style="font-weight:600;font-size:13px">Recent user actions</div>
+              <div style="color:var(--muted);font-size:11px">last 6 · <span style="color:var(--link);cursor:pointer">open in Trace →</span></div>
+            </div>
+            <div style="display:grid;grid-template-columns:96px minmax(0,1fr) 128px 68px 92px 42px 66px 40px;padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700">
+              <div>Start</div><div>Action</div><div>Feature</div><div style="text-align:right;padding-right:10px">Dur</div><div>Status</div><div style="text-align:right">SQL</div><div style="text-align:right">Render</div><div style="text-align:right">Gaps</div>
+            </div>
+            <sc-for list="{{ actions }}" as="a" hint-placeholder-count="6">
+              <div data-row onClick="{{ a.onOpen }}" style="display:grid;grid-template-columns:96px minmax(0,1fr) 128px 68px 92px 42px 66px 40px;padding:6px 12px;border-bottom:1px solid var(--line);cursor:pointer;align-items:center;font-size:12px">
+                <div style="font-family:var(--font-mono);font-size:11px;color:var(--muted)">{{ a.time }}</div>
+                <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500">{{ a.action }}</div>
+                <div style="color:var(--fg-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.feature }}</div>
+                <div style="text-align:right;font-family:var(--font-mono);font-size:11.5px">{{ a.dur }}</div>
+                <div><span style="display:inline-flex;align-items:center;height:17px;padding:0 7px;border-radius:999px;border:1px solid {{ a.st.b }};background:{{ a.st.bg }};color:{{ a.st.c }};font-size:10.5px;font-weight:600">{{ a.statusLabel }}</span></div>
+                <div style="text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--fg-soft)">{{ a.sql }}</div>
+                <div style="text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--fg-soft)">{{ a.render }}</div>
+                <div style="text-align:right;font-family:var(--font-mono);font-size:11px;color:{{ a.gapColor }}">{{ a.gaps }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- anomalies -->
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="font-weight:600;font-size:13px;padding:0 2px">Anomalies</div>
+            <sc-for list="{{ anomalies }}" as="an" hint-placeholder-count="4">
+              <button data-ghost onClick="{{ an.onOpen }}" style="text-align:left;display:block;background:var(--panel);border:1px solid var(--line);border-left:3px solid {{ an.color }};border-radius:var(--radius);padding:9px 11px;cursor:pointer;box-shadow:var(--shadow)">
+                <div style="display:flex;gap:7px;align-items:flex-start">
+                  <span style="flex:none;margin-top:1px;width:8px;height:8px;border-radius:50%;background:{{ an.color }}"></span>
+                  <div style="min-width:0">
+                    <div style="font-size:12.5px;font-weight:600;line-height:1.35">{{ an.title }}</div>
+                    <div style="color:var(--muted);font-size:11px;margin-top:3px;font-family:var(--font-mono)">{{ an.detail }}</div>
+                    <div style="color:var(--link);font-size:11px;margin-top:5px;font-weight:600">{{ an.cta }} →</div>
+                  </div>
+                </div>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- recent sessions -->
+        <div style="margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--line)">
+            <div style="font-weight:600;font-size:13px">Sessions &amp; imported runs</div>
+            <div style="color:var(--link);font-size:11px;cursor:pointer">Import bundle…</div>
+          </div>
+          <sc-for list="{{ sessions }}" as="s" hint-placeholder-count="4">
+            <div data-row style="display:grid;grid-template-columns:minmax(0,1fr) 120px 100px 90px 90px;padding:8px 12px;border-bottom:1px solid var(--line);cursor:pointer;align-items:center;font-size:12px">
+              <div style="display:flex;align-items:center;gap:8px;min-width:0">
+                <span data-pulse="{{ s.dotPulse }}" style="flex:none;width:8px;height:8px;border-radius:50%;background:{{ s.dotColor }}"></span>
+                <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500">{{ s.name }}</span>
+              </div>
+              <div><span style="display:inline-flex;align-items:center;height:17px;padding:0 7px;border-radius:4px;background:var(--panel-alt);border:1px solid var(--line);color:var(--muted);font-size:10.5px;font-family:var(--font-mono)">{{ s.src }}</span></div>
+              <div style="color:var(--muted)">{{ s.when }}</div>
+              <div style="text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--fg-soft)">{{ s.events }}</div>
+              <div style="text-align:right;color:var(--muted);font-size:11px">{{ s.mode }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+      <!-- ============ CONSOLIDATED TRACE ============ -->
+      <sc-if value="{{ isTrace }}" hint-placeholder-val="{{ false }}">
+      <div style="height:100%;display:flex;flex-direction:column;min-height:0">
+        <!-- page toolbar -->
+        <div style="flex:none;display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap">
+          <div style="font-weight:600;font-size:13px;margin-right:4px">Consolidated Trace</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span data-chip style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11px">Process <span style="color:var(--muted)">all</span> <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><path d="M4 6l4 4 4-4"/></svg></span>
+            <span data-chip style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11px">Feature <span style="color:var(--muted)">all</span> <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><path d="M4 6l4 4 4-4"/></svg></span>
+            <span data-chip style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11px">Kind <span style="color:var(--muted)">all</span> <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><path d="M4 6l4 4 4-4"/></svg></span>
+            <span data-chip style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11px">Status <span style="color:var(--muted)">any</span> <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><path d="M4 6l4 4 4-4"/></svg></span>
+            <span data-chip style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11px">Group by <span style="color:var(--fg)">none</span> <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><path d="M4 6l4 4 4-4"/></svg></span>
+          </div>
+          <div style="flex:1"></div>
+          <div style="color:var(--muted);font-size:11px">{{ traceLiveNote }}</div>
+          <div style="color:var(--muted);font-size:11px;font-family:var(--font-mono)">{{ traceCount }} shown</div>
+        </div>
+
+        <!-- split -->
+        <div style="flex:1;display:flex;min-height:0">
+          <!-- event table -->
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid var(--line);overflow:hidden">
+            <div style="flex:none;overflow-x:auto">
+              <div style="min-width:660px">
+                <div style="display:grid;grid-template-columns:78px 50px 92px 84px minmax(120px,1fr) 92px 56px 66px 84px;padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;position:sticky;top:0;background:var(--bg)">
+                  <div>Time</div><div>Seq</div><div>Process</div><div>Feature</div><div>Type</div><div>Corr</div><div style="text-align:right">Dur</div><div>Status</div><div>Flags</div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1;overflow:auto">
+              <div style="min-width:660px">
+                <sc-for list="{{ events }}" as="e" hint-placeholder-count="16">
+                  <sc-if value="{{ e.gap }}" hint-placeholder-val="{{ false }}">
+                    <div style="border-bottom:1px solid var(--line);background:var(--warn-bg)">
+                      <div data-ghost onClick="{{ e.onToggle }}" style="display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;color:var(--warn);font-size:12px">
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5l6.5 11.5H1.5z"/><path d="M8 6.2v3.2M8 11.4v.02"/></svg>
+                        <span style="font-weight:600">{{ e.count }} events dropped</span>
+                        <span style="font-family:var(--font-mono);font-size:11px">seq {{ e.from }}–{{ e.through }}</span>
+                        <span style="color:var(--muted);font-size:11px">reason: {{ e.reason }}</span>
+                        <div style="flex:1"></div>
+                        <span style="font-size:11px;font-weight:600;text-decoration:underline">Backfill from journal</span>
+                      </div>
+                      <sc-if value="{{ gapOpen }}" hint-placeholder-val="{{ false }}">
+                        <div style="padding:0 12px 10px 32px">
+                          <sc-if value="{{ gapDone }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:flex;align-items:center;gap:8px;color:var(--ok);font-size:12px;padding:6px 0">
+                              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg>
+                              Recovered 214 events from local journal. Inserted at original sequence positions.
+                            </div>
+                          </sc-if>
+                          <sc-if value="{{ gapDoneNot }}" hint-placeholder-val="{{ true }}">
+                            <div style="display:flex;align-items:center;gap:10px;padding:6px 0">
+                              <button onClick="{{ e.onBackfill }}" style="height:26px;padding:0 12px;border:1px solid var(--accent);border-radius:5px;background:var(--accent);color:var(--accent-fg);font-weight:600;font-size:11.5px;cursor:pointer;font-family:var(--font-ui)">Backfill 214 events</button>
+                              <span style="color:var(--muted);font-size:11px">Reads JSONL segment for seq 10432–10645 from the local store. Not an error — the substrate reports the exact dropped range.</span>
+                            </div>
+                          </sc-if>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ e.notGap }}" hint-placeholder-val="{{ true }}">
+                    <div data-row data-selected="{{ e.selAttr }}" onClick="{{ e.onSelect }}" style="display:grid;grid-template-columns:78px 50px 92px 84px minmax(120px,1fr) 92px 56px 66px 84px;padding:5px 12px;border-bottom:1px solid var(--line);cursor:pointer;align-items:center;font-size:11.5px;box-shadow:inset 3px 0 0 {{ e.procColor }}">
+                      <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted)">{{ e.time }}</div>
+                      <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted)">{{ e.seq }}</div>
+                      <div><span style="display:inline-flex;align-items:center;height:16px;padding:0 6px;border-radius:4px;font-size:10px;font-weight:600;color:{{ e.procColor }};background:color-mix(in srgb,{{ e.procColor }} 12%,transparent)">{{ e.procLabel }}</span></div>
+                      <div style="color:var(--fg-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.feature }}</div>
+                      <div style="font-family:var(--font-mono);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="color:{{ e.procColor }};margin-right:5px">{{ e.kindGlyph }}</span>{{ e.type }}</div>
+                      <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.corr }}</div>
+                      <div style="text-align:right;font-family:var(--font-mono);font-size:10.5px">{{ e.dur }}</div>
+                      <div><span style="display:inline-flex;align-items:center;height:16px;padding:0 6px;border-radius:999px;border:1px solid {{ e.st.b }};background:{{ e.st.bg }};color:{{ e.st.c }};font-size:10px;font-weight:600">{{ e.statusLabel }}</span></div>
+                      <div style="display:flex;gap:3px;flex-wrap:wrap">
+                        <sc-for list="{{ e.flagList }}" as="fl" hint-placeholder-count="0">
+                          <span style="display:inline-flex;align-items:center;height:15px;padding:0 5px;border-radius:3px;font-size:9.5px;font-weight:600;color:{{ fl.color }};background:color-mix(in srgb,{{ fl.color }} 14%,transparent)">{{ fl.label }}</span>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <!-- detail pane -->
+          <div style="flex:none;width:clamp(360px,38%,470px);display:flex;flex-direction:column;min-height:0;background:var(--panel)">
+            <!-- tabs -->
+            <div style="flex:none;display:flex;gap:2px;padding:0 8px;border-bottom:1px solid var(--line);overflow-x:auto">
+              <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="7">
+                <button data-tab data-active="{{ tb.active }}" onClick="{{ tb.onTab }}" style="flex:none;height:30px;padding:0 10px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:12px;font-weight:500">{{ tb.label }}</button>
+              </sc-for>
+            </div>
+            <!-- header -->
+            <div style="flex:none;padding:11px 14px 9px;border-bottom:1px solid var(--line)">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:9px;height:9px;border-radius:2px;background:{{ sel.procColor }};flex:none"></span>
+                <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;word-break:break-all">{{ sel.title }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
+                <span style="display:inline-flex;align-items:center;height:18px;padding:0 8px;border-radius:999px;border:1px solid {{ sel.st.b }};background:{{ sel.st.bg }};color:{{ sel.st.c }};font-size:10.5px;font-weight:600">{{ sel.statusLabel }}</span>
+                <span style="color:var(--muted);font-size:11px">{{ sel.procLabel }} · {{ sel.feature }}</span>
+                <span style="color:var(--muted);font-size:11px;font-family:var(--font-mono)">{{ sel.dur }}</span>
+              </div>
+            </div>
+            <!-- tab body -->
+            <div style="flex:1;overflow:auto;padding:12px 14px 24px">
+
+              <sc-if value="{{ tSummary }}" hint-placeholder-val="{{ true }}">
+                <div style="display:grid;grid-template-columns:112px 1fr;gap:7px 12px;font-size:12px">
+                  <span style="color:var(--muted)">Event ID</span><span style="font-family:var(--font-mono);font-size:11px">{{ sel.seqMono }}</span>
+                  <span style="color:var(--muted)">Start</span><span style="font-family:var(--font-mono);font-size:11px">{{ sel.start }}</span>
+                  <span style="color:var(--muted)">Duration</span><span style="font-family:var(--font-mono);font-size:11px">{{ sel.dur }}</span>
+                  <span style="color:var(--muted)">Process</span><span>{{ sel.procLabel }}</span>
+                  <span style="color:var(--muted)">Feature</span><span>{{ sel.feature }}</span>
+                  <span style="color:var(--muted)">Kind</span><span>{{ sel.category }}</span>
+                  <span style="color:var(--muted)">Correlation</span><span style="font-family:var(--font-mono);font-size:11px;color:var(--link)">{{ sel.corr }}</span>
+                  <span style="color:var(--muted)">Parent cause</span><span style="font-family:var(--font-mono);font-size:11px">{{ sel.parentCause }}</span>
+                  <span style="color:var(--muted)">Max class</span><span><span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:11px">{{ sel.maxClass }}</span></span>
+                </div>
+                <div style="margin-top:12px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700">Entity refs</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+                  <sc-for list="{{ sel.entityRefs }}" as="er" hint-placeholder-count="1">
+                    <span style="display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 8px;border-radius:4px;background:var(--panel-alt);border:1px solid var(--line);font-size:11px"><span style="color:var(--muted)">{{ er.kind }}</span><span style="font-family:var(--font-mono);font-size:10.5px">{{ er.id }}</span></span>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ sel.hasArtifacts }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:12px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700">Related artifacts</div>
+                  <div style="display:flex;flex-direction:column;gap:5px;margin-top:6px">
+                    <sc-for list="{{ sel.artifacts }}" as="ar" hint-placeholder-count="0">
+                      <span style="display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--link);cursor:pointer"><span style="color:var(--muted)">{{ ar.icon }}</span>{{ ar.label }}</span>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </sc-if>
+
+              <sc-if value="{{ tPayload }}" hint-placeholder-val="{{ false }}">
+                <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:8px">Structured payload</div>
+                <div style="display:flex;flex-direction:column;gap:1px">
+                  <sc-for list="{{ sel.payloadRows }}" as="p" hint-placeholder-count="5">
+                    <div style="display:grid;grid-template-columns:130px 1fr;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);align-items:start">
+                      <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);word-break:break-all">{{ p.k }}</span>
+                      <sc-if value="{{ p.lock }}" hint-placeholder-val="{{ false }}">
+                        <div>
+                          <div style="display:flex;align-items:center;gap:6px;color:var(--fg-soft);font-size:11.5px">
+                            <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>
+                            <span>{{ p.v }}</span>
+                          </div>
+                          <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:2px">{{ p.digest }}</div>
+                          <div style="font-size:10.5px;color:var(--muted);margin-top:1px">{{ p.cls }} · {{ p.reason }}</div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ p.notLock }}" hint-placeholder-val="{{ true }}">
+                        <span style="font-family:var(--font-mono);font-size:11.5px;word-break:break-all">{{ p.v }}</span>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="margin-top:12px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel-alt);color:var(--muted);font-size:11px">Copy actions copy redacted values by default. Reveal requires explicit per-session capture elevation.</div>
+              </sc-if>
+
+              <sc-if value="{{ tCause }}" hint-placeholder-val="{{ false }}">
+                <div style="color:var(--muted);font-size:11px;margin-bottom:8px">Ancestors and descendants along the correlation chain. Click a node to select it.</div>
+                <div style="display:flex;flex-direction:column">
+                  <sc-for list="{{ sel.causeTree }}" as="c" hint-placeholder-count="5">
+                    <div data-ghost data-selected="{{ c.meAttr }}" style="display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:5px;cursor:pointer;padding-left:{{ c.pad }}">
+                      <span style="width:7px;height:7px;border-radius:2px;background:{{ c.color }};flex:none"></span>
+                      <span style="font-family:var(--font-mono);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ tTimeline }}" hint-placeholder-val="{{ false }}">
+                <div style="color:var(--muted);font-size:11px;margin-bottom:10px">Mini waterfall · ±250 ms window around the selected event.</div>
+                <div style="display:flex;flex-direction:column;gap:7px">
+                  <sc-for list="{{ sel.timeline }}" as="tb" hint-placeholder-count="5">
+                    <div>
+                      <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-bottom:2px"><span style="font-family:var(--font-mono)">{{ tb.label }}</span></div>
+                      <div style="position:relative;height:15px;background:var(--panel-alt);border-radius:3px">
+                        <div style="position:absolute;top:0;height:15px;border-radius:3px;left:{{ tb.left }};width:{{ tb.width }};background:{{ tb.bg }};opacity:{{ tb.op }};outline:1px solid color-mix(in srgb,{{ tb.color }} 60%,transparent)"></div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="margin-top:12px;color:var(--muted);font-size:10.5px;display:flex;gap:14px;flex-wrap:wrap"><span>▬ solid = same-process measured</span><span>▨ hatched = cross-process aligned</span></div>
+              </sc-if>
+
+              <sc-if value="{{ tPrivacy }}" hint-placeholder-val="{{ false }}">
+                <div style="color:var(--muted);font-size:11px;margin-bottom:8px">Classification and redaction per field. Governing policy: <span style="font-family:var(--font-mono)">policy_redacted_default</span>.</div>
+                <div style="display:grid;grid-template-columns:1fr auto;gap:0;border:1px solid var(--line);border-radius:6px;overflow:hidden">
+                  <div style="display:contents">
+                    <div style="padding:6px 10px;background:var(--panel-alt);color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:700;letter-spacing:.04em">Field · classification</div>
+                    <div style="padding:6px 10px;background:var(--panel-alt);color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:700;letter-spacing:.04em;text-align:right">Handling</div>
+                  </div>
+                  <sc-for list="{{ sel.privacyRows }}" as="pr" hint-placeholder-count="3">
+                    <div style="padding:6px 10px;border-top:1px solid var(--line)"><div style="font-family:var(--font-mono);font-size:11px">{{ pr.field }}</div><div style="color:var(--muted);font-size:10.5px">{{ pr.cls }}</div></div>
+                    <div style="padding:6px 10px;border-top:1px solid var(--line);text-align:right"><span style="color:{{ pr.hColor }};font-size:11px;font-weight:600">{{ pr.handling }}</span><div style="font-family:var(--font-mono);font-size:10px;color:var(--muted)">{{ pr.method }}</div></div>
+                  </sc-for>
+                </div>
+                <div style="margin-top:12px;padding:8px 10px;border:1px solid var(--warn-border);background:var(--warn-bg);border-radius:6px;color:var(--warn);font-size:11px">Reveal is blocked in redacted mode. Elevate capture for this session to view classified values (time-bounded, logged).</div>
+              </sc-if>
+
+              <sc-if value="{{ tRaw }}" hint-placeholder-val="{{ false }}">
+                <div style="color:var(--muted);font-size:11px;margin-bottom:8px">Raw envelope as stored, redactions applied.</div>
+                <pre style="margin:0;font-family:var(--font-mono);font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;background:var(--panel-alt);border:1px solid var(--line);border-radius:6px;padding:11px;overflow:auto">{{ sel.rawJson }}</pre>
+              </sc-if>
+
+              <sc-if value="{{ tActions }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <button style="text-align:left;height:32px;padding:0 11px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);color:var(--fg);cursor:pointer;font-family:var(--font-ui);font-size:12px">Add to Replay Trace</button>
+                  <button style="text-align:left;height:32px;padding:0 11px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);color:var(--fg);cursor:pointer;font-family:var(--font-ui);font-size:12px">Copy event ID</button>
+                  <button style="text-align:left;height:32px;padding:0 11px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);color:var(--fg);cursor:pointer;font-family:var(--font-ui);font-size:12px">Copy correlation ID</button>
+                  <button style="text-align:left;height:32px;padding:0 11px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);color:var(--fg);cursor:pointer;font-family:var(--font-ui);font-size:12px">Filter by this correlation</button>
+                  <button style="text-align:left;height:32px;padding:0 11px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);color:var(--fg);cursor:pointer;font-family:var(--font-ui);font-size:12px">Open in Waterfall</button>
+                  <button style="text-align:left;height:32px;padding:0 11px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);color:var(--fg);cursor:pointer;font-family:var(--font-ui);font-size:12px">Export selected slice…</button>
+                </div>
+              </sc-if>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+      <!-- ============ CROSS-PROCESS WATERFALL ============ -->
+      <sc-if value="{{ isWaterfall }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px 16px 40px;max-width:1500px">
+        <!-- toolbar -->
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <div style="font-weight:600;font-size:13px;margin-right:2px">Cross-Process Waterfall</div>
+          <button data-chip style="display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 9px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11.5px;font-family:var(--font-mono)">{{ wfActionLabel }} <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><path d="M4 6l4 4 4-4"/></svg></button>
+          <div style="flex:1"></div>
+          <button data-seg data-active="{{ showDiagAttr }}" onClick="{{ onToggleDiag }}" style="height:26px;padding:0 10px;border:1px solid var(--input-border);border-radius:5px;background:transparent;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--font-ui)">Diag lanes</button>
+          <button data-seg data-active="{{ corrAttr }}" onClick="{{ onToggleCorr }}" style="height:26px;padding:0 10px;border:1px solid var(--input-border);border-radius:5px;background:transparent;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--font-ui)">Correlation lines</button>
+          <button data-seg data-active="{{ cpAttr }}" onClick="{{ onToggleCp }}" style="height:26px;padding:0 10px;border:1px solid var(--input-border);border-radius:5px;background:transparent;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--font-ui)">Critical path</button>
+          <button data-chip style="height:26px;padding:0 10px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11px;font-family:var(--font-ui)">Export SVG</button>
+        </div>
+
+        <!-- summary strip -->
+        <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:11px 13px;box-shadow:var(--shadow);margin-bottom:12px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700">Wall-clock decomposition</div>
+            <div style="font-size:15px;font-weight:700;font-family:var(--font-mono)">{{ wfTotal }}</div>
+          </div>
+          <div style="height:24px;display:flex;border-radius:5px;overflow:hidden;border:1px solid var(--line)">
+            <sc-for list="{{ summarySegs }}" as="sg" hint-placeholder-count="6">
+              <div title="{{ sg.label }} {{ sg.val }}" style="width:{{ sg.w }};background:{{ sg.color }}"></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:9px">
+            <sc-for list="{{ summarySegs }}" as="sg" hint-placeholder-count="6">
+              <span style="display:flex;align-items:center;gap:6px;font-size:11px"><span style="width:9px;height:9px;border-radius:2px;background:{{ sg.color }}"></span>{{ sg.label }} <span style="color:var(--muted);font-family:var(--font-mono)">{{ sg.val }}</span></span>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- legend + calibration -->
+        <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;color:var(--muted);font-size:11px;margin-bottom:8px">
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:16px;height:9px;border-radius:2px;background:var(--p-sts)"></span>solid = official measured</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:16px;height:9px;border-radius:2px;background:repeating-linear-gradient(115deg,var(--p-sts) 0 4px,transparent 4px 8px)"></span>hatched = aligned diagnostic</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:16px;height:9px;border-radius:2px;border:1px dotted var(--muted)"></span>inferred</span>
+          <span style="display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>redacted</span>
+          <span style="margin-left:auto;font-family:var(--font-mono);font-size:10.5px">alignment: {{ calib }}</span>
+        </div>
+
+        <!-- timeline -->
+        <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+          <div style="overflow-x:auto">
+            <div style="min-width:760px">
+              <!-- axis -->
+              <div style="display:flex;border-bottom:1px solid var(--line)">
+                <div style="width:150px;flex:none;padding:6px 10px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700">Lane</div>
+                <div style="flex:1;position:relative;height:26px">
+                  <sc-for list="{{ ticks }}" as="tk" hint-placeholder-count="5">
+                    <div style="position:absolute;top:6px;left:{{ tk.left }};transform:translateX(-50%);font-family:var(--font-mono);font-size:10px;color:var(--muted)">{{ tk.label }}</div>
+                  </sc-for>
+                </div>
+              </div>
+              <!-- body -->
+              <div style="display:flex">
+                <!-- lane labels -->
+                <div style="width:150px;flex:none">
+                  <sc-for list="{{ lanes }}" as="ln" hint-placeholder-count="8">
+                    <div style="height:32px;display:flex;align-items:center;gap:7px;padding:0 10px;border-bottom:1px solid var(--line)">
+                      <span style="width:8px;height:8px;border-radius:2px;background:{{ ln.color }};flex:none"></span>
+                      <span style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ln.label }}</span>
+                      <sc-if value="{{ ln.diag }}" hint-placeholder-val="{{ false }}"><span style="font-size:8.5px;color:var(--warn);border:1px solid var(--warn-border);border-radius:3px;padding:0 3px">diag</span></sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+                <!-- track -->
+                <div style="flex:1;position:relative;min-width:560px">
+                  <sc-for list="{{ lanes }}" as="ln" hint-placeholder-count="8">
+                    <div style="height:32px;border-bottom:1px solid var(--line)"></div>
+                  </sc-for>
+                  <sc-for list="{{ ticks }}" as="tk" hint-placeholder-count="5">
+                    <div style="position:absolute;top:0;bottom:0;left:{{ tk.left }};width:1px;background:var(--chart-grid)"></div>
+                  </sc-for>
+                  <sc-for list="{{ bars }}" as="b" hint-placeholder-count="14">
+                    <div onClick="{{ b.onSelect }}" title="{{ b.title }}" style="position:absolute;left:{{ b.left }};width:{{ b.width }};top:{{ b.top }};height:20px;border-radius:4px;background:{{ b.bg }};opacity:{{ b.op }};box-shadow:{{ b.bs }};border:{{ b.border }};cursor:pointer;overflow:hidden;transition:opacity .15s"></div>
+                  </sc-for>
+                  <svg viewBox="{{ overlayVB }}" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none">
+                    <sc-for list="{{ corrLines }}" as="ln" hint-placeholder-count="0">
+                      <line x1="{{ ln.x1 }}" y1="{{ ln.y1 }}" x2="{{ ln.x2 }}" y2="{{ ln.y2 }}" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="{{ ln.dash }}" vector-effect="non-scaling-stroke" opacity="0.55"></line>
+                    </sc-for>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- inspector + critical path -->
+        <div style="display:grid;grid-template-columns:minmax(0,1.45fr) minmax(240px,1fr);gap:14px;margin-top:14px;align-items:start">
+          <!-- inspector -->
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:11px 13px;border-bottom:1px solid var(--line)">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:9px;height:9px;border-radius:2px;background:{{ selWf.laneColor }};flex:none"></span>
+                <span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600">{{ selWf.title }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:9px;margin-top:6px;flex-wrap:wrap">
+                <span style="font-size:11px;font-weight:600;color:{{ selWf.timingColor }}">{{ selWf.timingLabel }}</span>
+                <span style="color:var(--muted);font-size:11px">{{ selWf.laneLabel }}</span>
+                <span style="color:var(--muted);font-size:11px;font-family:var(--font-mono)">{{ selWf.dur }}</span>
+              </div>
+            </div>
+            <div style="padding:11px 13px">
+              <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 12px;font-size:12px">
+                <span style="color:var(--muted)">Start</span><span style="font-family:var(--font-mono);font-size:11px">{{ selWf.start }}</span>
+                <span style="color:var(--muted)">End</span><span style="font-family:var(--font-mono);font-size:11px">{{ selWf.end }}</span>
+                <span style="color:var(--muted)">Timing class</span><span>{{ selWf.timingLabel }}</span>
+                <span style="color:var(--muted)">Correlation</span><span style="font-family:var(--font-mono);font-size:11px;color:var(--link)">{{ selWf.corr }}</span>
+                <span style="color:var(--muted)">Cause</span><span style="font-family:var(--font-mono);font-size:11px">{{ selWf.cause }}</span>
+                <span style="color:var(--muted)">Confidence</span><span>{{ selWf.confidence }}</span>
+                <span style="color:var(--muted)">Calibration</span><span style="font-family:var(--font-mono);font-size:11px">{{ selWf.jitter }}</span>
+              </div>
+
+              <sc-if value="{{ selWf.isSql }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:12px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700">SQL activity</div>
+                <div style="display:flex;align-items:center;gap:7px;margin:7px 0;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel-alt);font-size:11.5px">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>
+                  <span>SQL text redacted</span>
+                  <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted)">sql:sha256:8fd2c91a…</span>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px">
+                  <sc-for list="{{ selWf.sqlMetrics }}" as="m" hint-placeholder-count="9">
+                    <div style="border:1px solid var(--line);border-radius:5px;padding:6px 8px;background:var(--panel-alt)"><div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.03em">{{ m.k }}</div><div style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;margin-top:1px">{{ m.v }}</div></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ selWf.isRenderer }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:12px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700">Renderer detail · CDP (diagnostic)</div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px">
+                  <sc-for list="{{ selWf.renderPhases }}" as="m" hint-placeholder-count="4">
+                    <div style="border:1px solid var(--line);border-radius:5px;padding:6px 8px;background:var(--panel-alt)"><div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.03em">{{ m.k }}</div><div style="font-family:var(--font-mono);font-size:12.5px;font-weight:600;margin-top:1px">{{ m.v }}</div></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <!-- critical path -->
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:10px 13px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
+              <span style="font-weight:600;font-size:12.5px">Critical path</span>
+              <span style="font-family:var(--font-mono);font-size:12px;font-weight:700">2.84s</span>
+            </div>
+            <div style="padding:6px 0">
+              <sc-for list="{{ criticalSteps }}" as="cs" hint-placeholder-count="6">
+                <div style="display:flex;align-items:center;gap:10px;padding:7px 13px">
+                  <span style="flex:none;width:19px;height:19px;border-radius:50%;background:var(--panel-alt);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--font-mono)">{{ cs.n }}</span>
+                  <div style="min-width:0;flex:1">
+                    <div style="font-size:11.5px;font-family:var(--font-mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cs.label }}</div>
+                    <div style="color:var(--muted);font-size:10.5px">{{ cs.note }}</div>
+                  </div>
+                  <span style="font-family:var(--font-mono);font-size:11.5px;font-weight:600">{{ cs.dur }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+      <!-- ============ PERF & SESSIONS ============ -->
+      <sc-if value="{{ isPerf }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px 16px 44px;max-width:1500px">
+        <!-- toolbar -->
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <div style="font-weight:600;font-size:13px;margin-right:2px">Perf &amp; Sessions</div>
+          <span data-chip style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11.5px">Source <span style="color:var(--fg)">runs + sessions</span> <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><path d="M4 6l4 4 4-4"/></svg></span>
+          <span data-chip style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11.5px;font-family:var(--font-mono)">query-10k-results <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><path d="M4 6l4 4 4-4"/></svg></span>
+          <span data-chip style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11.5px">Metric <span style="color:var(--fg)">wall-clock</span> <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><path d="M4 6l4 4 4-4"/></svg></span>
+          <span data-chip style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11.5px">Group by <span style="color:var(--fg)">commit</span> <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><path d="M4 6l4 4 4-4"/></svg></span>
+          <div style="flex:1"></div>
+          <span data-chip style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11px;font-family:var(--font-mono)">baseline: 7a3d09c</span>
+        </div>
+
+        <!-- KPIs -->
+        <div style="display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-bottom:16px">
+          <sc-for list="{{ perfKpis }}" as="k" hint-placeholder-count="7">
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:9px 11px;box-shadow:var(--shadow)">
+              <div style="color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.label }}</div>
+              <div style="font-size:20px;font-weight:700;margin-top:3px;color:{{ k.color }}">{{ k.value }}</div>
+              <div style="color:var(--muted);font-size:11px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.note }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- distribution + trend -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin-bottom:14px">
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:11px 13px;box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px"><div style="font-weight:600;font-size:12.5px">Latency distribution</div><div style="color:var(--muted);font-size:11px">32 reps · wall-clock</div></div>
+            <div style="display:flex;align-items:flex-end;gap:6px;height:110px;padding-bottom:2px">
+              <sc-for list="{{ dist.bins }}" as="b" hint-placeholder-count="6">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end">
+                  <div style="width:100%;height:{{ b.h }};background:var(--info);border-radius:3px 3px 0 0;opacity:.85"></div>
+                  <div style="font-family:var(--font-mono);font-size:9.5px;color:var(--muted)">{{ b.l }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:10px;position:relative;height:26px">
+              <div style="position:absolute;top:12px;left:{{ box.whiskL }}%;right:{{ box.whiskR }}%;height:2px;background:var(--muted)"></div>
+              <div style="position:absolute;top:5px;left:{{ box.q1X }}%;width:{{ box.boxW }}%;height:16px;background:color-mix(in srgb,var(--info) 20%,transparent);border:1px solid var(--info);border-radius:3px"></div>
+              <div style="position:absolute;top:3px;left:{{ box.medX }}%;width:2px;height:20px;background:var(--info)"></div>
+              <div style="position:absolute;top:2px;left:{{ box.p95X }}%;width:2px;height:22px;background:var(--warn)"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:4px"><span>median 2.84s</span><span>p95 3.18s</span><span>max 3.31s</span></div>
+          </div>
+
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:11px 13px;box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px"><div style="font-weight:600;font-size:12.5px">Cross-session trend</div><div style="color:var(--muted);font-size:11px">median by commit · 12 runs</div></div>
+            <svg viewBox="{{ trend.vb }}" style="width:100%;height:auto;display:block">
+              <rect x="8" y="{{ trend.bandY }}" width="324" height="{{ trend.bandH }}" fill="var(--band)"></rect>
+              <line x1="8" y1="{{ trend.baseY }}" x2="{{ trend.xr }}" y2="{{ trend.baseY }}" stroke="var(--ok)" stroke-width="1" stroke-dasharray="4 3" opacity="0.75"></line>
+              <line x1="{{ trend.stepX }}" y1="12" x2="{{ trend.stepX }}" y2="{{ trend.y0 }}" stroke="var(--err)" stroke-width="1" stroke-dasharray="2 2"></line>
+              <polyline points="{{ trend.poly }}" fill="none" stroke="var(--accent)" stroke-width="1.7"></polyline>
+              <sc-for list="{{ trend.dots }}" as="d" hint-placeholder-count="12"><circle cx="{{ d.cx }}" cy="{{ d.cy }}" r="2.3" fill="var(--accent)"></circle></sc-for>
+            </svg>
+            <div style="display:flex;align-items:center;gap:14px;margin-top:6px;font-size:10.5px;color:var(--muted);flex-wrap:wrap">
+              <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:8px;background:var(--band);border-radius:2px"></span>baseline band</span>
+              <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:0;border-top:2px dashed var(--err)"></span>step-change · commit 7f3c2b1 (+310ms)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- A/B + memory soak -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin-bottom:14px">
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:11px 13px;box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px"><div style="font-weight:600;font-size:12.5px">A/B delta · baseline vs candidate</div><div style="color:var(--muted);font-size:11px;font-family:var(--font-mono)">7a3d09c → 7f3c2b1</div></div>
+            <div style="display:flex;flex-direction:column;gap:11px">
+              <sc-for list="{{ ab }}" as="m" hint-placeholder-count="4">
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px"><span>{{ m.label }}</span><span style="font-weight:700;color:{{ m.vColor }};font-family:var(--font-mono)">{{ m.pct }} {{ m.verdict }}</span></div>
+                  <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px"><span style="width:52px;font-size:10px;color:var(--muted);text-align:right">base</span><div style="flex:1;height:11px;background:var(--panel-alt);border-radius:3px;overflow:hidden"><div style="height:100%;width:{{ m.baseW }};background:var(--muted);opacity:.55;border-radius:3px"></div></div><span style="width:52px;font-family:var(--font-mono);font-size:10.5px">{{ m.baseTxt }}</span></div>
+                  <div style="display:flex;align-items:center;gap:7px"><span style="width:52px;font-size:10px;color:var(--muted);text-align:right">cand</span><div style="flex:1;height:11px;background:var(--panel-alt);border-radius:3px;overflow:hidden"><div style="height:100%;width:{{ m.candW }};background:{{ m.candColor }};border-radius:3px"></div></div><span style="width:52px;font-family:var(--font-mono);font-size:10.5px">{{ m.candTxt }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:12px;padding:9px 11px;border:1px solid var(--warn-border);background:var(--warn-bg);border-radius:6px">
+              <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--warn);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px">Investigation</div>
+              <div style="font-size:11.5px;line-height:1.5;color:var(--fg-soft)">{{ absCallout }}</div>
+            </div>
+          </div>
+
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:11px 13px;box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px"><div style="font-weight:600;font-size:12.5px">Memory soak · RSS vs iteration</div><span style="display:inline-flex;align-items:center;height:18px;padding:0 8px;border-radius:999px;border:1px solid var(--ok-border);background:var(--ok-bg);color:var(--ok);font-size:10.5px;font-weight:600">{{ soak.verdict }}</span></div>
+            <svg viewBox="{{ soak.vb }}" style="width:100%;height:auto;display:block">
+              <polygon points="{{ soak.band }}" fill="var(--band)"></polygon>
+              <line x1="{{ soak.slope.x1 }}" y1="{{ soak.slope.y1 }}" x2="{{ soak.slope.x2 }}" y2="{{ soak.slope.y2 }}" stroke="var(--accent)" stroke-width="1.6"></line>
+              <sc-for list="{{ soak.dots }}" as="d" hint-placeholder-count="41"><circle cx="{{ d.cx }}" cy="{{ d.cy }}" r="1.7" fill="var(--muted)" opacity="0.7"></circle></sc-for>
+            </svg>
+            <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:var(--muted);flex-wrap:wrap">
+              <span>slope <span style="color:var(--fg);font-family:var(--font-mono);font-weight:600">{{ soak.slopeTxt }}</span></span>
+              <span>R² <span style="color:var(--fg);font-family:var(--font-mono);font-weight:600">{{ soak.r2 }}</span></span>
+              <span>40 iterations</span>
+              <span style="color:var(--muted)">low confidence → no leak</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- small multiples -->
+        <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:11px 13px;box-shadow:var(--shadow);margin-bottom:14px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px"><div style="font-weight:600;font-size:12.5px">Variant comparison · time split</div><div style="color:var(--muted);font-size:11px">same x-axis — extension / STS / SQL / wire / renderer</div></div>
+          <div style="display:flex;gap:14px;margin:8px 0 12px;flex-wrap:wrap">
+            <sc-for list="{{ segLegend }}" as="lg" hint-placeholder-count="5"><span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:{{ lg.c }}"></span>{{ lg.l }}</span></sc-for>
+          </div>
+          <sc-for list="{{ variants }}" as="v" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:170px 1fr 52px;align-items:center;gap:12px;margin-bottom:9px">
+              <div style="font-family:var(--font-mono);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.name }}</div>
+              <div style="height:18px;width:{{ v.rowW }};display:flex;border-radius:3px;overflow:hidden;min-width:2px">
+                <sc-for list="{{ v.segs }}" as="s" hint-placeholder-count="5"><div style="width:{{ s.w }};background:{{ s.color }}"></div></sc-for>
+              </div>
+              <div style="font-family:var(--font-mono);font-size:11px;font-weight:600;text-align:right">{{ v.totalTxt }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- metric table -->
+        <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:14px">
+          <div style="padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">Metric comparison &amp; regression verdicts</div>
+          <div style="overflow-x:auto"><div style="min-width:720px">
+            <div style="display:grid;grid-template-columns:minmax(140px,1.4fr) 90px 90px 84px 70px 110px 82px 96px;padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700">
+              <div>Metric</div><div style="text-align:right">Candidate</div><div style="text-align:right">Baseline</div><div style="text-align:right">Delta</div><div style="text-align:right">%</div><div style="text-align:center">Verdict</div><div style="text-align:center">Official</div><div>Confidence</div>
+            </div>
+            <sc-for list="{{ metricRows }}" as="r" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:minmax(140px,1.4fr) 90px 90px 84px 70px 110px 82px 96px;padding:7px 12px;border-bottom:1px solid var(--line);align-items:center;font-size:12px">
+                <div style="font-weight:500">{{ r.m }}</div>
+                <div style="text-align:right;font-family:var(--font-mono);font-size:11.5px">{{ r.cand }}</div>
+                <div style="text-align:right;font-family:var(--font-mono);font-size:11.5px;color:var(--muted)">{{ r.base }}</div>
+                <div style="text-align:right;font-family:var(--font-mono);font-size:11px">{{ r.delta }}</div>
+                <div style="text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:600;color:{{ r.vColor }}">{{ r.pct }}</div>
+                <div style="text-align:center"><span style="display:inline-flex;align-items:center;height:18px;padding:0 8px;border-radius:999px;border:1px solid {{ r.vBorder }};background:{{ r.vBg }};color:{{ r.vColor }};font-size:10px;font-weight:700">{{ r.verdict }}</span></div>
+                <div style="text-align:center;color:var(--muted);font-size:11px">{{ r.official }}</div>
+                <div style="color:var(--muted);font-size:11px">{{ r.conf }}</div>
+              </div>
+            </sc-for>
+          </div></div>
+        </div>
+
+        <!-- SQL activity -->
+        <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)">
+          <div style="padding:9px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between"><div style="font-weight:600;font-size:12.5px">SQL activity · top by duration</div><div style="color:var(--muted);font-size:11px">text redacted · policy: digest</div></div>
+          <div style="overflow-x:auto"><div style="min-width:760px">
+            <div style="display:grid;grid-template-columns:36px minmax(150px,1fr) 74px 72px 96px 74px 130px 64px;padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700">
+              <div>#</div><div>Event type</div><div style="text-align:right">Dur</div><div style="text-align:right">CPU</div><div style="text-align:right">Logical rd</div><div style="text-align:right">Rows</div><div>Correlation</div><div>Status</div>
+            </div>
+            <sc-for list="{{ sqlRows }}" as="r" hint-placeholder-count="5">
+              <div data-row style="display:grid;grid-template-columns:36px minmax(150px,1fr) 74px 72px 96px 74px 130px 64px;padding:6px 12px;border-bottom:1px solid var(--line);align-items:center;font-size:11.5px;cursor:pointer">
+                <div style="font-family:var(--font-mono);color:var(--muted)">{{ r.idx }}</div>
+                <div style="display:flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:11px;min-width:0"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.3" style="flex:none"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.type }}</span></div>
+                <div style="text-align:right;font-family:var(--font-mono)">{{ r.dur }}</div>
+                <div style="text-align:right;font-family:var(--font-mono);color:var(--fg-soft)">{{ r.cpu }}</div>
+                <div style="text-align:right;font-family:var(--font-mono)">{{ r.reads }}</div>
+                <div style="text-align:right;font-family:var(--font-mono);color:var(--fg-soft)">{{ r.rows }}</div>
+                <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.corr }}</div>
+                <div><span style="display:inline-flex;align-items:center;height:16px;padding:0 6px;border-radius:999px;border:1px solid {{ r.st.b }};background:{{ r.st.bg }};color:{{ r.st.c }};font-size:10px;font-weight:600">{{ r.status }}</span></div>
+              </div>
+            </sc-for>
+          </div></div>
+        </div>
+      </div>
+      </sc-if>
+      <!-- ============ SQL ACTIVITY ============ -->
+      <sc-if value="{{ isSql }}" hint-placeholder-val="{{ false }}">
+      <div style="height:100%;display:flex;flex-direction:column;min-height:0">
+        <div style="flex:none;padding:12px 16px 10px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:10px">SQL Activity</div>
+          <div style="display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(128px,1fr))">
+            <sc-for list="{{ sqlKpis }}" as="k" hint-placeholder-count="7">
+              <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:8px 10px;box-shadow:var(--shadow)">
+                <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em">{{ k.label }}</div>
+                <div style="font-size:18px;font-weight:700;margin-top:2px;color:{{ k.c }}">{{ k.value }}</div>
+                <div style="color:var(--muted);font-size:10.5px">{{ k.note }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="flex:1;display:flex;min-height:0;border-top:1px solid var(--line)">
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid var(--line);overflow:hidden">
+            <div style="flex:1;overflow:auto"><div style="min-width:700px">
+              <div style="display:grid;grid-template-columns:80px minmax(120px,1fr) 62px 60px 88px 66px 60px 120px 60px;padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;position:sticky;top:0;background:var(--bg)">
+                <div>Time</div><div>Event type</div><div style="text-align:right">Dur</div><div style="text-align:right">CPU</div><div style="text-align:right">Logical</div><div style="text-align:right">Rows</div><div style="text-align:right">Sess</div><div>Correlation</div><div>Status</div>
+              </div>
+              <sc-for list="{{ sqlRows2 }}" as="r" hint-placeholder-count="6">
+                <div data-row data-selected="{{ r.selAttr }}" onClick="{{ r.onSelect }}" style="display:grid;grid-template-columns:80px minmax(120px,1fr) 62px 60px 88px 66px 60px 120px 60px;padding:6px 12px;border-bottom:1px solid var(--line);cursor:pointer;align-items:center;font-size:11.5px;box-shadow:inset 3px 0 0 var(--p-sql)">
+                  <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted)">{{ r.time }}</div>
+                  <div style="display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;min-width:0"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.3" style="flex:none"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.type }}</span></div>
+                  <div style="text-align:right;font-family:var(--font-mono)">{{ r.dur }}</div>
+                  <div style="text-align:right;font-family:var(--font-mono);color:var(--fg-soft)">{{ r.cpu }}</div>
+                  <div style="text-align:right;font-family:var(--font-mono)">{{ r.lreads }}</div>
+                  <div style="text-align:right;font-family:var(--font-mono);color:var(--fg-soft)">{{ r.rows }}</div>
+                  <div style="text-align:right;font-family:var(--font-mono);color:var(--muted)">{{ r.sess }}</div>
+                  <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.corr }}</div>
+                  <div><span style="display:inline-flex;align-items:center;height:16px;padding:0 6px;border-radius:999px;border:1px solid {{ r.st.b }};background:{{ r.st.bg }};color:{{ r.st.c }};font-size:10px;font-weight:600">{{ r.status }}</span></div>
+                </div>
+              </sc-for>
+            </div></div>
+          </div>
+          <div style="flex:none;width:clamp(340px,36%,440px);overflow:auto;background:var(--panel);padding:13px 15px 24px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;border-radius:2px;background:var(--p-sql)"></span><span style="font-family:var(--font-mono);font-size:12.5px;font-weight:600">{{ sqlSel.type }}</span></div>
+            <div style="margin-top:10px;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:var(--panel-alt)">
+              <div style="display:flex;align-items:center;gap:7px;font-size:12px"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg><span>SQL text redacted</span></div>
+              <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted);margin-top:4px">digest: sql:sha256:8fd2c91a12e9…</div>
+              <div style="font-size:10.5px;color:var(--muted);margin-top:2px">classification: sql.text · handling: digest · policy_redacted_default</div>
+            </div>
+            <div style="margin-top:12px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700">Statistics</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:7px">
+              <sc-for list="{{ sqlSelStats }}" as="m" hint-placeholder-count="9">
+                <div style="border:1px solid var(--line);border-radius:5px;padding:6px 8px;background:var(--panel-alt)"><div style="color:var(--muted);font-size:9.5px;text-transform:uppercase;letter-spacing:.03em">{{ m.k }}</div><div style="font-family:var(--font-mono);font-size:12px;font-weight:600;margin-top:1px">{{ m.v }}</div></div>
+              </sc-for>
+            </div>
+            <div style="margin-top:12px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700">Query plan</div>
+            <div style="margin-top:6px;display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--link);cursor:pointer"><span style="color:var(--muted)">⧉</span>query-plan.sqlplan · open in estimated plan viewer</div>
+            <div style="margin-top:12px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700">Correlation chain</div>
+            <div style="margin-top:6px">
+              <sc-for list="{{ sqlSelCause }}" as="c" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;padding-left:{{ c.pad }}"><span style="width:7px;height:7px;border-radius:2px;background:{{ c.c }};flex:none"></span><span style="font-family:var(--font-mono);font-size:11.5px">{{ c.label }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ REPLAY LAB ============ -->
+      <sc-if value="{{ isReplay }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px 16px 44px;max-width:1400px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+          <div style="font-weight:600;font-size:13px">Replay Lab</div>
+          <span style="color:var(--muted);font-size:12px">Replay Trace Builder · {{ replayCount }}</span>
+          <div style="flex:1"></div>
+          <button data-chip style="height:26px;padding:0 10px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11px;font-family:var(--font-ui)">Use live</button>
+          <button data-chip style="height:26px;padding:0 10px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11px;font-family:var(--font-ui)">Reverse order</button>
+          <button style="height:26px;padding:0 12px;border:1px solid var(--accent);border-radius:5px;background:var(--accent);color:var(--accent-fg);cursor:pointer;font-size:11px;font-weight:600;font-family:var(--font-ui)">Run matrix</button>
+        </div>
+
+        <!-- trace builder table -->
+        <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:14px">
+          <div style="display:grid;grid-template-columns:30px minmax(150px,1.2fr) 100px minmax(120px,1fr) 92px minmax(120px,1fr);padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700">
+            <div>#</div><div>Source</div><div>Feature</div><div>Event</div><div>State</div><div>Config preview</div>
+          </div>
+          <sc-for list="{{ replayEvents }}" as="e" hint-placeholder-count="4">
+            <div data-row data-selected="{{ e.selAttr }}" onClick="{{ e.onSelect }}" style="display:grid;grid-template-columns:30px minmax(150px,1.2fr) 100px minmax(120px,1fr) 92px minmax(120px,1fr);padding:7px 12px;border-bottom:1px solid var(--line);cursor:pointer;align-items:center;font-size:11.5px">
+              <div style="font-family:var(--font-mono);color:var(--muted)">{{ e.idNum }}</div>
+              <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.src }}</div>
+              <div>{{ e.feature }}</div>
+              <div style="font-family:var(--font-mono);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.ev }}</div>
+              <div><span style="display:inline-flex;align-items:center;height:17px;padding:0 7px;border-radius:4px;border:1px solid {{ e.stBorder }};background:{{ e.stBg }};color:{{ e.stColor }};font-size:10px;font-weight:600">{{ e.state }}</span></div>
+              <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--fg-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.preview }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px">
+          <!-- config matrix -->
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:10px 13px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">Config matrix · profiles × schema budgets</div>
+            <div style="padding:11px 13px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+                <sc-for list="{{ matrixCells }}" as="c" hint-placeholder-count="4">
+                  <div style="border:1px solid var(--line);border-left:3px solid {{ c.color }};border-radius:6px;padding:8px 10px;background:var(--panel-alt)">
+                    <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--font-mono);font-size:10px;color:var(--muted)">{{ c.cell }}</span><span style="font-size:9.5px;font-weight:700;color:{{ c.color }};text-transform:uppercase">{{ c.status }}</span></div>
+                    <div style="font-size:11.5px;font-weight:600;margin-top:3px">{{ c.label }}</div>
+                    <div style="font-size:10.5px;color:var(--muted)">{{ c.events }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:11.5px">
+                <sc-for list="{{ matrixSummary }}" as="m" hint-placeholder-count="5">
+                  <span style="color:var(--muted)">{{ m.k }}</span><span style="font-family:var(--font-mono);text-align:right">{{ m.v }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <!-- execution order + gating -->
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+              <div style="padding:10px 13px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">Execution order preview</div>
+              <div style="padding:9px 13px;display:flex;flex-direction:column;gap:5px">
+                <sc-for list="{{ execOrder }}" as="o" hint-placeholder-count="4">
+                  <div style="font-family:var(--font-mono);font-size:11px;color:var(--fg-soft)">{{ o }}</div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="padding:11px 13px;border:1px solid var(--warn-border);background:var(--warn-bg);border-radius:var(--radius)">
+              <div style="font-size:11px;font-weight:700;color:var(--warn);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px">Replay gating</div>
+              <div style="font-size:11.5px;line-height:1.5;color:var(--fg-soft)">Query replay via STS replay-drive is gated until STS2 hardening (strict replay, run isolation, capture policy). You can still export the event slice or add it to a manual reproduction bundle. Completions replay is available now.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+      <!-- ============ COMPLETIONS ============ -->
+      <sc-if value="{{ isCompletions }}" hint-placeholder-val="{{ false }}">
+      <div style="height:100%;display:flex;flex-direction:column;min-height:0">
+        <div style="flex:none;display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid var(--line)">
+          <div style="font-weight:600;font-size:13px">Completions</div>
+          <div style="display:flex;align-items:center;height:26px;padding:2px;gap:2px;background:var(--panel-alt);border:1px solid var(--line);border-radius:6px">
+            <button data-seg data-active="{{ subLiveAttr }}" onClick="{{ onSubLive }}" style="height:100%;padding:0 12px;border:0;border-radius:4px;background:transparent;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--font-ui)">Live trace</button>
+            <button data-seg data-active="{{ subAnalysisAttr }}" onClick="{{ onSubAnalysis }}" style="height:100%;padding:0 12px;border:0;border-radius:4px;background:transparent;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--font-ui)">Multi-session analysis</button>
+          </div>
+        </div>
+
+        <!-- LIVE SUBVIEW -->
+        <sc-if value="{{ compIsLive }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <!-- strip -->
+          <div style="flex:none;display:flex;flex-wrap:wrap;gap:16px;padding:9px 14px;border-bottom:1px solid var(--line);background:var(--sidebar-bg)">
+            <sc-for list="{{ compStrip }}" as="s" hint-placeholder-count="10">
+              <div style="display:flex;flex-direction:column"><span style="color:var(--muted);font-size:9.5px;text-transform:uppercase;letter-spacing:.04em">{{ s.label }}</span><span style="font-size:12px;font-weight:600;color:{{ s.c }};display:flex;align-items:center;gap:5px"><span data-pulse="{{ s.dotAttr }}" style="width:7px;height:7px;border-radius:50%;background:{{ s.dot }};display:{{ s.dotShow }}"></span>{{ s.value }}</span></div>
+            </sc-for>
+          </div>
+          <div style="flex:1;display:flex;min-height:0">
+            <!-- table -->
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid var(--line);overflow:hidden">
+              <div style="flex:1;overflow:auto"><div style="min-width:640px">
+                <div style="display:grid;grid-template-columns:76px minmax(90px,1fr) 54px 80px 78px 78px 74px 60px;padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;position:sticky;top:0;background:var(--bg)">
+                  <div>Time</div><div>Document</div><div>Pos</div><div>Trigger</div><div>Model</div><div style="text-align:right">Latency</div><div style="text-align:right;padding-right:7px">Tok i/o</div><div>Result</div>
+                </div>
+                <sc-for list="{{ compRows }}" as="r" hint-placeholder-count="7">
+                  <div data-row data-selected="{{ r.selAttr }}" onClick="{{ r.onSelect }}" style="display:grid;grid-template-columns:76px minmax(90px,1fr) 54px 80px 78px 78px 74px 60px;padding:6px 12px;border-bottom:1px solid var(--line);cursor:pointer;align-items:center;font-size:11.5px">
+                    <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted)">{{ r.time }}</div>
+                    <div style="display:flex;align-items:center;gap:6px;min-width:0"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-mono);font-size:11px">{{ r.doc }}</span><sc-if value="{{ r.isReplay }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;color:var(--p-sts);border:1px solid color-mix(in srgb,var(--p-sts) 40%,transparent);border-radius:3px;padding:0 3px;flex:none">replay</span></sc-if></div>
+                    <div style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted)">{{ r.pos }}</div>
+                    <div style="color:var(--fg-soft)">{{ r.trig }}</div>
+                    <div style="color:var(--fg-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.model }}</div>
+                    <div style="text-align:right;font-family:var(--font-mono);font-size:11px">{{ r.lat }}</div>
+                    <div style="text-align:right;font-family:var(--font-mono);font-size:10.5px;color:var(--fg-soft)">{{ r.tin }}/{{ r.tout }}</div>
+                    <div><span style="display:inline-flex;align-items:center;height:16px;padding:0 6px;border-radius:999px;border:1px solid {{ r.res.b }};background:{{ r.res.bg }};color:{{ r.res.c }};font-size:9.5px;font-weight:600">{{ r.result }}</span></div>
+                  </div>
+                </sc-for>
+              </div></div>
+            </div>
+            <!-- detail -->
+            <div style="flex:none;width:clamp(340px,38%,460px);display:flex;flex-direction:column;min-height:0;background:var(--panel)">
+              <div style="flex:none;display:flex;gap:1px;padding:0 6px;border-bottom:1px solid var(--line);overflow-x:auto">
+                <sc-for list="{{ ctabs }}" as="tb" hint-placeholder-count="10">
+                  <button data-tab data-active="{{ tb.active }}" onClick="{{ tb.onTab }}" style="flex:none;height:29px;padding:0 8px;border:0;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:11px;font-weight:500;white-space:nowrap">{{ tb.label }}</button>
+                </sc-for>
+              </div>
+              <div style="flex:1;overflow:auto;padding:12px 14px 24px">
+                <sc-if value="{{ cT.summary }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:grid;grid-template-columns:110px 1fr;gap:6px 12px;font-size:12px">
+                    <sc-for list="{{ csel.summaryRows }}" as="s" hint-placeholder-count="10"><span style="color:var(--muted)">{{ s.k }}</span><span style="font-family:var(--font-mono);font-size:11px">{{ s.v }}</span></sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ cT.sys }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--font-mono);font-size:11.5px;line-height:1.6;white-space:pre-wrap;background:var(--panel-alt);border:1px solid var(--line);border-radius:6px;padding:11px">{{ csel.sysPrompt }}</div></sc-if>
+                <sc-if value="{{ cT.user }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:7px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel-alt);color:var(--fg-soft);font-size:12px"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg><span style="font-family:var(--font-mono);font-size:11px">{{ csel.userPrompt }}</span></div></sc-if>
+                <sc-if value="{{ cT.raw }}" hint-placeholder-val="{{ false }}"><pre style="margin:0;font-family:var(--font-mono);font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;background:var(--panel-alt);border:1px solid var(--line);border-radius:6px;padding:11px">{{ csel.rawResponse }}</pre></sc-if>
+                <sc-if value="{{ cT.sanitized }}" hint-placeholder-val="{{ false }}"><pre style="margin:0;font-family:var(--font-mono);font-size:11.5px;line-height:1.55;white-space:pre-wrap;background:var(--panel-alt);border:1px solid var(--line);border-radius:6px;padding:11px">{{ csel.sanitized }}</pre></sc-if>
+                <sc-if value="{{ cT.schema }}" hint-placeholder-val="{{ false }}">
+                  <div style="color:var(--muted);font-size:11px;margin-bottom:8px">Schema context sent to the model (digested · Balanced budget · 2,060 / 4,096 tokens).</div>
+                  <sc-for list="{{ csel.schemaCtx }}" as="s" hint-placeholder-count="4"><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:11.5px"><span style="font-family:var(--font-mono)">{{ s.n }}</span><span style="color:var(--muted);font-family:var(--font-mono);font-size:10.5px">{{ s.t }}</span></div></sc-for>
+                </sc-if>
+                <sc-if value="{{ cT.locals }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr auto;gap:5px 12px;font-size:11.5px"><sc-for list="{{ csel.locals }}" as="s" hint-placeholder-count="5"><span style="color:var(--muted);font-family:var(--font-mono);font-size:11px">{{ s.k }}</span><span style="font-family:var(--font-mono);font-size:11px;text-align:right">{{ s.v }}</span></sc-for></div></sc-if>
+                <sc-if value="{{ cT.telemetry }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr auto;gap:5px 12px;font-size:11.5px"><sc-for list="{{ csel.telemetry }}" as="s" hint-placeholder-count="6"><span style="color:var(--muted);font-family:var(--font-mono);font-size:11px">{{ s.k }}</span><span style="font-family:var(--font-mono);font-size:11px;text-align:right">{{ s.v }}</span></sc-for></div></sc-if>
+                <sc-if value="{{ cT.replay }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:120px 1fr;gap:6px 10px;font-size:11.5px"><sc-for list="{{ csel.replayRows }}" as="s" hint-placeholder-count="5"><span style="color:var(--muted)">{{ s.k }}</span><span style="font-family:var(--font-mono);font-size:10.5px;word-break:break-all">{{ s.v }}</span></sc-for></div></sc-if>
+                <sc-if value="{{ cT.privacy }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{ csel.privacyRows }}" as="s" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;padding:6px 9px;border:1px solid var(--line);border-radius:5px;font-size:11px"><span style="font-family:var(--font-mono)">{{ s.field }}</span><span style="color:var(--info)">{{ s.handling }}</span></div></sc-for></div></sc-if>
+              </div>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ANALYSIS SUBVIEW -->
+        <sc-if value="{{ compIsAnalysis }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;overflow:auto;padding:14px 16px 40px">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+            <sc-for list="{{ compFilters }}" as="f" hint-placeholder-count="5"><span data-chip style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11px">{{ f.k }} <span style="color:var(--fg)">{{ f.v }}</span></span></sc-for>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:14px">
+            <div style="padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">Grouped by model + profile</div>
+            <div style="display:grid;grid-template-columns:minmax(140px,1fr) 80px 90px 90px 90px 80px;padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700"><div>Group</div><div style="text-align:right">Requests</div><div style="text-align:right">p95</div><div style="text-align:right">Accept</div><div style="text-align:right;padding-right:7px">Tok i/o</div><div style="text-align:right">Err</div></div>
+            <sc-for list="{{ compGroups }}" as="g" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(140px,1fr) 80px 90px 90px 90px 80px;padding:7px 12px;border-bottom:1px solid var(--line);font-size:11.5px;align-items:center"><div style="font-family:var(--font-mono);font-size:11px">{{ g.g }}</div><div style="text-align:right;font-family:var(--font-mono)">{{ g.req }}</div><div style="text-align:right;font-family:var(--font-mono)">{{ g.p95 }}</div><div style="text-align:right;font-family:var(--font-mono)">{{ g.acc }}</div><div style="text-align:right;font-family:var(--font-mono);color:var(--fg-soft)">{{ g.tin }}/{{ g.tout }}</div><div style="text-align:right;font-family:var(--font-mono);color:var(--muted)">{{ g.err }}</div></div></sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:11px 13px;box-shadow:var(--shadow)">
+              <div style="font-weight:600;font-size:12.5px;margin-bottom:10px">p95 latency by group</div>
+              <sc-for list="{{ p95bars }}" as="b" hint-placeholder-count="3"><div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>{{ b.l }}</span><span style="font-family:var(--font-mono);color:var(--muted)">{{ b.v }}s</span></div><div style="height:12px;background:var(--panel-alt);border-radius:3px;overflow:hidden"><div style="height:100%;width:{{ b.w }};background:{{ b.c }};border-radius:3px"></div></div></div></sc-for>
+            </div>
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:11px 13px;box-shadow:var(--shadow)">
+              <div style="font-weight:600;font-size:12.5px;margin-bottom:10px">Acceptance funnel</div>
+              <sc-for list="{{ funnel }}" as="f" hint-placeholder-count="4"><div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>{{ f.l }}</span><span style="font-family:var(--font-mono);color:var(--muted)">{{ f.v }}</span></div><div style="height:14px;background:var(--panel-alt);border-radius:3px;overflow:hidden"><div style="height:100%;width:{{ f.w }};background:var(--ok);opacity:.8;border-radius:3px"></div></div></div></sc-for>
+            </div>
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:11px 13px;box-shadow:var(--shadow)">
+              <div style="font-weight:600;font-size:12.5px;margin-bottom:10px">Token cost in / out</div>
+              <sc-for list="{{ tokenBars }}" as="t" hint-placeholder-count="2"><div style="margin-bottom:11px"><div style="font-size:11px;margin-bottom:3px">{{ t.l }}</div><div style="display:flex;height:12px;border-radius:3px;overflow:hidden;background:var(--panel-alt)"><div style="width:{{ t.inW }};background:var(--info)"></div><div style="width:{{ t.outW }};background:var(--p-sts)"></div></div><div style="display:flex;gap:12px;margin-top:3px;font-size:10px;color:var(--muted);font-family:var(--font-mono)"><span>{{ t.inTxt }}</span><span>{{ t.outTxt }}</span></div></div></sc-for>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      </sc-if>
+      <!-- ============ CONNECTIONS ============ -->
+      <sc-if value="{{ isConnections }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px 16px 40px;max-width:1300px">
+        <div style="font-weight:600;font-size:13px;margin-bottom:10px">Connections</div>
+        <div style="display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:14px">
+          <sc-for list="{{ connKpis }}" as="k" hint-placeholder-count="4"><div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:9px 11px;box-shadow:var(--shadow)"><div style="color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em">{{ k.label }}</div><div style="font-size:19px;font-weight:700;margin-top:2px;color:{{ k.c }}">{{ k.value }}</div></div></sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:260px 1fr;gap:14px;align-items:start">
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:var(--ok)"></span>SQL Tools Service</div>
+            <div style="padding:10px 12px;display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:11.5px"><sc-for list="{{ stsLife }}" as="s" hint-placeholder-count="6"><span style="color:var(--muted)">{{ s.k }}</span><span style="font-family:var(--font-mono);font-size:11px;text-align:right">{{ s.v }}</span></sc-for></div>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">Active connections</div>
+            <div style="overflow-x:auto"><div style="min-width:620px">
+              <div style="display:grid;grid-template-columns:76px 1fr 1fr 90px 74px 70px 64px;padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700"><div>Conn</div><div>Server</div><div>Database</div><div>Auth</div><div>Created</div><div style="text-align:right">Ready</div><div>Status</div></div>
+              <sc-for list="{{ connRows }}" as="r" hint-placeholder-count="3"><div data-row style="display:grid;grid-template-columns:76px 1fr 1fr 90px 74px 70px 64px;padding:7px 12px;border-bottom:1px solid var(--line);align-items:center;font-size:11.5px;cursor:pointer"><div style="font-family:var(--font-mono);font-size:11px">{{ r.conn }}</div><div style="display:flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:10px;color:var(--muted);min-width:0"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.3" style="flex:none"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.srv }}</span></div><div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.db }}</div><div style="font-size:11px">{{ r.auth }}</div><div style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted)">{{ r.created }}</div><div style="text-align:right;font-family:var(--font-mono)">{{ r.ready }}</div><div><span style="display:inline-flex;align-items:center;height:16px;padding:0 6px;border-radius:999px;border:1px solid {{ r.st.b }};background:{{ r.st.bg }};color:{{ r.st.c }};font-size:10px;font-weight:600">{{ r.status }}</span></div></div></sc-for>
+            </div></div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ QUERY & RESULTS ============ -->
+      <sc-if value="{{ isQuery }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px 16px 40px;max-width:1300px">
+        <div style="font-weight:600;font-size:13px;margin-bottom:10px">Query &amp; Results</div>
+        <div style="display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-bottom:14px">
+          <sc-for list="{{ queryKpis }}" as="k" hint-placeholder-count="4"><div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:9px 11px;box-shadow:var(--shadow)"><div style="color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em">{{ k.label }}</div><div style="font-size:19px;font-weight:700;margin-top:2px">{{ k.value }}</div></div></sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:start">
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">Result sets</div>
+            <div style="overflow-x:auto"><div style="min-width:560px">
+              <div style="display:grid;grid-template-columns:44px 60px 90px 90px 80px 74px 78px 60px;padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700"><div>Set</div><div style="text-align:right">Cols</div><div style="text-align:right">Expected</div><div style="text-align:right">Rendered</div><div style="text-align:right">Render</div><div style="text-align:right">Windows</div><div style="text-align:right">Bytes</div><div>Status</div></div>
+              <sc-for list="{{ resultSets }}" as="r" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:44px 60px 90px 90px 80px 74px 78px 60px;padding:7px 12px;border-bottom:1px solid var(--line);align-items:center;font-size:11.5px;font-family:var(--font-mono)"><div style="color:var(--muted)">{{ r.idx }}</div><div style="text-align:right">{{ r.cols }}</div><div style="text-align:right">{{ r.expected }}</div><div style="text-align:right">{{ r.rendered }}</div><div style="text-align:right">{{ r.render }}</div><div style="text-align:right">{{ r.windows }}</div><div style="text-align:right;color:var(--muted)">{{ r.bytes }}</div><div><span style="display:inline-flex;align-items:center;height:16px;padding:0 6px;border-radius:999px;border:1px solid {{ r.st.b }};background:{{ r.st.bg }};color:{{ r.st.c }};font-size:10px;font-weight:600;font-family:var(--font-ui)">{{ r.status }}</span></div></div></sc-for>
+            </div></div>
+            <div style="margin:12px;padding:9px 11px;border:1px solid var(--ok-border);background:var(--ok-bg);border-radius:6px;display:flex;align-items:center;gap:8px;color:var(--ok);font-size:11.5px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg>Row-count proof: 10,000 expected · 10,000 rendered · virtual windowing active (8 windows)</div>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">Render breakdown <span style="color:var(--muted);font-weight:400;font-size:10.5px">· CDP diag</span></div>
+            <div style="padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:11.5px"><sc-for list="{{ renderPhases }}" as="p" hint-placeholder-count="4"><span style="color:var(--muted)">{{ p.k }}</span><span style="font-family:var(--font-mono);text-align:right;font-weight:600">{{ p.v }}</span></sc-for></div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ OBJECT EXPLORER ============ -->
+      <sc-if value="{{ isOe }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px 16px 40px;max-width:1300px">
+        <div style="font-weight:600;font-size:13px;margin-bottom:10px">Object Explorer</div>
+        <div style="display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start">
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">Object-count proof</div>
+            <div style="padding:10px 12px;display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:11.5px"><sc-for list="{{ oeProof }}" as="p" hint-placeholder-count="7"><span style="color:var(--muted)">{{ p.k }}</span><span style="font-family:var(--font-mono);font-size:11px;text-align:right">{{ p.v }}</span></sc-for></div>
+            <div style="margin:0 12px 12px;padding:8px 10px;border:1px solid var(--warn-border);background:var(--warn-bg);border-radius:6px;color:var(--warn);font-size:11px">Slower than baseline — 1 live-tail gap during expansion. SMO enumeration issued 1.28M logical reads.</div>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">Tree action activity</div>
+            <div style="display:grid;grid-template-columns:78px minmax(150px,1fr) 70px 100px 74px 64px;padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700"><div>Time</div><div>Type</div><div style="text-align:right">Dur</div><div style="text-align:right">Reads</div><div style="text-align:right">Objects</div><div>Status</div></div>
+            <sc-for list="{{ oeRows }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:78px minmax(150px,1fr) 70px 100px 74px 64px;padding:7px 12px;border-bottom:1px solid var(--line);align-items:center;font-size:11.5px"><div style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted)">{{ r.time }}</div><div style="font-family:var(--font-mono);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.type }}</div><div style="text-align:right;font-family:var(--font-mono)">{{ r.dur }}</div><div style="text-align:right;font-family:var(--font-mono);color:var(--fg-soft)">{{ r.reads }}</div><div style="text-align:right;font-family:var(--font-mono)">{{ r.rows }}</div><div><span style="display:inline-flex;align-items:center;height:16px;padding:0 6px;border-radius:999px;border:1px solid {{ r.st.b }};background:{{ r.st.bg }};color:{{ r.st.c }};font-size:10px;font-weight:600">{{ r.status }}</span></div></div></sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ EXPORTS ============ -->
+      <sc-if value="{{ isExports }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px 16px 40px;max-width:1300px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-weight:600;font-size:13px">Exports</div><div style="display:flex;gap:8px"><button data-chip style="height:28px;padding:0 12px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);cursor:pointer;font-size:11.5px;font-family:var(--font-ui)">Import bundle…</button><button onClick="{{ act.openExport }}" style="height:28px;padding:0 12px;border:1px solid var(--accent);border-radius:5px;background:var(--accent);color:var(--accent-fg);cursor:pointer;font-size:11.5px;font-weight:600;font-family:var(--font-ui)">Create export…</button></div></div>
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:14px;align-items:start">
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">Recent exports</div>
+            <div style="overflow-x:auto"><div style="min-width:560px">
+              <div style="display:grid;grid-template-columns:80px 1fr 100px 70px 56px 70px 70px;padding:7px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:700"><div>Created</div><div>Source · scope</div><div style="text-align:right">Events</div><div style="text-align:right">Redact</div><div style="text-align:right">Gaps</div><div style="text-align:right">Size</div><div>Valid</div></div>
+              <sc-for list="{{ exportRows }}" as="r" hint-placeholder-count="3"><div data-row style="display:grid;grid-template-columns:80px 1fr 100px 70px 56px 70px 70px;padding:7px 12px;border-bottom:1px solid var(--line);align-items:center;font-size:11.5px;cursor:pointer"><div style="font-family:var(--font-mono);font-size:10.5px;color:var(--muted)">{{ r.created }}</div><div style="min-width:0"><div style="font-family:var(--font-mono);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.src }}</div><div style="color:var(--muted);font-size:10.5px">{{ r.scope }}</div></div><div style="text-align:right;font-family:var(--font-mono)">{{ r.events }}</div><div style="text-align:right;font-family:var(--font-mono);color:var(--fg-soft)">{{ r.red }}</div><div style="text-align:right;font-family:var(--font-mono)">{{ r.gaps }}</div><div style="text-align:right;font-family:var(--font-mono);color:var(--muted)">{{ r.size }}</div><div><span style="display:inline-flex;align-items:center;height:16px;padding:0 6px;border-radius:999px;border:1px solid {{ r.st.b }};background:{{ r.st.bg }};color:{{ r.st.c }};font-size:10px;font-weight:600">{{ r.valid }}</span></div></div></sc-for>
+            </div></div>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:9px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">Bundle validation</div>
+            <div style="padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:11.5px"><sc-for list="{{ exportManifest }}" as="m" hint-placeholder-count="6"><span style="color:var(--muted)">{{ m.k }}</span><span style="font-family:var(--font-mono);text-align:right">{{ m.v }}</span></sc-for></div>
+            <div style="margin:0 12px 12px;padding:8px 10px;border:1px solid var(--ok-border);background:var(--ok-bg);border-radius:6px;color:var(--ok);font-size:11px">Redaction scan passed · manifest hashes verified · no external fetch required.</div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============ SETTINGS ============ -->
+      <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px 16px 40px;max-width:820px">
+        <div style="font-weight:600;font-size:13px;margin-bottom:12px">Settings</div>
+        <sc-for list="{{ setSections }}" as="sec" hint-placeholder-count="3">
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px">
+            <div style="padding:9px 13px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px">{{ sec.title }}</div>
+            <sc-for list="{{ sec.rows }}" as="r" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:14px;padding:11px 13px;border-bottom:1px solid var(--line)">
+                <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:500">{{ r.label }}</div><div style="color:var(--muted);font-size:11px;margin-top:2px">{{ r.desc }}</div></div>
+                <sc-if value="{{ r.isToggle }}" hint-placeholder-val="{{ false }}"><div data-active="{{ r.onAttr }}" style="flex:none;width:34px;height:19px;border-radius:999px;background:var(--panel-alt);border:1px solid var(--line);position:relative;cursor:pointer"><span style="position:absolute;top:1px;width:15px;height:15px;border-radius:50%;transition:all .15s;background:{{ r.knobBg }};left:{{ r.knobLeft }}"></span></div></sc-if>
+                <sc-if value="{{ r.isSeg }}" hint-placeholder-val="{{ false }}"><div style="flex:none;display:flex;height:26px;padding:2px;gap:2px;background:var(--panel-alt);border:1px solid var(--line);border-radius:6px"><sc-for list="{{ r.segItems }}" as="s" hint-placeholder-count="3"><button data-seg data-active="{{ s.active }}" style="height:100%;padding:0 9px;border:0;border-radius:4px;background:transparent;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--font-ui)">{{ s.o }}</button></sc-for></div></sc-if>
+                <sc-if value="{{ r.isVal }}" hint-placeholder-val="{{ false }}"><div style="flex:none;height:26px;display:flex;align-items:center;padding:0 10px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);font-family:var(--font-mono);font-size:11.5px">{{ r.val }}</div></sc-if>
+                <sc-if value="{{ r.isDanger }}" hint-placeholder-val="{{ false }}"><button style="flex:none;height:28px;padding:0 12px;border:1px solid var(--err-border);border-radius:5px;background:var(--err-bg);color:var(--err);font-weight:600;font-size:11.5px;cursor:pointer;font-family:var(--font-ui)">Clear all…</button></sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+      <!--PAGES-->
+
+      <!-- generic fallback for not-yet-selected pages handled per-page -->
+    </main>
+  </div>
+
+  <!-- ===================== OVERLAYS ===================== -->
+  <sc-if value="{{ showCapturePop }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ act.closeCapture }}" style="position:fixed;inset:0;z-index:40"></div>
+    <div style="position:fixed;top:46px;z-index:41;width:320px;background:var(--widget);border:1px solid var(--line-strong);border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.22);padding:13px 14px; {{ capturePopPos }}">
+      <div style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px;margin-bottom:2px">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="var(--info)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>
+        Capture: Redacted
+      </div>
+      <div style="color:var(--muted);font-size:11.5px;line-height:1.5;margin:6px 0 10px">Classified events are captured locally with sensitive fields redacted. SQL text, row values, secrets, and connection strings are never stored as plaintext. Nothing is uploaded.</div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:11.5px;margin-bottom:11px">
+        <span style="color:var(--muted)">Storage</span><span style="font-family:var(--font-mono);font-size:11px">globalStorage/session-diag</span>
+        <span style="color:var(--muted)">Retention</span><span>10 sessions · 14 days · 250 MB cap</span>
+        <span style="color:var(--muted)">Elevated</span><span>not active</span>
+      </div>
+      <button style="width:100%;height:30px;border:1px solid var(--warn-border);border-radius:5px;background:var(--warn-bg);color:var(--warn);font-weight:600;font-size:12px;cursor:pointer;font-family:var(--font-ui);margin-bottom:6px">Elevate capture (time-bounded)…</button>
+      <div style="display:flex;gap:8px;justify-content:space-between;color:var(--link);font-size:11px"><span style="cursor:pointer">Open Settings</span><span style="cursor:pointer">Privacy explanation</span></div>
+    </div>
+  </sc-if>
+
+  <!-- EXPORT EVIDENCE BUNDLE MODAL -->
+  <sc-if value="{{ showExport }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ act.closeModal }}" style="position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.42)"></div>
+    <div style="position:fixed;z-index:51;top:50%;left:50%;transform:translate(-50%,-50%);width:min(600px,92vw);max-height:88vh;display:flex;flex-direction:column;background:var(--widget);border:1px solid var(--line-strong);border-radius:9px;box-shadow:0 16px 50px rgba(0,0,0,.32);overflow:hidden">
+      <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:9px;font-weight:600;font-size:14px"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="1.3" stroke-linejoin="round"><path d="M8 1.6l6 3v7l-6 3-6-3v-7z"/><path d="M2.2 4.7L8 7.6l5.8-2.9M8 7.6v7.3"/></svg>Export Evidence Bundle</div>
+        <button data-ghost onClick="{{ act.closeModal }}" style="width:26px;height:26px;border:0;border-radius:5px;background:transparent;color:var(--muted);cursor:pointer;font-size:16px">✕</button>
+      </div>
+      <div style="flex:1;overflow:auto;padding:14px 16px">
+        <div style="margin-bottom:14px">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700;margin-bottom:7px">1 · Scope</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <label style="display:flex;align-items:center;gap:9px;font-size:12.5px;cursor:pointer"><span style="width:15px;height:15px;border-radius:50%;border:4px solid var(--accent);background:var(--panel);flex:none"></span>Entire session <span style="color:var(--muted);font-family:var(--font-mono);font-size:11px">12,481 events</span></label>
+            <label style="display:flex;align-items:center;gap:9px;font-size:12.5px;cursor:pointer;color:var(--fg-soft)"><span style="width:15px;height:15px;border-radius:50%;border:1.5px solid var(--input-border);flex:none"></span>Selected correlation <span style="color:var(--muted);font-family:var(--font-mono);font-size:11px">trace_8d3f…0007</span></label>
+            <label style="display:flex;align-items:center;gap:9px;font-size:12.5px;cursor:pointer;color:var(--fg-soft)"><span style="width:15px;height:15px;border-radius:50%;border:1.5px solid var(--input-border);flex:none"></span>Selected time range · current replay result</label>
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700;margin-bottom:7px">2 · Privacy</div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px">
+            <label style="display:flex;align-items:center;gap:9px"><span style="width:15px;height:15px;border-radius:3px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex:none"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span>Redacted (default)</label>
+            <label style="display:flex;align-items:center;gap:9px"><span style="width:15px;height:15px;border-radius:3px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex:none"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span>Include digests</label>
+            <label style="display:flex;align-items:center;gap:9px;color:var(--muted)"><span style="width:15px;height:15px;border-radius:3px;border:1.5px solid var(--input-border);flex:none"></span>Include full SQL text <span style="display:inline-flex;align-items:center;gap:3px;color:var(--warn);font-size:10.5px"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>blocked by policy</span></label>
+            <label style="display:flex;align-items:center;gap:9px;color:var(--muted)"><span style="width:15px;height:15px;border-radius:3px;border:1.5px solid var(--input-border);flex:none"></span>Include row samples <span style="color:var(--warn);font-size:10.5px">requires elevation</span></label>
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700;margin-bottom:7px">3 · Validation</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:12px">
+            <span style="display:flex;align-items:center;gap:7px;color:var(--ok)"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg>Snapshot consistency</span>
+            <span style="display:flex;align-items:center;gap:7px;color:var(--ok)"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg>Gap summary · 0 unresolved</span>
+            <span style="display:flex;align-items:center;gap:7px;color:var(--ok)"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg>Redaction scan · 31 fields</span>
+            <span style="display:flex;align-items:center;gap:7px;color:var(--ok)"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg>Manifest hashes</span>
+          </div>
+        </div>
+        <div style="padding:10px 12px;border:1px solid var(--ok-border);background:var(--ok-bg);border-radius:6px;font-size:12px;color:var(--fg-soft)">
+          <div style="font-family:var(--font-mono);font-size:11.5px;color:var(--ok);font-weight:600">mssql-session-2026-07-02T14-02-13.zip</div>
+          <div style="margin-top:3px;color:var(--muted);font-size:11px">Contains 12,481 events · 0 unresolved gaps · 31 redactions · 4 artifacts · privacy report included.</div>
+        </div>
+      </div>
+      <div style="flex:none;display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:1px solid var(--line)">
+        <button data-ghost onClick="{{ act.closeModal }}" style="height:30px;padding:0 14px;border:1px solid var(--input-border);border-radius:5px;background:var(--input-bg);color:var(--fg);cursor:pointer;font-size:12px;font-family:var(--font-ui)">Cancel</button>
+        <button onClick="{{ act.closeModal }}" style="height:30px;padding:0 16px;border:1px solid var(--accent);border-radius:5px;background:var(--accent);color:var(--accent-fg);cursor:pointer;font-size:12px;font-weight:600;font-family:var(--font-ui)">Save bundle…</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- PROVENANCE DRAWER -->
+  <sc-if value="{{ showProvenance }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ act.closeModal }}" style="position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.35)"></div>
+    <div style="position:fixed;z-index:51;top:0;right:0;bottom:0;width:min(360px,90vw);background:var(--widget);border-left:1px solid var(--line-strong);box-shadow:-8px 0 30px rgba(0,0,0,.22);display:flex;flex-direction:column">
+      <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--line)"><div style="font-weight:600;font-size:13.5px">Run &amp; session provenance</div><button data-ghost onClick="{{ act.closeModal }}" style="width:26px;height:26px;border:0;border-radius:5px;background:transparent;color:var(--muted);cursor:pointer;font-size:16px">✕</button></div>
+      <div style="flex:1;overflow:auto;padding:13px 15px">
+        <div style="display:grid;grid-template-columns:120px 1fr;gap:8px 12px;font-size:12px">
+          <span style="color:var(--muted)">Session ID</span><span style="font-family:var(--font-mono);font-size:10.5px;word-break:break-all">sess_20260702_140213_devbox</span>
+          <span style="color:var(--muted)">Source</span><span>live · local store</span>
+          <span style="color:var(--muted)">Started</span><span style="font-family:var(--font-mono);font-size:11px">2026-07-02 14:02:13</span>
+          <span style="color:var(--muted)">VS Code</span><span style="font-family:var(--font-mono);font-size:11px">1.101.0</span>
+          <span style="color:var(--muted)">vscode-mssql</span><span style="font-family:var(--font-mono);font-size:11px">7f3c2b1 · main · dirty</span>
+          <span style="color:var(--muted)">SQL Tools Service</span><span style="font-family:var(--font-mono);font-size:11px">4.11.0-dev</span>
+          <span style="color:var(--muted)">Env fingerprint</span><span style="font-family:var(--font-mono);font-size:11px">env:9d0412a</span>
+          <span style="color:var(--muted)">Capture policy</span><span>redacted · policy_redacted_default</span>
+          <span style="color:var(--muted)">Store path</span><span style="font-family:var(--font-mono);font-size:10px;word-break:break-all">globalStorage/session-diag</span>
+          <span style="color:var(--muted)">Retention</span><span>10 sessions · 14 days · 250 MB</span>
+          <span style="color:var(--muted)">Replay source</span><span>none</span>
+        </div>
+        <div style="margin-top:14px;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:var(--panel-alt)">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700;margin-bottom:5px">Export manifest</div>
+          <div style="font-size:11.5px;color:var(--fg-soft)">2 exports · latest mssql-session-2026-07-02T14-02-13.zip · hashes verified.</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!--OVERLAYS-->
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;defaultTheme&quot;: {&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light'|'dark'&quot;,&quot;section&quot;:&quot;Appearance&quot;},
+  &quot;accent&quot;: {&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#005fb8&quot;,&quot;options&quot;:[&quot;#005fb8&quot;,&quot;#0078d4&quot;,&quot;#8250df&quot;,&quot;#1a7f37&quot;,&quot;#bc4b09&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Appearance&quot;},
+  &quot;reduceMotion&quot;: {&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Appearance&quot;}
+}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = {
+      page: 'overview',
+      theme: (props && props.defaultTheme) || 'light',
+      live: true,
+      sessionName: 'Session 2026-07-02 09:14',
+      selectedEventId: null,
+      tab: 'summary',
+      search: '',
+      capturePop: false,
+      modal: null,
+    };
+  }
+
+  // ---- shared color maps (var() refs are theme-aware automatically) ----
+  get SC(){ return {
+    ok:{c:'var(--ok)',bg:'var(--ok-bg)',b:'var(--ok-border)'},
+    warning:{c:'var(--warn)',bg:'var(--warn-bg)',b:'var(--warn-border)'},
+    error:{c:'var(--err)',bg:'var(--err-bg)',b:'var(--err-border)'},
+    blocked:{c:'var(--warn)',bg:'var(--warn-bg)',b:'var(--warn-border)'},
+    info:{c:'var(--info)',bg:'var(--info-bg)',b:'var(--info-border)'},
+    skipped:{c:'var(--muted)',bg:'var(--panel-alt)',b:'var(--line)'},
+    partial:{c:'var(--warn)',bg:'var(--warn-bg)',b:'var(--warn-border)'},
+    invalid:{c:'var(--muted)',bg:'var(--panel-alt)',b:'var(--line)'},
+  };}
+  get PC(){ return {
+    extensionHost:'var(--p-ext)', webview:'var(--p-webview)', renderer:'var(--p-webview)',
+    sqlToolsService:'var(--p-sts)', sqlServer:'var(--p-sql)', harness:'var(--p-harness)',
+    wire:'var(--p-wire)', system:'var(--muted)',
+  };}
+
+  setPage(p){ this.setState({ page:p, capturePop:false, modal:null }); }
+
+  shellVals(){
+    const self=this;
+    const pages=['overview','trace','waterfall','perf','completions','replay','sql','connections','query','oe','exports','settings'];
+    const nav={}, go={};
+    pages.forEach(p=>{ nav[p]= self.state.page===p ? 'true':'false'; go[p]=()=>self.setPage(p); });
+    const is={};
+    pages.forEach(p=>{ is['is'+p.charAt(0).toUpperCase()+p.slice(1)] = self.state.page===p; });
+
+    const live=self.state.live;
+    const accent = (self.props && self.props.accent) || '';
+    const accentVars = accent ? ('--accent:'+accent+';--link:'+accent+';--focus:'+accent+';--info:'+accent) : '';
+
+    return Object.assign({
+      theme:self.state.theme,
+      reduceAttr: (self.props && self.props.reduceMotion) ? 'true':'false',
+      accentVars,
+      nav, go,
+      // top bar
+      sessionLabel: live ? 'Current VS Code Session' : self.state.sessionName,
+      sessionMeta: live ? '· live' : '· historical',
+      sessionDotColor: live ? 'var(--ok)' : 'var(--muted)',
+      liveDotAttr: live ? 'true':'false',
+      liveActive: live ? 'true':'false',
+      histActive: live ? 'false':'true',
+      liveTintColor: live ? 'var(--ok)' : 'var(--muted)',
+      searchText:self.state.search,
+      captureLabel:'Redacted',
+      captureBg:'var(--info-bg)', captureColor:'var(--info)', captureBorder:'var(--info-border)',
+      gapCount:'2',
+      sunDisplay: self.state.theme==='dark' ? 'flex':'none',
+      moonDisplay: self.state.theme==='dark' ? 'none':'flex',
+      provCommit:'mssql 7f3c2b1-dirty', provEnv:'env:9d0412a',
+      sessionId:'sess_20260702_140213_devbox',
+      // overlays
+      showCapturePop:self.state.capturePop,
+      showExport: self.state.modal==='export',
+      showProvenance: self.state.modal==='provenance',
+      capturePopPos:'left:220px',
+      // actions
+      act:{
+        toggleTheme:()=>self.setState(s=>({theme:s.theme==='light'?'dark':'light'})),
+        setLive:()=>self.setState({live:true}),
+        setHistory:()=>self.setState({live:false}),
+        onSearch:(e)=>self.setState({search:e.target.value}),
+        toggleCapture:()=>self.setState(s=>({capturePop:!s.capturePop})),
+        closeCapture:()=>self.setState({capturePop:false}),
+        openExport:()=>self.setState({modal:'export'}),
+        openProvenance:()=>self.setState({modal:'provenance'}),
+        closeModal:()=>self.setState({modal:null}),
+        goTraceGap:()=>self.setPage('trace'),
+      },
+    }, is);
+  }
+
+  vals_overview(){
+    const self=this; const SC=this.SC;
+    const tone={ '':'var(--fg)', ok:'var(--ok)', warn:'var(--warn)', error:'var(--err)', info:'var(--info)' };
+    const kpis=[
+      {label:'Events', value:'18,421', note:'2 gaps', t:''},
+      {label:'Errors', value:'11', note:'0 privacy leaks', t:'error'},
+      {label:'Warnings', value:'34', note:'3 features', t:'warn'},
+      {label:'Live-tail gaps', value:'2', note:'backfillable', t:'warn'},
+      {label:'Slowest action', value:'9.83s', note:'Expand Tables · OE', t:'warn'},
+      {label:'SQL commands', value:'312', note:'296k logical reads', t:''},
+      {label:'Renderer', value:'412ms', note:'paint 84ms', t:''},
+      {label:'Memory peak', value:'684MB', note:'ext host RSS', t:''},
+      {label:'Capture mode', value:'Redacted', note:'local · 14-day cap', t:'info'},
+      {label:'Replay runs', value:'3', note:'1 failed cell', t:''},
+      {label:'Exports', value:'2', note:'0 unresolved gaps', t:''},
+    ].map(k=>({ ...k, color:tone[k.t] }));
+
+    const mkStatus=(s)=>({ ok:'ok', warning:'warning', error:'error', skipped:'skipped', blocked:'blocked' }[s]||s);
+    const actions=[
+      {time:'14:02:41.118', action:'Run query', feature:'Query', dur:'2.84s', status:'ok', sql:'4', render:'412ms', gaps:'0', page:'waterfall'},
+      {time:'14:03:10.445', action:'Expand Tables node', feature:'Object Explorer', dur:'9.83s', status:'warning', sql:'21', render:'1.8s', gaps:'1', page:'trace'},
+      {time:'14:03:22.004', action:'Completion request', feature:'Completions', dur:'621ms', status:'skipped', sql:'0', render:'0ms', gaps:'0', page:'completions'},
+      {time:'14:01:58.210', action:'Connect · local container', feature:'Connection', dur:'1.21s', status:'ok', sql:'2', render:'0ms', gaps:'0', page:'connections'},
+      {time:'14:04:03.887', action:'Schema Compare run', feature:'Schema Compare', dur:'6.42s', status:'ok', sql:'38', render:'220ms', gaps:'0', page:'trace'},
+      {time:'14:04:41.552', action:'Edit rows · commit', feature:'Data Editor', dur:'840ms', status:'error', sql:'3', render:'60ms', gaps:'0', page:'trace'},
+    ].map(a=>({ ...a, statusLabel:mkStatus(a.status), st:SC[a.status]||SC.info, gapColor: a.gaps!=='0'?'var(--warn)':'var(--muted)', onOpen:()=>self.setPage(a.page) }));
+
+    const anomalies=[
+      {sev:'warn', title:'1 live-tail gap in Object Explorer expansion', detail:'214 events dropped · seq 10432–10645 · backfillable', cta:'Open in Trace', page:'trace'},
+      {sev:'warn', title:'SQL logical reads +42% vs baseline', detail:'query-10k · +296k reads · +3 round-trips', cta:'Open A/B in Perf', page:'perf'},
+      {sev:'info', title:'Renderer longest task 390ms in Results Grid', detail:'diagnostic metric · does not gate regressions', cta:'Open Waterfall', page:'waterfall'},
+      {sev:'error', title:'Replay matrix cell failed', detail:'cell_focused_generous_02 · adapter timeout', cta:'Open Replay Lab', page:'replay'},
+    ].map(an=>({ ...an, color: an.sev==='error'?'var(--err)': an.sev==='warn'?'var(--warn)':'var(--info)', onOpen:()=>self.setPage(an.page) }));
+
+    const sessions=[
+      {name:'Current VS Code Session', src:'live', when:'active now', events:'18,421', mode:'redacted', dotColor:'var(--ok)', dotPulse:'true'},
+      {name:'Session 2026-07-02 09:14', src:'local store', when:'today 09:14', events:'42,109', mode:'digest', dotColor:'var(--muted)', dotPulse:'false'},
+      {name:'Perf run: query-10k / cand 7f3c2b1', src:'perf run', when:'yesterday', events:'8,204', mode:'synthetic', dotColor:'var(--p-harness)', dotPulse:'false'},
+      {name:'Bug bundle: support-2026-07-01.zip', src:'bundle', when:'imported', events:'3,517', mode:'redacted', dotColor:'var(--info)', dotPulse:'false'},
+    ];
+
+    return {
+      overviewSourceLine: self.state.live ? 'Streaming from the current session.' : 'Reviewing a saved session (static).',
+      kpis, actions, anomalies, sessions,
+    };
+  }
+
+  vals_trace(){
+    const self=this; const SC=this.SC; const PC=this.PC;
+    const procLabel={ extensionHost:'Extension', webview:'Webview', renderer:'Renderer', sqlToolsService:'STS', sqlServer:'SQL Server', harness:'Harness', wire:'Wire', system:'System' };
+    const kindGlyph={ event:'●', span:'⟺', metric:'∿', request:'→', response:'←', sqlActivity:'◆', renderPhase:'▧', gap:'▸', state:'◈', artifact:'⧉' };
+    const flagMeta={ diag:{l:'diag',c:'var(--warn)'}, replay:{l:'replay',c:'var(--p-sts)'}, lock:{l:'lock',c:'var(--muted)'}, gap:{l:'gap',c:'var(--warn)'}, artifact:{l:'artifact',c:'var(--info)'} };
+
+    const raw=[
+      {seq:10428,time:'14:02:41.092',process:'extensionHost',feature:'system',kind:'event',type:'sessionDiag.heartbeat',corr:'—',dur:'',status:'ok',flags:['diag']},
+      {seq:10430,time:'14:02:41.118',process:'extensionHost',feature:'query',kind:'event',type:'command.mssql.runQuery.begin',corr:'trace_8d3f…0007',dur:'',status:'ok',flags:[]},
+      {seq:10431,time:'14:02:41.122',process:'extensionHost',feature:'query',kind:'span',type:'query.submit',corr:'trace_8d3f…0007',dur:'12ms',status:'ok',flags:[]},
+      {gap:true,from:10432,through:10645,count:214,reason:'subscriberOverflow'},
+      {seq:10646,time:'14:02:41.246',process:'sqlToolsService',feature:'query',kind:'request',type:'sts.rpc.query.execute',corr:'trace_8d3f…0007',dur:'1.92s',status:'ok',flags:['lock'],hero:true},
+      {seq:10648,time:'14:02:41.250',process:'sqlToolsService',feature:'query',kind:'span',type:'driver.command.execute',corr:'trace_8d3f…0007',dur:'1.90s',status:'ok',flags:['lock']},
+      {seq:10651,time:'14:02:42.384',process:'sqlServer',feature:'query',kind:'sqlActivity',type:'sql_batch_completed',corr:'app:mssql-vscode',dur:'1.43s',status:'ok',flags:['lock','diag']},
+      {seq:10658,time:'14:02:43.160',process:'sqlToolsService',feature:'query',kind:'response',type:'sts.rpc.query.execute.result',corr:'trace_8d3f…0007',dur:'',status:'ok',flags:[]},
+      {seq:10660,time:'14:02:43.204',process:'webview',feature:'resultsGrid',kind:'event',type:'resultsGrid.dataReceived',corr:'trace_8d3f…0007',dur:'44ms',status:'ok',flags:[]},
+      {seq:10663,time:'14:02:43.248',process:'webview',feature:'resultsGrid',kind:'renderPhase',type:'resultsGrid.renderComplete',corr:'trace_8d3f…0007',dur:'412ms',status:'ok',flags:['diag']},
+      {seq:10664,time:'14:02:43.250',process:'extensionHost',feature:'query',kind:'event',type:'command.mssql.runQuery.end',corr:'trace_8d3f…0007',dur:'2.84s',status:'ok',flags:[]},
+      {seq:10680,time:'14:03:10.445',process:'extensionHost',feature:'objectExplorer',kind:'span',type:'oe.expand.begin',corr:'trace_a1c9…0031',dur:'',status:'ok',flags:[]},
+      {seq:10712,time:'14:03:12.980',process:'sqlToolsService',feature:'objectExplorer',kind:'request',type:'sts.rpc.metadata.listTables',corr:'trace_a1c9…0031',dur:'6.30s',status:'warning',flags:['lock']},
+      {seq:10740,time:'14:03:20.270',process:'webview',feature:'objectExplorer',kind:'renderPhase',type:'oe.tree.renderComplete',corr:'trace_a1c9…0031',dur:'1.80s',status:'warning',flags:['diag']},
+      {seq:10742,time:'14:03:22.004',process:'extensionHost',feature:'completions',kind:'event',type:'completion.request',corr:'trace_c2f0…0044',dur:'621ms',status:'skipped',flags:['replay']},
+      {seq:10760,time:'14:04:41.552',process:'extensionHost',feature:'query',kind:'event',type:'dataEditor.commit',corr:'trace_e5b1…0071',dur:'840ms',status:'error',flags:[]},
+    ];
+
+    const selId = self.state.selectedEventId==null ? 10646 : self.state.selectedEventId;
+
+    const events = raw.map(ev=>{
+      if(ev.gap){
+        return { gap:true, from:ev.from, through:ev.through, count:ev.count, reason:ev.reason,
+          onToggle:()=>self.setState(s=>({gapOpen:!s.gapOpen})),
+          onBackfill:()=>self.setState({gapDone:true, gapOpen:true}) };
+      }
+      const flagList=(ev.flags||[]).map(f=>({ label:flagMeta[f].l, color:flagMeta[f].c }));
+      return {
+        seq:ev.seq, time:ev.time, procLabel:procLabel[ev.process], procColor:PC[ev.process],
+        feature:ev.feature, kindGlyph:kindGlyph[ev.kind]||'●', type:ev.type, corr:ev.corr,
+        dur:ev.dur||'', status:ev.status, statusLabel:ev.status, st:SC[ev.status]||SC.info,
+        flagList, hasFlags:flagList.length>0, selAttr: ev.seq===selId?'true':'false', notGap:true,
+        onSelect:()=>self.setState({selectedEventId:ev.seq, tab:'summary'}),
+      };
+    });
+
+    const evById = {}; raw.forEach(e=>{ if(!e.gap) evById[e.seq]=e; });
+    const ev = evById[selId] || evById[10646];
+    const sel = this.buildTraceDetail(ev, procLabel);
+
+    const tabs=['summary','payload','cause','timeline','privacy','raw','actions'].map(id=>({
+      id, label:{summary:'Summary',payload:'Payload',cause:'Cause',timeline:'Timeline',privacy:'Privacy',raw:'Raw',actions:'Actions'}[id],
+      active: (self.state.tab||'summary')===id?'true':'false', onTab:()=>self.setState({tab:id}),
+    }));
+    const T=(self.state.tab||'summary');
+
+    return {
+      events,
+      traceCount: raw.filter(e=>!e.gap).length+' of 18,421',
+      gapOpen: !!self.state.gapOpen, gapDone: !!self.state.gapDone, gapDoneNot: !self.state.gapDone,
+      traceLiveNote: self.state.live ? 'Streaming · newest at bottom' : 'Saved session · static',
+      sel, tabs,
+      tSummary:T==='summary', tPayload:T==='payload', tCause:T==='cause', tTimeline:T==='timeline', tPrivacy:T==='privacy', tRaw:T==='raw', tActions:T==='actions',
+    };
+  }
+
+  buildTraceDetail(ev, procLabel){
+    const PC=this.PC; const SC=this.SC;
+    const hero = ev.seq===10646;
+    const hero2 = ev.seq===10651;
+    const payloadRows = ev.payloadRows || (hero ? [
+      {k:'documentUriDigest', v:'uri:sha256:df02a9c1…', lock:false},
+      {k:'sql.text', v:'SQL text redacted', lock:true, cls:'sql.text', reason:'Session Diag redacted mode', digest:'sql:sha256:8fd2c91a…'},
+      {k:'rowLimit', v:'10000', lock:false},
+      {k:'connectionId', v:'srv:sha256:1a0c… (digest)', lock:true, cls:'server.name', reason:'digest policy', digest:'srv:sha256:1a0c…'},
+      {k:'timeoutMs', v:'30000', lock:false},
+      {k:'traceparent', v:'00-8d3f1a9c…-b7c2-01', lock:false},
+    ] : hero2 ? [
+      {k:'eventType', v:'sql_batch_completed', lock:false},
+      {k:'sql.text', v:'SQL text redacted', lock:true, cls:'sql.text', reason:'host policy: digest only', digest:'sql:sha256:8fd2c91a…'},
+      {k:'durationMs', v:'1430', lock:false},
+      {k:'cpuMs', v:'920', lock:false},
+      {k:'logicalReads', v:'296,120', lock:false},
+      {k:'rowCount', v:'10,000', lock:false},
+      {k:'applicationName', v:'mssql-vscode', lock:false},
+    ] : [
+      {k:'type', v:ev.type, lock:false},
+      {k:'status', v:ev.status, lock:false},
+      {k:'seq', v:String(ev.seq), lock:false},
+      {k:'durationMs', v:(ev.dur||'—'), lock:false},
+    ]);
+
+    const causeTree = ev.causeTree || (ev.corr && ev.corr.indexOf('8d3f')>=0 || ev.corr==='app:mssql-vscode' ? [
+      {d:0,label:'User action: Run query',type:'system'},
+      {d:1,label:'command.mssql.runQuery',type:'extensionHost'},
+      {d:2,label:'sts.rpc.query.execute',type:'sqlToolsService',me:hero},
+      {d:3,label:'SQL batch SELECT TOP 10000…',type:'sqlServer',me:hero2},
+      {d:3,label:'webview resultDataReceived',type:'webview'},
+      {d:4,label:'renderer layout',type:'webview'},
+      {d:4,label:'resultsGrid.renderComplete',type:'webview'},
+    ] : [
+      {d:0,label:'command boundary',type:'extensionHost'},
+      {d:1,label:ev.type,type:ev.process,me:true},
+    ]).map(n=>({ ...n, color:PC[n.type]||'var(--muted)', pad:(8+n.d*16)+'px', meAttr:n.me?'true':'false' }));
+
+    const timeline = ev.timeline || [
+      {label:'query.submit', color:PC.extensionHost, left:'2%', width:'4%', hatch:false},
+      {label:'sts.rpc.query.execute', color:PC.sqlToolsService, left:'8%', width:'62%', hatch:true, me:hero},
+      {label:'sql_batch_completed', color:PC.sqlServer, left:'40%', width:'46%', hatch:true, me:hero2},
+      {label:'dataReceived', color:PC.webview, left:'86%', width:'3%', hatch:false},
+      {label:'renderComplete', color:PC.webview, left:'89%', width:'9%', hatch:true},
+    ].map(b=>({ ...b, meAttr:b.me?'true':'false', bg: b.hatch? ('repeating-linear-gradient(115deg,'+b.color+' 0 6px,transparent 6px 11px),'+b.color) : b.color, op: b.hatch?'0.55':'1' }));
+
+    const privacyRows = ev.privacyRows || (hero||hero2 ? [
+      {field:'sql.text', cls:'sql.text', handling:'digest', method:'sql:sha256:8fd2c91a…'},
+      {field:'connectionId', cls:'server.name', handling:'digest', method:'srv:sha256:1a0c…'},
+      {field:'rowCount', cls:'diagnostic.metadata', handling:'plain', method:'—'},
+      {field:'logicalReads', cls:'diagnostic.metadata', handling:'plain', method:'—'},
+    ] : [
+      {field:'(payload)', cls:'diagnostic.metadata', handling:'plain', method:'—'},
+    ]).map(r=>({ ...r, hColor: r.handling==='plain'?'var(--muted)':'var(--info)' }));
+
+    const rawObj = {
+      schemaVersion:'mssql.diag.event/1', eventId:'evt_000'+ev.seq, sessionId:'sess_20260702_140213_devbox',
+      seq:ev.seq, timestampUtc:'2026-07-02T'+ev.time+'Z', process:ev.process, feature:ev.feature,
+      kind:ev.kind, type:ev.type, status:ev.status,
+      correlation:{ traceId:'trace_8d3f1a9c_0007', spanId:'span_'+ev.seq, stsCorr: ev.process==='sqlToolsService'?'sts.corr.142':undefined },
+      durationMs: ev.dur? ev.dur : undefined,
+      classification:{ maxClassification: (ev.flags||[]).includes('lock')?'sql.text':'diagnostic.metadata', redactionApplied:(ev.flags||[]).includes('lock'), policyId:'policy_redacted_default' },
+      payload:{ value: hero2? { logicalReads:296120, cpuMs:920, rowCount:10000, sqlText:'‹redacted:sql:sha256:8fd2c91a…›' } : { redacted:true } },
+      source:{ component:'vscode-mssql', version:'dev', commit:'7f3c2b1' },
+    };
+
+    return {
+      title:ev.type, statusLabel:ev.status, st:SC[ev.status]||SC.info,
+      dur: ev.dur||'instant', start:ev.time, end: ev.dur? '≈ +'+ev.dur : 'instant',
+      procLabel:procLabel[ev.process], procColor:PC[ev.process], feature:ev.feature, category:ev.kind,
+      corr: ev.corr==='—' ? 'none' : ev.corr, corrFull:'trace_8d3f1a9c_0007',
+      parentCause: ev.corr==='—'?'—':'command.mssql.runQuery', seqMono:'evt_000'+ev.seq,
+      maxClass: (ev.flags||[]).includes('lock')?'sql.text':'diagnostic.metadata',
+      redacted: (ev.flags||[]).includes('lock'),
+      entityRefs: hero2? [{kind:'sqlCommand',id:'cmd_10k_0007'},{kind:'query',id:'q_10k_0007'}] : [{kind:'query',id:'q_10k_0007'}],
+      artifacts: hero2? [{label:'sql-activity.jsonl',icon:'◆'},{label:'query-plan.sqlplan',icon:'⧉'}] : (ev.kind==='renderPhase'? [{label:'renderer.trace.json',icon:'▧'}] : []),
+      hasArtifacts: (hero2 || ev.kind==='renderPhase'),
+      payloadRows: payloadRows.map(p=>({...p, notLock:!p.lock})), causeTree, timeline, privacyRows,
+      rawJson: JSON.stringify(rawObj, (k,v)=> v===undefined? undefined : v, 2),
+      isSql: hero2,
+    };
+  }
+
+  vals_waterfall(){
+    const self=this; const PC=this.PC;
+    const total=2840;
+    const pct=(v)=> (v/total*100);
+    const cp = !!self.state.criticalPath;
+    const showDiag = self.state.showDiag!==false;
+    const showCorr = self.state.showCorr!==false;
+
+    const laneDefs=[
+      {id:'user',label:'User action',color:'var(--muted)',diag:false},
+      {id:'ext',label:'Extension Host',color:PC.extensionHost,diag:false},
+      {id:'webview',label:'Webview / Renderer',color:PC.webview,diag:false},
+      {id:'sts',label:'SQL Tools Service',color:PC.sqlToolsService,diag:false},
+      {id:'driver',label:'Driver / Network',color:PC.wire,diag:false},
+      {id:'sql',label:'SQL Server',color:PC.sqlServer,diag:false},
+      {id:'counters',label:'Process counters',color:PC.harness,diag:true},
+      {id:'collectors',label:'Diag collectors',color:PC.harness,diag:true},
+    ];
+    const laneIndex={}; laneDefs.forEach((l,i)=>laneIndex[l.id]=i);
+    const rowH=32;
+    const lanes=laneDefs.filter(l=>showDiag||!l.diag).map((l,i)=>({ ...l, top:(i*rowH)+'px' }));
+    const visN=lanes.length;
+
+    const rawBars=[
+      {id:'b_dispatch',lane:'user',label:'runQuery dispatch',s:0,e:10,timing:'official',crit:true},
+      {id:'b_cmd',lane:'ext',label:'command.mssql.runQuery',s:10,e:128,timing:'official',crit:true},
+      {id:'b_end',lane:'ext',label:'result handling + command.end',s:2748,e:2840,timing:'official',crit:false},
+      {id:'b_recv',lane:'webview',label:'resultsGrid.dataReceived',s:2384,e:2428,timing:'official',crit:true},
+      {id:'b_render',lane:'webview',label:'scripting · layout · paint',s:2428,e:2840,timing:'collector',crit:true,renderer:true},
+      {id:'b_sts',lane:'sts',label:'sts.rpc.query.execute',s:120,e:2040,timing:'aligned',crit:true,hero:true},
+      {id:'b_driver',lane:'sts',label:'driver.command.execute',s:150,e:2010,timing:'product',crit:false},
+      {id:'b_ser',lane:'sts',label:'serialize result',s:2040,e:2120,timing:'official',crit:false},
+      {id:'b_wsend',lane:'driver',label:'wire send',s:150,e:186,timing:'aligned',crit:false},
+      {id:'b_wrecv',lane:'driver',label:'wire recv',s:1970,e:2010,timing:'aligned',crit:false},
+      {id:'b_sql',lane:'sql',label:'sql_batch_completed',s:300,e:1730,timing:'aligned',crit:true,sql:true},
+      {id:'b_rss',lane:'counters',label:'ext host RSS 684MB peak',s:0,e:2840,timing:'inferred',crit:false},
+      {id:'b_xe',lane:'collectors',label:'XEvents sql capture',s:300,e:1730,timing:'collector',crit:false},
+      {id:'b_cdp',lane:'collectors',label:'CDP renderer.trace',s:2428,e:2840,timing:'collector',crit:false},
+    ];
+
+    const selId = self.state.wfSel || 'b_sts';
+    const styleFor=(b)=>{
+      const c=laneDefs[laneIndex[b.lane]].color;
+      let bg=c, op=1, bs='none', border='none';
+      if(b.timing==='official'){ bg=c; op=1; }
+      else if(b.timing==='product'){ bg=c; op=.9; bs='inset 0 0 0 1px var(--panel)'; }
+      else if(b.timing==='aligned'){ bg='repeating-linear-gradient(115deg,'+c+' 0 5px,color-mix(in srgb,'+c+' 22%,transparent) 5px 10px)'; op=.72; }
+      else if(b.timing==='collector'){ bg='repeating-linear-gradient(115deg,color-mix(in srgb,'+c+' 60%,transparent) 0 5px,color-mix(in srgb,'+c+' 14%,transparent) 5px 10px)'; op=.6; }
+      else if(b.timing==='inferred'){ bg='transparent'; border='1px dotted '+c; op=.85; }
+      if(cp && !b.crit) op=op*0.26;
+      if(cp && b.crit) bs=(bs==='none'?'':bs+', ')+'0 0 0 1.5px color-mix(in srgb,'+c+' 70%,transparent), 0 0 9px color-mix(in srgb,'+c+' 55%,transparent)';
+      if(selId===b.id) bs=(bs==='none'?'':bs+', ')+'0 0 0 2px var(--focus)';
+      return {c,bg,op:String(op),bs,border};
+    };
+    const bars=rawBars.filter(b=>showDiag||!laneDefs[laneIndex[b.lane]].diag).map(b=>{
+      const st=styleFor(b);
+      const w=Math.max(pct(b.e-b.s),0.7);
+      const timingLabel={official:'official · measured',product:'product timer',aligned:'aligned · diagnostic',collector:'diag collector',inferred:'inferred'}[b.timing];
+      return { ...b, left:pct(b.s)+'%', width:w+'%', top:(laneIndex[b.lane]*rowH+6)+'px', color:st.c, bg:st.bg, op:st.op, bs:st.bs, border:st.border,
+        collectorDot: (b.timing==='collector'),
+        title:b.label+'  ·  '+timingLabel+'  ·  '+((b.e-b.s)>=1000?((b.e-b.s)/1000).toFixed(2)+'s':(b.e-b.s)+'ms'),
+        onSelect:()=>self.setState({wfSel:b.id}) };
+    });
+
+    // correlation lines (lanes 0..5 always visible)
+    const lc=(i)=>i*rowH+16;
+    const rawLines=[
+      {x1:pct(128),y1:lc(1),x2:pct(120),y2:lc(3),kind:'measured'},
+      {x1:pct(300),y1:lc(3),x2:pct(300),y2:lc(5),kind:'measured'},
+      {x1:pct(2120),y1:lc(3),x2:pct(2384),y2:lc(2),kind:'measured'},
+      {x1:pct(2428),y1:lc(2),x2:pct(2428),y2:lc(2)+0,kind:'measured'},
+    ];
+    const corrLines= showCorr ? rawLines.map(l=>({ ...l, dash: l.kind==='inferred'?'3 3':'0' })) : [];
+    const overlayH=(visN*rowH);
+
+    // axis ticks
+    const ticks=[0,710,1420,2130,2840].map(t=>({ left:pct(t)+'%', label: t===0?'0':(t/1000).toFixed(t%1000===0?0:2)+'s' }));
+
+    // summary strip
+    const segRaw=[
+      {label:'UI',ms:10,color:'var(--muted)'},
+      {label:'Extension',ms:118,color:PC.extensionHost},
+      {label:'STS',ms:490,color:PC.sqlToolsService},
+      {label:'SQL Server',ms:1430,color:PC.sqlServer},
+      {label:'Wire',ms:380,color:PC.wire},
+      {label:'Renderer',ms:412,color:PC.webview},
+    ];
+    const segTotal=segRaw.reduce((a,b)=>a+b.ms,0);
+    const summarySegs=segRaw.map(s=>({ ...s, w:(s.ms/segTotal*100)+'%', val: s.ms>=1000?(s.ms/1000).toFixed(2)+'s':s.ms+'ms' }));
+
+    const criticalSteps=[
+      {n:1,label:'command.mssql.runQuery.begin',dur:'10ms',note:'extension dispatch'},
+      {n:2,label:'Extension → STS query.execute',dur:'118ms',note:'RPC + traceparent'},
+      {n:3,label:'STS query.execute handler',dur:'1.92s',note:'overlaps SQL Server'},
+      {n:4,label:'SQL batch completed',dur:'1.43s',note:'296k logical reads'},
+      {n:5,label:'Result serialize + transfer',dur:'380ms',note:'wire + socket'},
+      {n:6,label:'Results grid render complete',dur:'412ms',note:'diagnostic (CDP)'},
+    ];
+
+    const sel=rawBars.find(b=>b.id===selId)||rawBars.find(b=>b.id==='b_sts');
+    const selWf=this.buildWfDetail(sel, laneDefs[laneIndex[sel.lane]]);
+
+    return {
+      lanes, bars, corrLines, overlayH:overlayH+'px', overlayVB:'0 0 100 '+overlayH, ticks,
+      wfLaneColW:'150px',
+      summarySegs, wfTotal:'2.84s',
+      criticalSteps, criticalOn:cp,
+      showDiagAttr: showDiag?'true':'false', cpAttr: cp?'true':'false', corrAttr: showCorr?'true':'false',
+      calib:'exthost ±1.4ms · STS ±3.2ms · webview ±2.0ms',
+      selWf,
+      wfActionLabel: self.state.live ? 'Run query · trace_8d3f…0007' : 'Run query · trace_8d3f…0007',
+      onToggleDiag:()=>self.setState(s=>({showDiag:s.showDiag===false?true:false})),
+      onToggleCp:()=>self.setState(s=>({criticalPath:!s.criticalPath})),
+      onToggleCorr:()=>self.setState(s=>({showCorr:s.showCorr===false?true:false})),
+    };
+  }
+
+  buildWfDetail(b, lane){
+    const PC=this.PC;
+    const timingLabel={official:'Official · same-process monotonic',product:'Product timer',aligned:'Epoch-aligned diagnostic',collector:'Diagnostic collector',inferred:'Inferred'}[b.timing];
+    const timingColor= (b.timing==='official'||b.timing==='product')?'var(--ok)': b.timing==='inferred'?'var(--muted)':'var(--warn)';
+    const dur=(b.e-b.s)>=1000?((b.e-b.s)/1000).toFixed(2)+'s':(b.e-b.s)+'ms';
+    return {
+      title:b.label, laneLabel:lane.label, laneColor:lane.color,
+      timingLabel, timingColor,
+      start:(b.s/1000).toFixed(3)+'s', end:(b.e/1000).toFixed(3)+'s', dur,
+      corr:'trace_8d3f…0007', cause: b.lane==='sql'?'sts.rpc.query.execute': b.lane==='sts'?'command.mssql.runQuery':'—',
+      confidence: (b.timing==='official'||b.timing==='product')?'high': b.timing==='inferred'?'low':'medium',
+      jitter: b.timing==='aligned' ? 'STS ±3.2ms' : (b.timing==='collector'?'collector clock':'n/a'),
+      isSql: !!b.sql, isRenderer: !!b.renderer,
+      sqlMetrics: b.sql? [
+        {k:'Duration',v:'1.43s'},{k:'CPU',v:'920ms'},{k:'Logical reads',v:'296,120'},
+        {k:'Physical reads',v:'0'},{k:'Writes',v:'0'},{k:'Row count',v:'10,000'},
+        {k:'App name',v:'mssql-vscode'},{k:'Session ID',v:'58'},{k:'Request ID',v:'0'},
+      ]:[],
+      renderPhases: b.renderer? [
+        {k:'Scripting',v:'196ms'},{k:'Layout',v:'88ms'},{k:'Paint',v:'84ms'},{k:'Longest task',v:'390ms'},
+      ]:[],
+      redacted: !!b.sql,
+    };
+  }
+
+  vals_perf(){
+    const self=this; const PC=this.PC;
+    const tone={ '':'var(--fg)', ok:'var(--ok)', warn:'var(--warn)', error:'var(--err)', info:'var(--info)' };
+    const kpis=[
+      {label:'Runs', value:'31', note:'last 7 days', t:''},
+      {label:'Median latency', value:'2.84s', note:'+310ms vs baseline', t:'warn'},
+      {label:'p95 latency', value:'8.22s', note:'small-n · 8 reps', t:''},
+      {label:'SQL reads', value:'296k', note:'+3 round-trips', t:'warn'},
+      {label:'Render p95', value:'1.20s', note:'renderer diag', t:''},
+      {label:'Memory slope', value:'+28KB/it', note:'stable · R² 0.19', t:''},
+      {label:'Regressions', value:'2', note:'official only', t:'error'},
+    ].map(k=>({ ...k, color:tone[k.t] }));
+
+    // ---- cross-session trend ----
+    const tv=[2.48,2.51,2.46,2.55,2.49,2.52,2.47,2.84,2.86,2.83,2.85,2.84];
+    const commits=['a1','b2','c3','d4','e5','f6','a7','7f3c2b1','h9','i0','j1','k2'];
+    const tmin=2.35, tmax=2.95, W=340,H=140, ml=8,mr=8,mt=12,mb=20, pw=W-ml-mr, ph=H-mt-mb;
+    const tx=(i)=> ml + i/(tv.length-1)*pw;
+    const ty=(v)=> mt + (1-(v-tmin)/(tmax-tmin))*ph;
+    const trendPoly = tv.map((v,i)=>tx(i).toFixed(1)+','+ty(v).toFixed(1)).join(' ');
+    const trendDots = tv.map((v,i)=>({ cx:tx(i).toFixed(1), cy:ty(v).toFixed(1), step: i===7, val:v.toFixed(2) }));
+    const bandTop=ty(2.62), bandBot=ty(2.38);
+    const trend={ poly:trendPoly, dots:trendDots, bandY:bandTop.toFixed(1), bandH:(bandBot-bandTop).toFixed(1), baseY:ty(2.50).toFixed(1), stepX:tx(7).toFixed(1), stepLabel:'7f3c2b1', vb:'0 0 '+W+' '+H, y0:(H-mb).toFixed(1), xr:(W-mr).toFixed(1) };
+
+    // ---- distribution ----
+    const bins=[{c:2,l:'2.5'},{c:6,l:'2.7'},{c:11,l:'2.9'},{c:8,l:'3.1'},{c:4,l:'3.3'},{c:1,l:'3.5'}];
+    const maxc=11; const dist={ bins: bins.map(b=>({ ...b, h:(b.c/maxc*100).toFixed(0)+'%' })) };
+    const bx=(v)=> ((v-2.3)/(3.4-2.3)*100);
+    const box={ minX:bx(2.42).toFixed(1), q1X:bx(2.71).toFixed(1), medX:bx(2.84).toFixed(1), q3X:bx(3.02).toFixed(1), maxX:bx(3.31).toFixed(1), p95X:bx(3.18).toFixed(1), boxW:(bx(3.02)-bx(2.71)).toFixed(1), whiskL:bx(2.42).toFixed(1), whiskR:(100-bx(3.31)).toFixed(1) };
+
+    // ---- A/B deltas ----
+    const abRaw=[
+      {label:'Wall-clock (official)', base:2.53, cand:2.84, unit:'s', pct:'+12.3%', verdict:'REGRESSED', reg:true},
+      {label:'STS handler (official)', base:1.71, cand:1.92, unit:'s', pct:'+12.3%', verdict:'regressed', reg:true},
+      {label:'SQL logical reads', base:208, cand:296, unit:'k', pct:'+42%', verdict:'investigate', reg:false},
+      {label:'Render complete', base:0.402, cand:0.412, unit:'s', pct:'+2.5%', verdict:'ok', reg:false},
+    ];
+    const abMax=Math.max(...abRaw.map(m=>Math.max(m.base,m.cand)));
+    const ab=abRaw.map(m=>({ label:m.label, baseTxt:m.base+m.unit, candTxt:m.cand+m.unit, pct:m.pct, verdict:m.verdict,
+      baseW:(m.base/abMax*100).toFixed(0)+'%', candW:(m.cand/abMax*100).toFixed(0)+'%',
+      candColor: m.reg?'var(--err)':'var(--info)', vColor: m.verdict==='ok'?'var(--ok)': (m.reg?'var(--err)':'var(--warn)') }));
+
+    // ---- memory soak ----
+    let seed=42; const rnd=()=>{ seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff; };
+    const N=40; const smin=608, smax=618; const sml=24,smt=10,spw=W-sml-8,sph=H-smt-20;
+    const sx=(i)=> sml + i/N*spw; const sy=(v)=> smt + (1-(v-smin)/(smax-smin))*sph;
+    const soakDots=[]; for(let i=0;i<=N;i++){ const v=612 + i*0.028 + (rnd()-0.5)*2.4; soakDots.push({ cx:sx(i).toFixed(1), cy:sy(v).toFixed(1) }); }
+    const slopeY0=612, slopeY1=612+N*0.028;
+    const soak={ dots:soakDots,
+      slope:{ x1:sx(0).toFixed(1), y1:sy(slopeY0).toFixed(1), x2:sx(N).toFixed(1), y2:sy(slopeY1).toFixed(1) },
+      band:[ sx(0)+','+sy(slopeY0+1.5), sx(N)+','+sy(slopeY1+1.5), sx(N)+','+sy(slopeY1-1.5), sx(0)+','+sy(slopeY0-1.5) ].join(' '),
+      vb:'0 0 '+W+' '+H, y0:(H-20).toFixed(1), r2:'0.19', slopeTxt:'+28 KB/iter', verdict:'stable' };
+
+    // ---- small multiples (variant time-split) ----
+    const segColors=[PC.extensionHost,PC.sqlToolsService,PC.sqlServer,PC.wire,PC.webview];
+    const variantsRaw=[
+      {name:'grid_virtual (baseline)', segs:[118,490,1430,380,402]},
+      {name:'grid_eager (candidate)', segs:[120,505,1430,520,690]},
+      {name:'grid_windowed', segs:[119,495,1430,300,300]},
+      {name:'grid_legacy_full', segs:[122,540,1430,780,1180]},
+    ];
+    const vmaxTotal=Math.max(...variantsRaw.map(v=>v.segs.reduce((a,b)=>a+b,0)));
+    const variants=variantsRaw.map(v=>{ const total=v.segs.reduce((a,b)=>a+b,0); return {
+      name:v.name, totalTxt:(total/1000).toFixed(2)+'s', rowW:(total/vmaxTotal*100).toFixed(1)+'%',
+      segs:v.segs.map((ms,i)=>({ w:(ms/total*100).toFixed(1)+'%', color:segColors[i] })) }; });
+    const segLegend=[{l:'extension',c:PC.extensionHost},{l:'STS',c:PC.sqlToolsService},{l:'SQL',c:PC.sqlServer},{l:'wire',c:PC.wire},{l:'renderer',c:PC.webview}];
+
+    // ---- metric table ----
+    const mkV=(v,reg)=> ({ txt:v, color: reg==='REGRESSED'?'var(--err)': reg==='ok'?'var(--ok)':'var(--warn)' });
+    const metricRows=[
+      {m:'Wall-clock', cand:'2.84s', base:'2.53s', delta:'+310ms', pct:'+12.3%', verdict:'REGRESSED', official:'yes', conf:'high'},
+      {m:'STS query.execute', cand:'1.92s', base:'1.71s', delta:'+210ms', pct:'+12.3%', verdict:'regressed', official:'yes', conf:'high'},
+      {m:'SQL logical reads', cand:'296,120', base:'208,400', delta:'+87,720', pct:'+42%', verdict:'investigate', official:'no · diag', conf:'high'},
+      {m:'Render complete', cand:'412ms', base:'402ms', delta:'+10ms', pct:'+2.5%', verdict:'ok', official:'no · diag', conf:'medium'},
+      {m:'Memory peak RSS', cand:'684MB', base:'679MB', delta:'+5MB', pct:'+0.7%', verdict:'ok', official:'no', conf:'low · small-n'},
+    ].map(r=>({ ...r, vColor: r.verdict==='ok'?'var(--ok)': (r.verdict==='REGRESSED'||r.verdict==='regressed')?'var(--err)':'var(--warn)', vBg: r.verdict==='ok'?'var(--ok-bg)': (r.verdict==='REGRESSED'||r.verdict==='regressed')?'var(--err-bg)':'var(--warn-bg)', vBorder: r.verdict==='ok'?'var(--ok-border)': (r.verdict==='REGRESSED'||r.verdict==='regressed')?'var(--err-border)':'var(--warn-border)' }));
+
+    // ---- SQL activity ----
+    const sqlRows=[
+      {idx:'1', type:'sql_batch_completed', dur:'1.43s', cpu:'920ms', reads:'296,120', rows:'10,000', corr:'trace_8d3f…0007', status:'ok'},
+      {idx:'2', type:'sp_executesql', dur:'88ms', cpu:'32ms', reads:'2,140', rows:'1', corr:'trace_a1c9…0031', status:'ok'},
+      {idx:'3', type:'sql_batch_completed', dur:'6.30s', cpu:'4.10s', reads:'1,284,900', rows:'10,000', corr:'trace_a1c9…0031', status:'warning'},
+      {idx:'4', type:'rpc_completed', dur:'12ms', cpu:'4ms', reads:'318', rows:'21', corr:'trace_a1c9…0031', status:'ok'},
+      {idx:'5', type:'sql_batch_completed', dur:'2.20s', cpu:'1.90s', reads:'512,300', rows:'0', corr:'trace_e5b1…0071', status:'error'},
+    ].map(r=>({ ...r, st:(this.SC[r.status]||this.SC.info) }));
+
+    return {
+      perfKpis:kpis, trend, dist, box, ab, absCallout:'Candidate added 3 SQL commands and +87,720 logical reads during query execution. Likely an extra SMO enumeration query. Official latency verdict: REGRESSED · diagnostic explanation only.',
+      soak, variants, segLegend, metricRows, sqlRows,
+    };
+  }
+
+  vals_sql(){
+    const self=this; const SC=this.SC;
+    const kpis=[
+      {label:'Commands', value:'312', note:'this session'},
+      {label:'Total SQL time', value:'84.2s', note:'wall'},
+      {label:'CPU', value:'41.6s', note:'server-side'},
+      {label:'Logical reads', value:'296k', note:'+42% vs base', c:'var(--warn)'},
+      {label:'Physical reads', value:'12', note:'cache warm'},
+      {label:'Rows', value:'1.28M', note:'returned'},
+      {label:'Round-trips', value:'+3', note:'vs baseline', c:'var(--warn)'},
+    ];
+    const rows=[
+      {id:'s1',time:'14:02:42.384',type:'sql_batch_completed',dur:'1.43s',cpu:'920ms',lreads:'296,120',preads:'0',writes:'0',rows:'10,000',app:'mssql-vscode',sess:'58',req:'0',corr:'trace_8d3f…0007',status:'ok',conf:'high'},
+      {id:'s2',time:'14:03:12.980',type:'sql_batch_completed',dur:'6.30s',cpu:'4.10s',lreads:'1,284,900',preads:'8',writes:'0',rows:'10,000',app:'mssql-vscode',sess:'58',req:'12',corr:'trace_a1c9…0031',status:'warning',conf:'high'},
+      {id:'s3',time:'14:03:13.020',type:'rpc_completed',dur:'12ms',cpu:'4ms',lreads:'318',preads:'0',writes:'0',rows:'21',app:'mssql-vscode',sess:'58',req:'13',corr:'trace_a1c9…0031',status:'ok',conf:'high'},
+      {id:'s4',time:'14:01:58.640',type:'sp_executesql',dur:'88ms',cpu:'32ms',lreads:'2,140',preads:'2',writes:'0',rows:'1',app:'mssql-vscode',sess:'57',req:'2',corr:'trace_7b20…0002',status:'ok',conf:'high'},
+      {id:'s5',time:'14:04:41.560',type:'sql_batch_completed',dur:'2.20s',cpu:'1.90s',lreads:'512,300',preads:'4',writes:'320',rows:'0',app:'mssql-vscode',sess:'58',req:'71',corr:'trace_e5b1…0071',status:'error',conf:'medium'},
+      {id:'s6',time:'14:04:03.900',type:'sql_batch_completed',dur:'980ms',cpu:'640ms',lreads:'88,400',preads:'0',writes:'0',rows:'4,210',app:'mssql-vscode',sess:'58',req:'44',corr:'trace_c9d3…0059',status:'ok',conf:'high'},
+    ].map(r=>({ ...r, st:SC[r.status]||SC.info, selAttr: (self.state.sqlSel||'s1')===r.id?'true':'false', onSelect:()=>self.setState({sqlSel:r.id}) }));
+    const sel=rows.find(r=>r.id===(self.state.sqlSel||'s1'))||rows[0];
+    const selStats=[
+      {k:'Duration',v:sel.dur},{k:'CPU',v:sel.cpu},{k:'Logical reads',v:sel.lreads},{k:'Physical reads',v:sel.preads},
+      {k:'Writes',v:sel.writes},{k:'Row count',v:sel.rows},{k:'App name',v:sel.app},{k:'Session ID',v:sel.sess},{k:'Request ID',v:sel.req},
+    ];
+    return { sqlKpis:kpis.map(k=>({...k, c:k.c||'var(--fg)'})), sqlRows2:rows, sqlSel:sel, sqlSelStats:selStats, sqlSelCause:[
+      {d:0,label:'command.mssql.runQuery',c:this.PC.extensionHost},
+      {d:1,label:'sts.rpc.query.execute',c:this.PC.sqlToolsService},
+      {d:2,label:sel.type,c:this.PC.sqlServer,me:true},
+    ].map(n=>({...n,pad:(8+n.d*16)+'px'})) };
+  }
+
+  vals_replay(){
+    const self=this; const SC=this.SC;
+    const events=[
+      {id:'r1',src:'sess_…140213 · evt_10430',feature:'query',ev:'query.execute',cfg:'snapshot',state:'snapshot',preview:'SELECT TOP 10000 … (redacted)',blocked:false},
+      {id:'r2',src:'sess_…140213 · evt_10680',feature:'objectExplorer',ev:'metadata.listTables',cfg:'override',state:'override',preview:'schema budget → Focused',blocked:false},
+      {id:'r3',src:'sess_…140213 · evt_10742',feature:'completions',ev:'completion.request',cfg:'snapshot',state:'snapshot',preview:'Untitled-1 · intent',blocked:false},
+      {id:'r4',src:'sess_…090014 · evt_08120',feature:'query',ev:'query.execute',cfg:'—',state:'blocked',preview:'STS replay-drive not enabled',blocked:true},
+    ].map((e,i)=>({ ...e, idNum:i+1,
+      stColor: e.state==='blocked'?'var(--err)': e.state==='override'?'var(--p-sts)':'var(--muted)',
+      stBg: e.state==='blocked'?'var(--err-bg)': e.state==='override'?'color-mix(in srgb,var(--p-sts) 14%,transparent)':'var(--panel-alt)',
+      stBorder: e.state==='blocked'?'var(--err-border)': e.state==='override'?'color-mix(in srgb,var(--p-sts) 40%,transparent)':'var(--line)',
+      selAttr:(self.state.replaySel||'r2')===e.id?'true':'false', onSelect:()=>self.setState({replaySel:e.id}) }));
+    const matrix=[];
+    const profiles=['Balanced','Focused']; const budgets=['Balanced','Generous'];
+    let n=0; profiles.forEach(p=>budgets.forEach(b=>{ n++; matrix.push({ cell:'cell '+n+'/4', label:p+' × '+b, events:'events 1–3', status: n===2?'failed':'queued', color:n===2?'var(--err)':'var(--muted)' }); }));
+    return {
+      replayEvents:events, replayCount:'3 events · est. 41s sequential',
+      replaySel: events.find(e=>e.id===(self.state.replaySel||'r2'))||events[1],
+      matrixCells:matrix, matrixSummary:[
+        {k:'Total events',v:'3'},{k:'Matrix cells',v:'4'},{k:'Est. time',v:'2m 44s'},{k:'Replay mode',v:'replay-drive'},{k:'Required capture',v:'digest'},
+      ],
+      execOrder:['cell 1/4 Balanced × Balanced → events 1..3','cell 2/4 Balanced × Generous → events 1..3','cell 3/4 Focused × Balanced → events 1..3','cell 4/4 Focused × Generous → events 1..3'],
+    };
+  }
+
+  vals_completions(){
+    const self=this; const SC=this.SC;
+    const sub=self.state.compSub||'live';
+    const resMap={ accepted:{c:'var(--ok)',bg:'var(--ok-bg)',b:'var(--ok-border)'}, skipped:{c:'var(--muted)',bg:'var(--panel-alt)',b:'var(--line)'}, canceled:{c:'var(--warn)',bg:'var(--warn-bg)',b:'var(--warn-border)'} };
+    const strip=[
+      {label:'Recording',value:'live',dot:'var(--ok)'},{label:'Model',value:'Claude Sonnet 4.6'},{label:'Profile',value:'Balanced'},
+      {label:'Schema budget',value:'Balanced default'},{label:'Events',value:'1,204'},{label:'Avg latency',value:'3.2s'},
+      {label:'Accepted',value:'38%',c:'var(--ok)'},{label:'Skipped',value:'41%'},{label:'Canceled',value:'21%'},{label:'Replay tags',value:'46',c:'var(--p-sts)'},
+    ];
+    const rowsRaw=[
+      {id:'c1',time:'14:02:12.104',doc:'Untitled-1',pos:'42:8',trig:'automatic',mode:'intent',model:'Sonnet 4.6',lat:'3,892ms',tin:'3,667',tout:'129',result:'accepted',info:'—'},
+      {id:'c2',time:'14:02:18.550',doc:'query.sql',pos:'88:1',trig:'automatic',mode:'completion',model:'Sonnet 4.6',lat:'2,140ms',tin:'2,890',tout:'64',result:'skipped',info:'low-conf'},
+      {id:'c3',time:'14:02:22.900',doc:'query.sql',pos:'90:12',trig:'manual',mode:'intent',model:'Sonnet 4.6',lat:'4,510ms',tin:'4,102',tout:'210',result:'accepted',info:'—'},
+      {id:'c4',time:'14:03:22.004',doc:'schema.sql',pos:'12:4',trig:'automatic',mode:'intent',model:'Sonnet 4.6',lat:'621ms',tin:'0',tout:'0',result:'canceled',info:'superseded'},
+      {id:'c5',time:'14:03:40.210',doc:'proc.sql',pos:'5:1',trig:'automatic',mode:'completion',model:'Sonnet 4.6',lat:'3,120ms',tin:'3,301',tout:'95',result:'accepted',info:'replay'},
+      {id:'c6',time:'14:04:02.700',doc:'view.sql',pos:'22:9',trig:'automatic',mode:'intent',model:'Haiku 4.5',lat:'880ms',tin:'1,204',tout:'40',result:'skipped',info:'budget'},
+      {id:'c7',time:'14:04:31.880',doc:'query.sql',pos:'140:3',trig:'automatic',mode:'completion',model:'Sonnet 4.6',lat:'5,240ms',tin:'5,880',tout:'188',result:'accepted',info:'—'},
+    ];
+    const compRows=rowsRaw.map(r=>({ ...r, res:resMap[r.result], isReplay:r.info==='replay', selAttr:(self.state.compSel||'c1')===r.id?'true':'false', onSelect:()=>self.setState({compSel:r.id, ctab:'summary'}) }));
+    const cr=rowsRaw.find(r=>r.id===(self.state.compSel||'c1'))||rowsRaw[0];
+    const T=self.state.ctab||'summary';
+    const ctabDefs=[['summary','Summary'],['sys','System Prompt'],['user','User Prompt'],['raw','Raw Response'],['sanitized','Sanitized'],['schema','Schema Context'],['locals','Locals'],['telemetry','Telemetry'],['replay','Replay'],['privacy','Privacy']];
+    const ctabs=ctabDefs.map(([id,label])=>({ id,label, active:T===id?'true':'false', onTab:()=>self.setState({ctab:id}) }));
+    const cT={}; ctabDefs.forEach(([id])=>cT[id]=T===id);
+
+    // analysis
+    const groups=[
+      {g:'Sonnet 4.6',req:'842',p95:'6.1s',acc:'44%',tin:'3.1M',tout:'92k',err:'0.4%'},
+      {g:'Haiku 4.5',req:'318',p95:'1.4s',acc:'22%',tin:'420k',tout:'12k',err:'0.1%'},
+      {g:'Sonnet 4.6 · Focused',req:'44',p95:'4.8s',acc:'51%',tin:'96k',tout:'3k',err:'0%'},
+    ];
+    const p95bars=[{l:'Sonnet 4.6',v:6.1,w:'100%',c:'var(--info)'},{l:'Sonnet · Focused',v:4.8,w:'79%',c:'var(--info)'},{l:'Haiku 4.5',v:1.4,w:'23%',c:'var(--info)'}];
+    const funnel=[{l:'Requested',v:'1,204',w:'100%'},{l:'Returned',v:'1,061',w:'88%'},{l:'Shown',v:'642',w:'53%'},{l:'Accepted',v:'458',w:'38%'}];
+    const tokenBars=[
+      {l:'Sonnet 4.6',inW:'82%',outW:'6%',inTxt:'3.1M in',outTxt:'92k out'},
+      {l:'Haiku 4.5',inW:'11%',outW:'1%',inTxt:'420k in',outTxt:'12k out'},
+    ];
+
+    return {
+      compSub:sub, compIsLive:sub==='live', compIsAnalysis:sub==='analysis', subLiveAttr:sub==='live'?'true':'false', subAnalysisAttr:sub==='analysis'?'true':'false',
+      onSubLive:()=>self.setState({compSub:'live'}), onSubAnalysis:()=>self.setState({compSub:'analysis'}),
+      compStrip:strip.map(s=>({ ...s, dot:s.dot||'transparent', dotShow:s.dot?'inline-flex':'none', dotAttr:s.dot?'true':'false' })), compRows, ctabs, cT,
+      compFilters:[{k:'Model',v:'all'},{k:'Profile',v:'all'},{k:'Schema budget',v:'all'},{k:'Trigger',v:'all'},{k:'Result',v:'all'}],
+      csel:{
+        doc:cr.doc,pos:cr.pos,trig:cr.trig,mode:cr.mode,model:cr.model,lat:cr.lat,tin:cr.tin,tout:cr.tout,result:cr.result,res:resMap[cr.result],
+        summaryRows:[{k:'Document',v:cr.doc+' · '+cr.pos},{k:'Trigger',v:cr.trig},{k:'Mode',v:cr.mode},{k:'Model',v:cr.model},{k:'Profile',v:'Balanced'},{k:'Schema budget',v:'Balanced default'},{k:'Latency',v:cr.lat},{k:'Tokens in/out',v:cr.tin+' / '+cr.tout},{k:'Result',v:cr.result},{k:'Correlation',v:'trace_c2f0…0044'}],
+        sysPrompt:'You are a SQL completion assistant for Microsoft SQL Server. Use the provided schema context. Prefer set-based operations. Never invent table or column names. Return a single suggestion…',
+        userPrompt:'model.prompt redacted · digest prompt:sha256:4c1a… · elevate capture to reveal',
+        rawResponse:'{"choices":[{"text":"SELECT TOP (100) …","finish_reason":"stop"}],"usage":{"prompt_tokens":3667,"completion_tokens":129}}',
+        sanitized:'SELECT TOP (100) order_id, customer_id, total\nFROM dbo.orders\nWHERE status = @status\nORDER BY created_at DESC;',
+        schemaCtx:[{n:'dbo.orders (14 cols)',t:'820 tok'},{n:'dbo.customers (9 cols)',t:'510 tok'},{n:'dbo.order_items (7 cols)',t:'440 tok'},{n:'+ 3 FKs, 2 indexes',t:'290 tok'}],
+        locals:[{k:'service.warm',v:'true'},{k:'schema.cacheHit',v:'true'},{k:'budget.usedTokens',v:'2,060 / 4,096'},{k:'debounceMs',v:'75'},{k:'inflight',v:'0'}],
+        telemetry:[{k:'queueMs',v:'40'},{k:'promptBuildMs',v:'62'},{k:'modelMs',v:'3,667'},{k:'decodeMs',v:'123'},{k:'cache',v:'schema hit'},{k:'tokensPerSec',v:'34.9'}],
+        replayRows:[{k:'replayTraceId',v:'rtrace_completion_hotspots_001'},{k:'replayRunId',v:'rrun_20260702_141055'},{k:'matrixCellId',v:'cell_focused_generous_02'},{k:'sourceEventId',v:'evt_00010742'},{k:'overrides',v:'schemaBudget=Generous'}],
+        privacyRows:[{field:'model.prompt',cls:'model.prompt',handling:'digest'},{field:'model.response',cls:'model.response',handling:'sanitized'},{field:'schema.name',cls:'schema.name',handling:'digest'}],
+      },
+      compGroups:groups, p95bars, funnel, tokenBars,
+    };
+  }
+
+  vals_connections(){
+    const SC=this.SC;
+    return {
+      connKpis:[{label:'Active',value:'2'},{label:'STS PID',value:'18422'},{label:'Ready avg',value:'1.21s'},{label:'Failures',value:'1',c:'var(--err)'}],
+      stsLife:[{k:'Process ID',v:'18422'},{k:'Started',v:'14:01:52.004'},{k:'Version',v:'4.11.0-dev'},{k:'Health',v:'ok'},{k:'Fatal state',v:'none'},{k:'Uptime',v:'3m 12s'}],
+      connRows:[
+        {conn:'conn_7f3',srv:'srv:sha256:1a0c…',db:'db:sha256:9d2e…',auth:'SQL login',created:'14:01:52',ready:'1.21s',status:'ok',sts:'sts_01'},
+        {conn:'conn_8a1',srv:'srv:sha256:1a0c…',db:'db:sha256:41bf…',auth:'Entra MFA',created:'14:03:08',ready:'2.04s',status:'ok',sts:'sts_01'},
+        {conn:'conn_9c4',srv:'srv:sha256:77e2…',db:'db:sha256:0b13…',auth:'SQL login',created:'14:04:40',ready:'—',status:'error',sts:'sts_01'},
+      ].map(r=>({...r, st:SC[r.status]||SC.info})),
+    };
+  }
+  vals_query(){
+    const SC=this.SC;
+    return {
+      queryKpis:[{label:'Wall-clock',value:'2.84s'},{label:'Rows rendered',value:'10,000'},{label:'Render',value:'412ms'},{label:'Window fetches',value:'8'}],
+      renderPhases:[{k:'Scripting',v:'196ms'},{k:'Layout',v:'88ms'},{k:'Paint',v:'84ms'},{k:'Longest task',v:'390ms'}],
+      resultSets:[
+        {idx:'0',cols:'12',expected:'10,000',rendered:'10,000',render:'412ms',windows:'8',bytes:'4.2 MB',status:'ok'},
+        {idx:'1',cols:'3',expected:'1',rendered:'1',render:'6ms',windows:'0',bytes:'0.3 KB',status:'ok'},
+      ].map(r=>({...r, st:SC[r.status]||SC.info})),
+      proofOk:true,
+    };
+  }
+  vals_oe(){
+    const SC=this.SC;
+    return {
+      oeProof:[{k:'Node',v:'Tables'},{k:'Expected',v:'10,000 tables'},{k:'Rendered',v:'10,000 tables'},{k:'Truncation',v:'none'},{k:'Duration',v:'9.83s'},{k:'SQL commands',v:'21'},{k:'Renderer',v:'1.80s'}],
+      oeRows:[
+        {time:'14:03:12.980',type:'sts.rpc.metadata.listTables',dur:'6.30s',reads:'1,284,900',rows:'10,000',status:'warning'},
+        {time:'14:03:19.400',type:'smo.enumerate.columns',dur:'1.10s',reads:'128,400',rows:'84,120',status:'ok'},
+        {time:'14:03:20.270',type:'oe.tree.renderComplete',dur:'1.80s',reads:'—',rows:'10,000',status:'warning'},
+      ].map(r=>({...r, st:SC[r.status]||SC.info})),
+    };
+  }
+  vals_exports(){
+    const SC=this.SC;
+    return {
+      exportRows:[
+        {created:'14:05:10',src:'sess_…140213',scope:'full session',events:'12,481',red:'31',gaps:'0',size:'3.4 MB',valid:'ok'},
+        {created:'11:22:04',src:'trace_a1c9…0031',scope:'1 correlation',events:'214',red:'6',gaps:'1',size:'480 KB',valid:'warning'},
+        {created:'yesterday',src:'bug bundle import',scope:'imported',events:'3,517',red:'88',gaps:'0',size:'1.1 MB',valid:'ok'},
+      ].map(r=>({...r, st:SC[r.valid]||SC.info})),
+      exportManifest:[{k:'Events',v:'12,481'},{k:'Unresolved gaps',v:'0'},{k:'Redactions',v:'31'},{k:'Artifacts',v:'4'},{k:'Privacy scan',v:'passed'},{k:'Manifest hashes',v:'verified'}],
+    };
+  }
+  vals_settings(){
+    const setSections=[
+        {title:'Session Diag capture', rows:[
+          {label:'Enable Session Diag',desc:'Capture classified, redacted traces locally for this VS Code session.',type:'toggle',on:true},
+          {label:'Default capture mode',desc:'off · redacted · digest',type:'seg',val:'redacted',opts:['off','redacted','digest']},
+          {label:'Allow elevated capture',desc:'Time-bounded full capture (SQL text, row values) with reason.',type:'toggle',on:false},
+        ]},
+        {title:'Retention & storage', rows:[
+          {label:'Max sessions',desc:'Oldest sessions are pruned first.',type:'val',val:'10'},
+          {label:'Max age',desc:'Sessions older than this are cleared.',type:'val',val:'14 days'},
+          {label:'Disk cap',desc:'Total on-disk Session Diag budget.',type:'val',val:'250 MB'},
+          {label:'Clear all local diagnostics',desc:'Deletes segments, index, artifacts, and exports.',type:'danger'},
+        ]},
+        {title:'Experimental', rows:[
+          {label:'STS2 Session Diag source',desc:'Disabled until observer isolation + capture policy hardening.',type:'toggle',on:false},
+          {label:'Replay Lab',desc:'Completions adapter available; STS-backed replay gated.',type:'toggle',on:true},
+        ]},
+    ];
+    setSections.forEach(s=>{ s.rows=s.rows.map(r=>({ ...r, isToggle:r.type==='toggle', isSeg:r.type==='seg', isVal:r.type==='val', isDanger:r.type==='danger', onAttr:r.on?'true':'false', knobLeft:r.on?'16px':'1px', knobBg:r.on?'var(--accent)':'var(--muted)', segItems:(r.opts||[]).map(o=>({ o, active:o===r.val?'true':'false' })) })); });
+    return { setSections };
+  }
+
+  renderVals(){
+    const shell=this.shellVals();
+    const pv = (typeof this['vals_'+this.state.page]==='function') ? this['vals_'+this.state.page]() : {};
+    return Object.assign({}, shell, pv);
+  }
+}
+</script>
+</body>
+</html>

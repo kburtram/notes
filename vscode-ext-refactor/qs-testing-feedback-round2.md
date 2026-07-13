@@ -1,0 +1,33 @@
+# Query Studio testing feedback — round 2 (2026-07-06 evening)
+
+Work order from Karl's manual testing. Screens in `C:\repos\test\screens\` (grids.png, grid-selection.png, command-palette.png). Prior round fixed: sync stale-base deadlock, completion convergence + classified logging, grid fill/stack/maximize v1, clipboard/F5 scoping, basic classic messages, Debug Console completions fork (`d28edf664`, `b0825f334`, `5c6eb5d2f`, `51e1ae55d`).
+
+| # | Issue | Status / notes |
+|---|---|---|
+| 1 | Symbol binding STILL wrong while typing (post-convergence-fix?) — check newest session journal (globalStorage/ms-mssql.mssql/session-diag; sqlLanguage.completion.end now has offset/prefix/parts/topLabels classified + converge events). NOTE: was Karl testing a REBUILT extension? The convergence fix (`b0825f334`) needs a rebuild. If journal shows converge events firing and STILL wrong parts → real binder bug; add keystroke-level journaling (doc version + text length at request, item source counts). | **ROOT CAUSE FOUND (journal sess_20260707041525_19356):** new build confirmed (45 converge events; offset==docLength). memberAccess fires correctly now BUT all 20 events return itemCount:0 + isIncomplete:true — the resolved table/alias has NO COLUMNS loaded (lazy section) and the completion path never kicks the lazy column/module read, so Monaco re-queries (isIncomplete) forever-empty. Also 167 expression/items=0 events (prefix filtering to zero — probably fine). FIX: on memberAccess resolution hitting notLoaded columns, trigger the lazy read (same path OE expand uses / moduleRead via the store lease) and rely on isIncomplete retrigger; verify addMemberAccess in src/sqlLanguage/features/completion.ts + where markIncomplete fires; add a unit test with a lazy-column fixture. |
+| 2 | F1 opens Monaco's palette; should open VS Code's (route commands to editor via VS Code). Fix: Monaco `editor.addCommand(F1)` or keybinding override → RPC to host → `vscode.commands.executeCommand("workbench.action.showCommands")`; ensure Monaco's default F1 action suppressed. | TODO (small, webview app.tsx + controller) |
+| 3 | Messages missing per-BATCH lines + errors + rows affected. Repro (multi-GO with an error in batch 1) must produce per-batch "Started executing query at Line N" (batch start line), server errors as "Msg 4145, Level 15, State 1, Line 3 / <message>", per-set rows affected, single total time. Current output only one Started + total. Orchestrator synthesis (executionOrchestrator.ts) must emit per-batch, map error lines, include Msg/Level/State format, and rows-affected rows that were missed (investigate why "(5 rows affected)" absent — likely per-set counts only on rowsAffected field or plan gating). SSMS wording exactly as Karl's expected block (timestamps optional — classic editor shows time rows; check MessagesView rendering for timestamp support). | TODO (host orchestrator + tests) |
+| 4 | Grid sizing algorithm v2: 1 grid → fill; N grids that ALL fit fully (all rows, no scrolling) → split evenly using full area; when even min-size can't fit all → stack at min size (~10–15 rows). Study the classic editor's sizing + SSMS behavior. Worth perfecting. | TODO (with #9 decision) |
+| 5 | Grid shows "stream…" indicator even after query finished. | TODO (results.tsx status plumbing) |
+| 6 | SPID missing from QS status bar — add (SessionInfo from data plane; verify field exists e.g. session.info.spid; show as "SPID n"). | TODO (small) |
+| 7 | No cell selection (click-drag, shift+arrows). | TODO (with #9) |
+| 8 | Arrow keys don't navigate grid. | TODO (with #9) |
+| 9 | Column filter icons dead. Karl suggests REUSING the classic editor's grid — an updated react-slickgrid-based grid in preview exists in-repo (see `FluentSlickGrid` used by the InlineCompletionDebug EventGrid; classic query results webview also has one — find under src/reactviews or src/webviews query results pages; repo dep `slickgrid-react@10.8.2`). **Evaluate: replace QS custom grid with that grid** — likely solves 4/5/7/8/9 together with battle-tested behavior. | DECISION+BUILD — likely the main workstream |
+
+## Workstream status — ROUND 2 COMPLETE (2026-07-07, commits e019d130c + 5f7e1fb31 + 3998352db)
+All nine issues fixed and committed; suite 4184/0. FOLLOW-UP 1b CLOSED 2026-07-07 (ls: 3a7eb3c8e — system-object catalog serves the LS via a pinned-view decorator). The alternating flake is IDENTIFIED: CopilotChatEntry before-each hook timeout (pre-existing; passes in isolation). Still open: replay parity for the console-hosted completions viewer (then delete the standalone panel); the alternating single-test flake remains unidentified (pre-existing).
+
+### (historical status below)
+- **#1 FIXED in working tree (agent, uncommitted):** requestHydration seam implemented end-to-end — binder columnsOf notLoaded → nativeEngine settleMemberAccess fire-and-forget hydration kick (de-duped: in-flight guard, per-generation, 30s floor) → isIncomplete retrigger serves loaded columns; memberResolution field added to completion diag; fixture lazy-column tests added (sqlLanguageCompletion + sqlLanguageProviders). **FOLLOW-UP 1b (open):** hydration EXCLUDES system objects (is_ms_shipped=0, metadataService.ts:149/153) — sys.databases/sys.tables member access resolves UNRESOLVED and cannot complete; fix by adding a static system-object catalog to the LS member resolution (reuse/port src/copilot/completionSystemObjectCatalog.ts) or optionally hydrating system objects. Karl repros use sys.* — 1b is required for his exact case.
+- **#3 messages agent running** (per-batch started lines, Msg/Level/State errors, rows affected, timestamps).
+- **#4/5/7/8/9 grid workstream NOT STARTED** — launch after #3 lands (results.tsx contention). Spike: reuse classic-editor react-slickgrid grid.
+- **#2 F1 + #6 SPID + #5 stream-indicator quick wins** — after grid agent (app.tsx/results.tsx contention).
+
+## Approach
+- 4/5/7/8/9 as ONE grid workstream: first spike reusing the existing slickgrid-based results grid (classic editor / preview) inside QS results panes; keep RowStore windowed fetching (QsGetRows) as the data source (slickgrid supports virtual data providers). If reuse is clean, sizing algorithm (#4) implemented over it.
+- 3 separately (orchestrator).
+- 1 via journal first; then, if needed, richer journaling (keystroke/version correlation).
+- 2 and 6 quick wins.
+
+## Verification chain per batch (unchanged)
+tsgo both configs → prettier/eslint → tsc --noCheck → vscode-test full (baseline ~4168+; CopilotChatEntry-adjacent flake alternates) → repo build → perftest gates when host code changed.
