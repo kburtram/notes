@@ -185,3 +185,203 @@ This journal is authoritative for **current checkpoint status and recorded evide
 - **Live end-to-end evidence against the configured Azure SQL database and development STS/extension:** diagnostic run `2026-07-12T23-09-30Z_4b16202c` passes unopened lazy-load absence; `2026-07-12T23-07-22Z_178fb0b3` passes 10,000 rows with `prepare.end outcome=ok`, Canvas settle, 10,000 features/vertices, zero skipped, and no long tasks; `2026-07-12T23-08-06Z_d6cc286e` passes 100,000 rows with `prepare.end outcome=ok`, progressive Canvas first paint, WebGL `gpuPoints` settle, 100,000 features/vertices, zero skipped, and no long tasks.
 - **Final focused extension gate:** webview/extension builds and two-stage bundle are green; 19/19 Spatial geometry/session/resource-worker/view-state/results-focus/bundle-budget tests pass. The broader affected suite was 31/31 green earlier. Full extension sweep recorded 4,872 passing / 16 pending with four unrelated pre-existing failures; full perftest CLI recorded 130 passing / 14 skipped with one unrelated central-store integration failure because its localhost:14333 service was absent.
 - **Release honesty:** SPA-0..SPA-8 are complete and committed. SPA-9 remains `PARTIAL` only for promotion evidence that cannot be manufactured by one implementation session: named official baselines after stable multi-run/multi-machine variance plus the final manual visual/theme/keyboard/screen-reader acceptance sweep. SPA-10 remains intentionally unstarted and requires separate approval.
+
+### 2026-07-14 — Entry 19: SPA-10 map layers — MAP-0..3 landed (world outline + host-proxied XYZ)
+
+Per ONLINE_MAPS_EXECUTION_PLAN.md (new; addendum wins; decisions D-0021..D-0034).
+LANDED (vscode-mssql 4d4771000 MAP-1, d708d3f69 MAP-2/3, +defensive-init fix;
+perftest core: basemap markers registered+vendored MAP-0):
+- Contracts-first: basemap.open/tile.end/close (host) + layer.begin/ready pair
+  with derived metric layerReady; render family gained layer attr, offline now
+  honest. vendorSync + conformance green.
+- MAP-1 offline World outline: Layers <select> gated on NEW default-off
+  mssql.queryStudio.spatial.basemap.enabled (capabilities.spatialBasemap;
+  pinned panes via PinnedResultsState.spatialBasemapEnabled); Natural Earth
+  land-110m (55KB, ThirdPartyNotices) copied to dist/views, fetched lazily on
+  selection only; EPSG:4326/3857 eligibility (planar never on Earth, D-0030);
+  layerId view state (bounded id, rerun carry-forward D-0031); bundle-budget
+  guard keeps the asset out of every JS chunk.
+- MAP-2/3 online slice: spatialBasemap host module (validation grammar §5.2,
+  fingerprints, sanitized descriptors, consent restore-never-prompts D-0027,
+  HMAC-keyed bounded disk+memory cache D-0028 under the dedicated
+  globalStorage root = the ONLY extra localResourceRoot, typed fetcher with
+  https/redirect/size/timeout/sniff/retry + resolved-address private-network
+  gate), session manager (trust/eligibility/consent/zxy/generation/
+  concurrency, markers), qs/spatial.basemap.* RPCs, controller wiring with
+  rerun/configChanged/disposed cleanup, OL adapter via injected requestTile
+  (kept vscode-jsonrpc out of the chunk graph — budget test caught it),
+  consent modal, attribution overlay, honest status states. CSP UNTOUCHED
+  (connect-src as before; tiles ride asWebviewUri img-src).
+- Commands: mssql.spatialBasemap.clearCache / clearConsent (palette-gated).
+VERIFIED: tsgo both configs; spatial band 64 passing (15 new host tests incl.
+privacy canaries: no URL/coordinate/secret in descriptors, cache paths, or
+marker attrs); full suite 5114/12/5 = the 5 documented pre-existing (two extra
+failures were my init leaking into mock contexts — fixed, suites re-green).
+Mid-build tri-repo pull: one lockfile conflict (sql-database-projects, took
+upstream — their repin now installs; feed caught up on lru-cache 11.5.2).
+REMAINING (MAP-4, next stretch START HERE): perf action
+mssql.perf.queryStudioSpatialSelectLayer + perftest scenarios
+querystudio-spatial-basemap-worldoutline (A/B vs points-10k-offline, measure
+layer.begin→layer.ready + settled{layer}) + negative proofs (gate off / None ⇒
+basemap markers absent; extend unopened scenario) + scenario contract tests +
+config.spatial.local.jsonc; live A/B evidence; cache-size surfacing polish;
+Playwright sweep. DEFERRED (D-0032/D-0033): defaultLayer setting, Azure Maps
+adapter (PR5), WMTS/WMS/vector/PMTiles, OSM-standard adapter, live-internet
+perf scenario (no controlled endpoint in harness — online path is proven by
+fake-fetcher tests).
+
+### 2026-07-14 — Entry 20: Vector Workbench bug batch (Karl dogfood list) + QS shell fixes
+
+LANDED (vscode-mssql, one commit per concern; see git log `qs:`/`grid:`/`oe:`):
+- Search Target oscillation (Karl #5/#8): the authoritative-targetId prop is
+  the view's OWN emission round-tripped one commit late; the sync effect
+  treated the echo as an Index-initiated change, reverted local picks, and the
+  persist effect re-emitted the reverted value — perpetual leapfrog, pane-wide
+  flicker. Fix: `vectorSearchTargetSync.ts` pure seam
+  (`resolveAuthoritativeVectorTargetIndex`) — a prop equal to the last
+  emission carries no information; only a differing prop applies. Leapfrog
+  convergence simulated in vectorSearchTargetSync.test.ts.
+- "Vector could not be rendered." after Add filter → pick column (Karl #6):
+  REAL stack recovered from MSSQL.log — `TypeError: Cannot read properties of
+  null (reading 'value')` in VectorSearchView render. All three predicate-row
+  handlers read `e.currentTarget.value` INSIDE setState updaters; React nulls
+  currentTarget after dispatch and defers updaters to render when the queue
+  isn't empty (hence intermittent). Reads hoisted; webview-wide multiline grep
+  proves the anti-pattern is gone. + `target?.filterColumns?.length` guard.
+- Text-with-model draft lost on tab switch (Karl #7): panelActive=false effect
+  wiped modelText/modelParameters, and the webview-recreation snapshot had no
+  field for them. Draft text/model id/parameters now ride
+  QsVectorSearchViewState (bounded 32768/256/2048, validators + hasOnlyKeys),
+  seeded on mount, emitted on change; hide no longer wipes drafts (in-flight
+  prepare/generated vector still cancelled+cleared). NOTE: deliberate §9.1
+  deviation — spec excluded "model-source text" from the snapshot; Karl
+  explicitly requested restore (2026-07-14). Memory-only contract unchanged;
+  new runs still clear it (reset not carried).
+- Projection never frames points (Karl #10): fit clamped UP to SCALE_MIN=6 —
+  wide PCA spreads (unnormalized embeddings) need scale « 1, so every fit
+  landed over-zoomed. New pure `vectorProjectionMath.ts`: unclamped-below fit,
+  fit-relative zoom-out floor (fit/8, capped at legacy 6), and
+  projectionShowsAnyPoint guard — a RESTORED camera that frames none of the
+  data (saved against another column) refits instead of showing empty space.
+  Validator now admits sub-1 scales (rejecting them dropped the ENTIRE panel
+  snapshot on round trip — silent state loss).
+- Vector pane document-scroll + dead space (Karl #4): defense in depth —
+  `body{overflow:hidden}` for QS/pinned pages (document NEVER scrolls; panes
+  own scrollbars), `.qs-root` 100vh→100% (matches the #root clip chain; vh in
+  iframes disagrees with the layout viewport under zoom/scrollbar-gutter),
+  `.qs-vec-root` overflow:hidden, `.qs-vec-workspace` min-height:0 +
+  max-height:100% (stretched flex item's min-height:auto let tall content
+  grow the row past the pane instead of scrolling).
+- Reembed dialog cropped (Karl #9): scrim was position:absolute scoped to the
+  PANE while the body capped at 60vh of the VIEWPORT. Now position:fixed like
+  the Search model dialog; dialog is a flex column capped calc(100vh-72px),
+  only the body scrolls.
+- QS status bar wrap (Karl #2): `.qs-status-message` base rule was missing —
+  nowrap+ellipsis+min-width:0; segments and PRODUCTION warning flex-shrink:0.
+- Grid cross-axis scroll reset (Karl #3): scrollbar grabs emit NO pointer
+  events in Chromium — the 200ms pointer-focus guard never armed, container
+  focus re-ran gotoCell and snapped BOTH axes to the active cell. Guard now
+  also arms from onMouseDownCapture.
+- OE v2 Edit Connection (Karl #1): `mssql.objectExplorerV2.editConnection` —
+  profile via groupConfig+stableProfileId (moveToGroup pattern), delegates to
+  v1 `mssql.editConnection` (accepts bare profile, opens Connection Dialog
+  pre-filled); menu on all four connection kinds, palette-suppressed.
+VERIFIED: tsgo both configs clean; eslint clean on changed files; new suites
+31 passing (vectorSearchTargetSync, vectorProjectionMath, view-state
+round-trip incl. model-draft bounds + sub-1 scale); vector/grid/QS band
+533/1 failing = documented pre-existing RowStore VEC-3; full suite run
+recorded in the commit-time note below.
+REMAINING: Karl to re-verify #4's document scrollbar in his dogfood session
+(root cause defended on all layers but the growing element was never observed
+live); VTEST sweep + remaining Entry 16 scope unchanged.
+
+### 2026-07-15 — Entry 21: scroll-yank root causes + stale-webview class fixed; checkouts synced
+
+Karl's re-reports came from checkouts WITHOUT Entry 20 (he tests from
+langsrv2 / repos/test/vscode-mssql; fixes lived only in langsrv). While
+syncing, two REAL new root causes fell out of his fresh evidence:
+- Chrome trace (Trace-20260715T124704): ALL mid-drag scrollTop writes come
+  from SlickGrid's own _handleScroll→scrollTo(), and scrollbar grabs emit
+  NO pointer/mouse events — both prior "arm the guard" fixes could not
+  hold. Fixed twice over (commit b84e15276): (1) focus reveal now requires
+  POSITIVE keyboard evidence (window-level Tab keydown ≤250ms) instead of
+  absence-of-pointer; (2) streaming setLength→updateRowCount waits for a
+  200ms scroll-quiet window — updateRowCount reaches scrollTo(), which
+  teleports the thumb mid-drag whenever the page/offset mapping shifts
+  (matches "jerky until the run finishes, then smooth").
+- Pinned pane "missing maximize button": the on-disk bundle PROVABLY
+  contained the wiring (dev-mode chunk inspection + entry references) yet
+  the running pane lacked it → VS Code's webview service worker serves
+  STALE cached ENTRY bundles (unhashed names; chunks are content-hashed
+  and immune). Fixed with a per-host-session cache-buster on entry asset
+  URLs (6eb482a00). This class likely contaminated other "still broken"
+  reports.
+- Document-scroll backstop (8fe0a25d0): html/body/#root pinned to 0 on any
+  scroll event + violation logged with the focused element — the vector
+  dead-space repro will now name its culprit in MSSQL.log if it survives
+  the Entry 20 CSS containment.
+- Tri-repo pull: origin perf commits merged both ways (perftest registry
+  notes conflict resolved, contracts regenerated + re-vendored, 27/27;
+  spatial SpatialMap/SpatialResultsPane conflicts resolved keeping
+  basemap + upstream renderer/partialReason changes).
+VERIFIED: full suite 5215/12/5 (the documented five); grid band green incl.
+new defer + Tab-gate tests; both test checkouts fast-forwarded to 6eb482a00,
+npm install + FULL build run, fix strings verified in their dist.
+REMAINING: Karl re-tests #2/#3/#4 and pinned maximize on the synced builds
+(fresh extension host needed); MAP-4 unchanged as the spatial restart point.
+
+### 2026-07-15 — Entry 22: spatial dogfood batch — map context menu, panel splitters/collapse, OSM one-click setup
+
+Karl's second spatial dogfood list (commit f20c64fbb, qs:). Vector item #1
+(64-dim embeddings) withdrawn — he found the model-parameters override UI.
+
+- **Map right-click (screens\spatial-copy.png)**: the default webview
+  Cut/Copy/Paste menu appeared over the canvas and none of it could work.
+  Suppressed on the map region (data-vscode-context preventDefault items +
+  onContextMenu preventDefault) and replaced with a real menu: **Copy
+  image** composites the OL layer canvases into one PNG on the clipboard
+  (spatialMapExport.canvasCompositeMatrix handles CSS matrix transforms +
+  style/pixel scale fallback, identity on malformed — unit-tested; WebGL
+  buffer read is safe because export runs renderSync inside
+  rendercomplete), plus **Fit**. Outcome toast bottom-left (loading toast
+  owns bottom-right). SpatialMap is now forwardRef with an exportImage
+  handle.
+- **Side panels**: feature list and details get drag splitters against the
+  map (qs-splitter idiom, widths clamped 150..50% live, 120..4000 in the
+  validator, persisted as spatial.listWidth/detailsWidth, carried across
+  reruns) and Perf-History-style collapse — section headers with chevrons,
+  collapsed panels become 24px expand rails. listOpen/detailsOpen finally
+  have UI. Body layout grid→flex; the <760px hide-details media query is
+  gone (user-controlled now).
+- **LATENT STATE-DROP BUG fixed**: isSpatialState's filters hasOnlyKeys
+  omitted the optional geometryType/srid keys — setting either filter made
+  the WHOLE panel snapshot fail validation and silently drop on restore.
+  Regression-tested.
+- **Basemap onboarding**: Karl had to ask Copilot for the sources JSON —
+  "I don't think anyone will figure this out." First spatial view now
+  offers one-click OpenStreetMap setup (spatialBasemapOnboarding, host
+  seam-injected + 4 decision tests): writes enabled+sources to USER
+  settings (application scope preserved, §5.1), records consent for
+  exactly the fingerprint written (offer text carries the tile-coordinate
+  disclosure — no double prompt), don't-ask-again in globalState
+  (mssql.spatialBasemap.setupOffer.dismissed.v1), once per session, never
+  when enabled+configured. Trigger: QsSpatialOpenRequest. Basemap config
+  changes bump QsState.spatialBasemapEpoch (controller listener now
+  watches mssql.queryStudio.spatial.basemap) so a mounted pane re-fetches
+  the layer list live — covers the enabled-but-sources-empty accept path.
+VERIFIED: tsgo both configs, eslint 0 errors, targeted vscode-test band 34
+passing (onboarding 4, view-state widths/filters, export matrix 3), full
+langsrv build green; both test checkouts fast-forwarded to f20c64fbb + full
+builds green.
+REMAINING: Karl re-tests in a fresh extension host; MAP-4 (perftest spatial
+scenarios + live A/B) unchanged as the spatial restart point.
+
+### 2026-07-16 — Entry 23 (pointer): QS-side dogfood fixes landed in the OE round-3 batch
+
+qs: 19b513493 + core: cec2999a7 (details in oe-docs/PROGRESS.md Entry 18):
+plan properties filter case-insensitive; Peek Definition renders the
+scripted CREATE inside Monaco (virtualContent over qs/lang.definition +
+editor-opener → mssql-def beside; ctrl-hover no longer pops tabs); pinned
+documents with actual plans get the REAL Query Plan tab (qs/getPlanState
+over the frozen snapshot; plan sets leave the Results grid stack — this
+was the rendering-error/unbounded-height report).

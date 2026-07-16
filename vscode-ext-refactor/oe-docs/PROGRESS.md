@@ -694,3 +694,155 @@ NOTE: exact lower-layer stall (suspected: lease/session work queued
 behind the serverless resume below the 5s policy race) is now bounded
 away at the tree edge regardless of culprit; if the spinner-forever case
 shows up in dogfood, the next probe is STS2-side connectionOpen dispatch.
+
+## 2026-07-16 — Entry 18: dogfood round 3 — the connect-forever class killed + parity batch (Karl's 8-item list)
+
+SHIPPED — vscode-mssql core: cec2999a7 + oe: f4e71f0c3 + qs: 19b513493
+(dev/query, not pushed; both test checkouts synced + rebuilt).
+
+**Connect-forever root cause (Karl's Azure paused+firewall session journal:
+open.begin + rpc.v2/initialize.begin, NO ends, canceled never)**: the sts2
+v2/initialize handshake had NO deadline and runs BEFORE openSession's
+deadline clock starts (canOpen → start()). A wedged/busy service therefore
+hung every v2 consumer forever — matching Entry 17's NOTE that the next
+probe was STS2-side dispatch. Fixed in the backend where it belongs:
+- start() single-flight + bounded (initializeMs 20s,
+  mssql.sqlDataPlane.timeouts.initializeMs); expiry → unavailable with an
+  honest "timed out (service busy or wedged)" reason, retryable.
+- canOpen re-attempts retryable unavailability (transient wedge must not
+  poison every later open with a stale failure).
+- Registry cancelConnect + "Cancel Connecting" on connecting nodes
+  (canCancelConnect capability, inline stop icon): node returns to
+  disconnected immediately; the pending open self-supersedes under the
+  backend deadline; late sessions close (test pins it). Dogfood item #1.
+- Dialog dispose race from the same journal (seq 194 "Cannot send
+  notification on disposed controller"): sendNotification on a disposed
+  webview is now a silent no-op (mirrors the no-connection case) — the
+  post-connect state push raced the dialog's own auto-close.
+
+**Parity/dogfood batch**:
+- #5 Azure Logins: security/logins now includes Entra principals (type
+  E/X) — Azure logical servers are mostly E/X so the folder rendered
+  empty (probe: sqlninja login sees NO server principals at all — that's
+  permission-scoped visibility, expected; Karl's admin connection will
+  now list the AAD logins). Server Roles kept.
+- #6 System Databases folder (leading, v1/SSMS order; hidden whole when
+  showSystemDatabases=false). serverFolder id databases/system.
+- #7 External Tables folder: facetFlag selector generalized from the
+  dropped-ledger machinery; folder appears only nonEmpty, sortLast after
+  the table items (v1 order per Karl); items are REAL snapshot objects
+  (columns/scripting work); external tables leave the main Tables list.
+  Live-validated against ninjadb (dbo.ExternalRemoteRepro).
+- #8 menu parity: profiler/schemaCompare/editTable promoted from the
+  Legacy Actions quickpick to first-class context items with v1 WORDING
+  (Launch Query Profiler... / Compare Schemas... / Modify Table
+  Structure...; Backup/Restore retitled ...Database...); editTable
+  targets table objects only (objectKind in command facts); Legacy
+  Actions menu entry removed (command kept). Conformance test extended.
+- QS-side dogfood in the same batch (qs: 19b513493): #2 plan properties
+  filter case-insensitive; #3 Peek Definition renders the CREATE script
+  INSIDE Monaco (virtualContent rides the RPC; explicit navigation opens
+  the mssql-def doc beside via editor opener — ctrl-hover no longer pops
+  tabs); #4 pinned documents render plan result sets in a REAL Query
+  Plan tab (lazy azdataGraph; qs/getPlanState from the frozen snapshot)
+  instead of a 120px multi-MB XML grid (the rendering-error/unbounded-
+  height report).
+
+**Docker/deployment (design-first per Karl)**: full v1 subsystem review
+done (subagent sweep; ~1,300 LOC engine core + 970 LOC wizard, ~1,750 LOC
+tests, three narrow v1 couplings). VERDICT: reuse behind 3 seams
+(ContainerConnectAdapter, ContainerProgressReporter, v2 pre-connect
+ensure-started hook), do NOT rebuild; add diag spans + Debug Console +
+perftest scenarios (none exist today). Design at
+oe-docs/DOCKER_CONTAINERS_OE_V2_DESIGN.md (DOCK-0..6) — awaiting Karl's
+review before implementation.
+
+VERIFIED: tsgo both configs; eslint 0 errors; affected bands 136 passing
+with ONLY the documented stableProfileId baseline failure (the 4
+legacy-redirect fails reproduce on the UNCHANGED tree — pre-existing
+order-sensitive flake, journaled honestly); full build green; checkouts
+synced.
+
+REMAINING: Karl re-tests the batch (fresh extension host); DOCK-0..6
+implementation after design review; if a connect still spins >20s the
+journal now names the timeout — grab sqlDataPlane.openSession /
+initialize spans.
+
+## 2026-07-16 — Entry 19: DOCK-0..6 BUILT + live-validated (Docker in OE v2)
+
+SHIPPED — vscode-mssql: f37efaf2b (single `oe:` commit, 22 files/+1328);
+perftest: 8cc093b. dev/query, not pushed; both test checkouts (langsrv2,
+repos/test/vscode-mssql) fast-forwarded + full `npm run build` green.
+
+Built per the approved design: REUSE the connection-agnostic docker core
+behind three seams, do NOT rebuild. One commit (not the usual core:/oe:
+split) because the shared-core seams and the v2 integration are mutually
+dependent — mainController wires the v2 perf seams while the v2 tree
+imports the deployment adapters, so no 2-way split builds independently.
+
+**DOCK-0** ContainerHostAdapter {setStatus/showError/onContainerMissing}
+replaces the ConnectionNode/ObjectExplorerService leak in dockerUtils;
+ContainerConnectAdapter {saveAndConnect} abstracts the wizard terminal
+step (classic = saveProfile+createObjectExplorerSession; v2 =
+saveProfile+connectProfileById). classicContainerHostAdapter /
+classicContainerConnectAdapter reproduce v1 outcomes byte-for-byte.
+**DOCK-1/2** Deploy title button + palette (v2Preview gated); docker node
+icons/context; Start/Stop/Delete SQL Container with v1 WORDING + v1 nls
+keys (%mssql.startContainer% etc. already existed — reused, not
+re-added), 9_MSSQL_container menu group. **DOCK-3** connectProfile
+pre-flight restarts a stopped container (bounded 360s) before the open;
+containerName rides the saved profile through the settings roundtrip
+(getRawConnectionsFromSettings spreads it; readProfileTree keeps
+stored.containerName). **DOCK-4** diag spans over the whole lifecycle
+(docker.engine.start/image.pull/container.create/start/stop/delete/
+readiness.wait + objectExplorerV2.container.preflight/openRetry),
+value-free (never SA_PASSWORD; version/port/image only); Debug Console
+container rows; two perftest scenarios. **DOCK-5/6** docker/deployment/
+localContainers suites green with the classic adapters (v1 unchanged);
+v2 container targeting + docker identity + pre-flight + open-retry
+covered.
+
+LIVE VALIDATION (config.containers.local.jsonc, local SQL2025 image):
+**both scenarios PASS** — oev2-container-deploy 16.3s (create→ready→save
+→v2-connect), oev2-container-reconnect 6.99s (stopped→preflight→open,
+zero pre-login errors). Report 2026-07-16T05-36-33Z_132a58a9.
+
+Bugs found + fixed during the build ("fix up any bugs we encounter"):
+1. **connectProfileById** refreshes the profile tree first — the just-
+   saved profile was invisible to the cached tree (deploy race).
+2. **Registry connect() JOINs** an in-flight attempt (Entry.pending)
+   instead of returning a "still connecting" snapshot read as failure —
+   the wizard connect raced the single-new-profile auto-connect.
+3. **Container open rides out SQL's post-(re)start pre-login reset.** THE
+   real reliability find: a *running* container is not a *ready* server.
+   The `alreadyRunning` pre-flight short-circuit is v1-correct, but on a
+   cold boot (docker auto-start, or a restart raced by another connect)
+   the server briefly resets the pre-login endpoint ("An existing
+   connection was forcibly closed"). Fix = a deadline-bounded (~60s)
+   retry in the v2 open, on TRANSITORY transport/pre-login errors only —
+   a wrong password still fails on attempt 1. v2-only; v1's shared
+   restart/readiness path is untouched (no backcompat risk). Unit test:
+   two resets → success; bad password → one attempt.
+
+PROCESS GOTCHA (cost 3 dead perf runs): the harness loads the extension
+via --extensionDevelopmentPath, whose `main` is ./dist/extension — the
+BUNDLE. Unit tests use out/ (build:extension:emit), so they were green
+while the perftest ran a STALE bundle without any of the above fixes.
+**Always `npm run build:extension-bundle` before a perftest run.** Once
+rebuilt, reconnect went red→green immediately.
+
+machineName back-fill (checkForDockerConnection) still DEFERRED — the
+design anticipated it; wizard/saved container profiles carry containerName
+explicitly, so the derive-from-machineName path isn't needed for DOCK.
+
+VERIFIED: tsgo extension config clean; eslint 0 errors (only pre-existing
+class-property naming warnings); docker/deployment/localContainers + OE v2
+container bands green (the lone failure is the documented stableProfileId
+baseline — reproduces on the unchanged tree, not mine); full `npm run
+build` green; both checkouts rebuilt.
+
+REMAINING: Karl dogfoods the docker UX in a fresh extension host — Deploy
+new database from the v2 view, Start/Stop/Delete on a container node, and
+expand-a-stopped-container (the pre-flight + open-retry path). If a
+container connect ever errors mid-boot, the openRetry span now names each
+attempt.

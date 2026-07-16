@@ -435,3 +435,53 @@ a b c select list, "= 1 2", "select * form", "select id, from". Verified:
 26-statement legal-SQL battery (temporal, TABLESAMPLE, PIVOT, GROUPING
 SETS, FOR XML, OPENJSON, hints, window functions) zero false positives.
 Full suite 4371/3 known pre-existing. Commit e168c7697.
+
+## 2026-07-14 - Entry 9: Dogfood fixes - star hover under TOP, definition connection adoption
+
+Karl's two query-editor repros, both root-caused by test matrix + code
+reading (no live run needed):
+
+1. STAR HOVER SHOWED NO COLUMNS. A 23-shape hover matrix found the real
+failures: (a) `SELECT TOP 10 *` - the sketcher folded list-head modifiers
+(ALL/DISTINCT/TOP n|(expr)/PERCENT/WITH TIES) into the first select item,
+so star detection failed both branches ("TOP 10 col" also misread col as
+an alias of a "TOP 10" expression); (b) one unresolvable join source
+(unknown table, COUNT-derived, synonym) suppressed the ENTIRE tooltip;
+(c) the live lazily-hydrated columns path returned nothing with no
+self-heal (diagnostics kicks hydration; hover didn't). Fixes:
+`skipSelectListHeadModifiers` in the sketcher (item spans only - clause
+spans unmoved, so clause-keyed completion/diagnostics don't drift; TOP
+(subquery) heads still scanned); starHover lists claimable sources and
+marks the rest with an explicit "columns unavailable" line (NONE only
+when nothing is claimable; system-schema/USE-switched stay suppressed);
+HoverComputation.hydrationKicks -> nativeEngine fires the de-duped
+requestHydration (settleMemberAccess seam) so a re-hover serves. Fixture
+lazy-columns test proves kick -> didChange -> re-hover round trip.
+
+2. GO-TO-DEFINITION EDITOR CONNECTED TO THE WRONG DATABASE (OE node's
+master instead of the editor's userdb). Locus: the definition document is
+a real languageId=sql doc, so sqlDocumentService's generic auto-connect
+claimed it for the ambient default/last-active profile - a wrong-context
+v1 connection minted per F12. Fixes: auto-connect now SKIPS mssql-def:
+documents entirely; both delivery paths connect the target to the SOURCE
+editor's context via new
+QueryStudioLanguageService.adoptDefinitionDocumentConnection - shadow
+profile + connectionState.database (the LIVE db, tracking USE/dropdown,
+overriding the profile's default db), connectionSource
+"queryStudioDefinition". Native path: controller adopts the URI returned
+by openScriptedDefinition; bridge path: BridgeEngineHost.
+adoptDefinitionDocument after the cross-file open. Re-adoption of a
+cached script is a no-op while connected in the same db; a db change
+reconnects. No classic-mappable profile -> honestly disconnected.
+
+TESTS: +12 (4 hover incl. lazy-kick round trip, 3 sketch head-modifier,
+4 adoption, 1 auto-connect skip). VERIFIED (2026-07-14): tsgo both
+configs clean; full suite 5077 passing / 12 pending / 5 failing = the 5
+documented pre-existing (sqlScripting strict-host, sqlLanguage sys
+catalog, RowStore VEC-3, OE v2 stableProfileId, CopilotChatEntry flake).
+Commits: vscode-mssql ls: (sketch/hover/engine) + qs: (definition
+adoption).
+
+FINDINGS: completion's addStarExpansion does NOT apply the scopeId filter
+hover uses (asymmetry, unharmful today); git:-scheme diffs of .sql files
+also hit the generic auto-connect (latent, untouched).

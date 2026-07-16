@@ -938,3 +938,51 @@ Fixes:
   {method: use|reconnect, changed, engineEditionKnown, ms}.
 - Tests: 4 detection cases incl. the NaN repro and MI-vs-SQLDB. 4552
   passing. STS ServiceLayer + sts2 rebuilt (dogfood bin refreshed).
+
+## 2026-07-14 — Entry 24: Grid scrollbar focus-yank fixed (dogfood) + tri-repo pull
+
+Karl's repro: dragging the results-grid scrollbar scrolled in big bumps
+and jumped BACKWARD ("scroll up, it jerks down"); intermittent; wheel
+scrolling stayed smooth; some flicker. The session journal showed
+nothing during the episodes (single 100-row fill-mode grid, no window
+fetches, no block-visibility events — the new offscreen-grid reclaim
+never fired). Karl's DevTools profile broke it open: a long task rooted
+at `Event: focusin` → gotoCell → scrollCellIntoView → scrollRowIntoView
+→ synchronous full renderRows.
+
+ROOT CAUSE: the FluentResultGrid container div is focusable
+(tabIndex=0) and Chromium focuses the nearest focusable ancestor when
+the user GRABS A SCROLLBAR. handleGridContainerFocus treated that as
+grid entry and called focusGrid() → grid.gotoCell(activeCell) — which
+scrolls the ACTIVE cell back into view (below the viewport → backward
+jump) and synchronously rebuilds visible rows (bump + flicker) on every
+grab. Wheel never moves focus → smooth; focus settling inside the grid
+ends the storm → intermittency. Latent second symptom: clicking a cell
+while the old active cell was off-screen yanked back to the old cell
+before the click landed.
+
+FIX (vscode-mssql 621fd80ee, shared FluentResultGrid — classic results
+pane benefits too): pointer-initiated container focus (pointerdown
+within 200ms — scrollbar grabs and cell clicks) skips the
+re-activation; cell clicks activate through SlickGrid's own click
+pipeline; keyboard entry (Tab) keeps the reveal-active-cell behavior.
+Pure seam `isFluentResultGridPointerInitiatedFocus` + tests (21/21
+fluent grid band).
+
+ALSO THIS SESSION (langsrv, all committed): ls: ca1b62939 star hover
+fixes (TOP/DISTINCT list heads swallowed the star item; partial source
+honesty; lazy-columns hydration kick), qs: 2b3a07801 definition
+documents adopt the source editor's connection (auto-connect skips
+mssql-def:, both delivery paths connect via shadow profile + LIVE
+database), core: cb62a8b95 sql-database-projects lock repins
+(brace-expansion 2.1.2/1.1.14 + lru-cache 11.5.2 were UNPUBLISHED
+upstream — npm 404 through the feed proxy; re-resolved in-range).
+
+TRI-REPO PULL (Karl's ask): vscode-mssql merged origin/dev/query
+b4dce4a0f (no conflicts; brings QS copy-path perf work, Results-focus
+fix, upstream main incl. esbuild packaging for sql-database-projects);
+sqltoolsservice already up to date; perftest merged clean (backend
+shape matrix, copy scenarios). VERIFIED: tsgo both configs; full build
+(dist rebundled — dogfood needs a window reload); contracts 27/27 incl.
+cross-repo vendorSync; full suite 5160 passing / 12 pending / 5 failing
+= the 5 documented pre-existing. Nothing pushed.
