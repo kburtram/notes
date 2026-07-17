@@ -45,6 +45,9 @@ in a live trace, a self-test rep, a CLI waterfall, and a regression gate.
 | [05-testing.md](05-testing.md) | Test inventory across all three repos, verification workflows, known flakes, and the reliability playbook. |
 | [06-sts2-and-next.md](06-sts2-and-next.md) | Where STS2 fits, what is gated on it, current retrofit status, and the seams for the next round of improvements. |
 | [07-phase2-query-studio-branch-guide.md](07-phase2-query-studio-branch-guide.md) | Phase-1 wrap: what Query Studio consumes, frozen vs additive, pre-branch verification, deferred backlog. |
+| [inline_comp_observability.md](inline_comp_observability.md) | Inline completions observability (feature capture, replay, sessions analysis): current design, comparison with the substrate/STS2/perftest mechanisms, and the phased unification plan (console UX merge, journal consolidation, Replay Lab). |
+| [inline_comp_observability_addendum.md](inline_comp_observability_addendum.md) | Approved review of the unification plan: architectural amendments (bundle catalog, durable identity, capture-policy dimensions, lifecycle records, service de-fork, replay safety), revised sequence, parity matrix, test plan. |
+| [inline_comp_observability_final_plan.md](inline_comp_observability_final_plan.md) | **The authoritative merged execution plan** (companion + addendum reconciled): frozen decisions, UX quality brief, merged Gate A → Phase 0–5 sequence, delivery slices, status ledger. |
 
 ## Where the per-repo docs live (source of truth for their internals)
 
