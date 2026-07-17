@@ -13,7 +13,8 @@ Implements the addendum's PR 1–PR 4 with the Azure Maps adapter (PR 5) explici
 deferred, condensed into four checkpoints MAP-1..MAP-4 plus a contracts-first MAP-0.
 "Earth map" ships two ways: the bundled offline **World outline** (no network, no host
 session, works in pinned panes) and **configured host-proxied XYZ raster sources**
-(consented, trusted, Query Studio panel only in v1).
+(consented, trusted; Query Studio panel only at first — extended to pinned documents
+by D-0035).
 
 ## 2. Locked decisions (delta log)
 
@@ -33,6 +34,7 @@ session, works in pinned panes) and **configured host-proxied XYZ raster sources
 | D-0032 | `defaultLayer` setting DEFERRED (addendum allows; fewer consent paths). Azure Maps adapter (PR 5), WMTS/WMS/vector/PMTiles, and an OSM-standard adapter remain out of scope. |
 | D-0033 | Online perf scenario vs live internet is NOT added (no controlled tile endpoint in the harness). Online path is proven by unit/integration tests with a fake fetcher + deterministic tiles. Perf scenarios cover world outline A/B + negative proofs. |
 | D-0034 | Markers (registered in perftest registry BEFORE emission): extensionHost `mssql.queryResults.spatial.basemap.open` / `.tile.end` / `.close`; webview pair `mssql.queryResults.spatial.basemap.layer.begin` / `.layer.ready` (+ derived metric `mssql.queryResults.spatial.basemap.layerReady`); `render.begin/.firstPaint/.settled` gain `layer` safeEnum (none|worldOutline|xyzRaster) and `offline` becomes honest ("false" iff online layer active). Attrs: enums/buckets only — never URLs, hosts, tile coords, source ids. |
+| D-0035 | REVISES D-0024 (2026-07-16, dogfood): online layers gain pinned-document parity. `pinnedResultsController` registers the same four basemap RPCs as thin proxies over the shared extension-level host (consent, trust, cache, fetch policy, and limits all stay host-owned and are shared with live QS), adds the tile-cache dir to its `localResourceRoots` (D-0022 mechanics, derived from context so restore-before-activation holds), and bumps `spatialBasemapEpoch` on basemap config changes so mounted panes re-fetch the layer list. The strict pinned CSP is untouched: tiles are `img-src <cspSource>` loads of local cache URIs, same as D-0022. World-outline-only degradation remains the honest fallback when the host is absent or the gate is off. |
 
 ## 3. Checkpoints
 
