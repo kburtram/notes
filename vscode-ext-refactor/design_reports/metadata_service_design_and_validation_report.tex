@@ -188,18 +188,18 @@
 
 \vspace{0.12in}
 \begin{tcolorbox}[enhanced,colback=redbg,colframe=redish,boxrule=0.9pt,arc=2mm,left=4mm,right=4mm,top=2.5mm,bottom=2.5mm]
-\textbf{Review outcome at the pinned head.} The architecture is directionally strong and the focused implementation is substantial, but six correctness gaps remain merge-blocking: offline network enforcement, fail-closed database identity plus session recycling, auxiliary-session serialization, cache-key binding, cross-window cache publication ordering, and duplicate serverless wake ownership.
+\textbf{Review outcome at the repaired head.} The architecture and implementation now agree on the load-bearing boundaries. The six prior merge blockers---offline network enforcement, fail-closed database identity plus session recycling, auxiliary-session serialization, cache-key binding, cross-window cache publication ordering, and single serverless-wake ownership---are repaired and covered by deterministic regressions. Local build, lint, packaging, focused tests, and the broad hosted suite are green subject only to two independently reproduced, untouched Windows path-fixture suites.
 \end{tcolorbox}
 
 \vspace{0.20in}
 \begin{tabular}{@{}ll@{}}
 Prepared for: & Karl Burtram\\
-Primary change: & \code{dev/karlb/query_04_metadata_service} at \code{9955ff9e6}\\
+Primary change: & \code{dev/karlb/query_04_metadata_service} at \code{e5952174a}\\
 PR base: & \code{69f54be2a} on \code{main}\\
 Related vscode ref: & \code{dev/query} at \code{5be148b1e}\\
 STS2 reference: & \code{sqltoolsservice dev/query} at \code{fe8300939}\\
-Refactor notes: & \code{kburtram/notes main} at \code{a548c0b84}\\
-Report snapshot: & 28 August 2026, America/Los\_Angeles\\
+Refactor notes: & report source parent \code{f56db6d73}\\
+Report snapshot: & 29 August 2026, America/Los\_Angeles\\
 \end{tabular}
 
 \vspace{0.14in}
@@ -247,11 +247,11 @@ The source review is pinned to exact commits and current GitHub state. This repo
 \toprule
 \textbf{Source} & \textbf{Pinned state} & \textbf{Use in this report}\\
 \midrule
-PR \#22836 & head \code{9955ff9e6}; base \code{69f54be2a} & All 46 changed filenames, current discussions, Actions state, and exact line anchors.\\
+PR \#22836 & repaired head \code{e5952174a}; extraction base \code{69f54be2a} & Current changed filenames, review discussions, Actions state, and exact line anchors.\\
 \code{vscode-mssql dev/query} & \code{5be148b1e} & Related query/data-plane refactor history and already-merged platform seams.\\
-\code{vscode-mssql dev/refactor} & ref absent at review time & No assumptions are made from a deleted branch; surviving notes and current/merged code are used instead.\\
+\code{vscode-mssql dev/refactor} & \href{https://github.com/microsoft/vscode-mssql/tree/dev/refactor}{remote ref} at \code{a0880ad4f} & Integration-tree comparison and downstream refactor context; the branch was published during this closeout so the reference is reproducible.\\
 \code{sqltoolsservice dev/query} & \code{fe8300939} & STS2 generated contract, invariants, runtime behavior, and executable one-active-query scenario.\\
-\code{kburtram/notes main} & \code{a548c0b84} & Metadata substrate/cache/drift, language-service, STS2, and observability design intent.\\
+\code{kburtram/notes main} & source parent \code{f56db6d73} & Metadata substrate/cache/drift, language-service, STS2, and observability design intent.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -261,13 +261,13 @@ Evidence is ranked as follows:
 \begin{enumerate}
   \item \textbf{Pinned source and executable protocol contracts.} These establish control flow, ownership, serialization, identity, and persistence behavior.
   \item \textbf{Independent local validation.} The extension, embedded perftest, sqltoolsservice solution, STS2, authentication, language, and ServiceLayer lanes were run locally; exact results and exclusions appear in \cref{tab:localvalidation}.
-  \item \textbf{Current GitHub Actions logs.} At the reviewed head, analysis, packaging, normalization, and platform launch checks are green; the aggregate build-and-test check is red. The unit runner reports 3,975 passing, 0 failing, and 12 skipped; the aggregate failure comes from SQL Projects unit exit code 1 and one of 17 VSIX smoke tests.
+  \item \textbf{GitHub Actions logs.} At the prior head, analysis, packaging, normalization, and platform launch checks were green; the aggregate build-and-test check was red even though its MSSQL lane reported 3,975 passing, 0 failing, and 12 skipped. The aggregate failure came from SQL Projects unit exit code 1 and one of 17 VSIX smoke tests. A fresh workflow was triggered by \code{e5952174a}; its conclusion is intentionally not predicted in this artifact.
   \item \textbf{PR-body and prior-review results.} Additional focused pass counts, packaging measurements, and review-machine timing probes are useful reported evidence and remain identified as such.
-  \item \textbf{Missing regression proof.} A safety claim is not treated as validated when the current tests avoid the relevant branch---for example, an offline test with polling disabled and a guaranteed cache hit.
+  \item \textbf{Closure regressions.} The repaired head adds the adversarial branches that were missing: offline hit/miss/refresh/strict/auxiliary/transition paths, identity mismatch, auxiliary overlap, key-copy and logical-hash corruption, older-last and manifest-only publication races, abort-listener balance, unknown case semantics, provider availability, and server hydration timeout/recycle.
 \end{enumerate}
 
 \begin{statusbox}[title={Current review disposition}]
-The design can remain the basis of the refactor, but the current head should receive changes before merge. The first six findings in \cref{sec:blockers} affect truth, isolation, or retry ownership rather than optional polish. Additional hardening findings are documented for the same PR or an explicitly scheduled follow-up.
+The design remains the basis of the refactor and the repaired head is suitable for merge review. The original blockers and hardening findings in \cref{sec:blockers} are closed in code and tests. The remaining cross-window index caveat is explicit by design: access timestamps and LRU order are approximate across windows, while manifests remain authoritative and maintenance rebuilds membership and byte totals.
 \end{statusbox}
 
 \section{Executive design summary}
@@ -296,11 +296,11 @@ The live engine uses the SQL Data Plane to run a progressive H0--H7 catalog ladd
 \midrule
 Model and publication & Immutable, deterministic generations with per-section truth. & \impl{} Strong. Structure-of-arrays, deterministic projections, partial readiness, and scale fixes are well covered.\\
 Shared lifecycle & One entry per key, ref-counted leases, bounded idle retention, complete disposal. & \impl{} Strong after same-key single-flight and disposal fixes.\\
-Database isolation & A requested key can publish only metadata proven to belong to that database; recovery must reopen a fresh session. & \gap{} Initial mismatch logs and continues, and the wrapper drops \code{recycle()}.\\
-Freshness/offline & Consumers choose stale, validated, live, or network-forbidden behavior. & \gap{} Policy vocabulary exists, but store-level offline mode does not prevent backend resolution, cache-miss hydration, polling, refresh, or auxiliary work.\\
-STS2 query ownership & One active query per physical session, including lazy auxiliary sections. & \gap{} Main hydration is serialized; different auxiliary sections can overlap on one cached session and receive \code{Sts2.Busy}.\\
-Cache integrity & A payload is bound to its key, logical hash, and a globally ordered publication decision. & \gap{} Byte/shape defenses are strong, but key binding, logical-hash verification, and atomic cross-window authority remain incomplete.\\
-Data-plane retry policy & Serverless wake/retry has one owner per open attempt. & \gap{} Top-level and public service-view paths both wrap the same open.\\
+Database isolation & A requested key can publish only metadata proven to belong to that database; recovery must reopen a fresh session. & \impl{} H0 mismatch fails before H1/publication, comparison follows known catalog semantics, and lazy sources forward \code{recycle()} and reject late opens after disposal.\\
+Freshness/offline & Consumers choose stale, validated, live, or network-forbidden behavior. & \valid{} A live gate now spans resolver, hydration, validation, poll/retry timers, strict refresh, lazy definitions, server scope, and auxiliary work; hit, miss, and online$\rightarrow$offline regressions assert zero new resolver/session/query calls.\\
+STS2 query ownership & One active query per physical session, including lazy auxiliary sections. & \valid{} All section keys share one FIFO lane, and both database and server hydration watchdogs fence abandoned results and recycle before retry.\\
+Cache integrity & A payload is bound to its key, logical hash, and a globally ordered publication decision. & \valid{} Reads verify requested-key binding and decoded canonical content hash; per-key cross-process publication locks serialize compare/write/postcheck using capture time plus deterministic equal-time tie-break.\\
+Data-plane retry policy & Serverless wake/retry has one owner per open attempt. & \valid{} The public service view is the sole wake owner; top-level open delegates once, and provider availability refusal is a retryable \code{unavailable}, not a capability failure.\\
 Consumer cutover & Language/AI/OE/Query Studio pin snapshots and degrade honestly. & \future{} No ordinary product surface is routed to the substrate in this PR.\\
 \bottomrule
 \end{tabularx}
@@ -311,8 +311,8 @@ The load-bearing target is \textbf{honest degradation}: missing, failed, partial
 \end{designbox}
 
 \clearpage
-\begin{reviewbox}[title={Why the current gaps are blocking}]
-The six P1 findings can cause live network activity under an offline promise, metadata from the wrong database to be published under a requested key, valid auxiliary requests to fail nondeterministically, a copied cache entry to cross keys, an older window to become authoritative after a newer capture, or one serverless open to execute nested retry loops. These are correctness and isolation failures at the substrate boundary, so downstream consumers cannot safely compensate for them.
+\begin{reviewbox}[title={Why the repairs were required}]
+The six P1 findings could have caused live network activity under an offline promise, wrong-database publication, nondeterministic auxiliary failures, copied cache entries crossing keys, older-window authority, or nested wake loops. The repaired head closes those substrate-boundary failures rather than asking downstream consumers to compensate. The regression matrix in \cref{tab:regressions} is the durable proof, not merely the absence of a failure in a happy-path suite.
 \end{reviewbox}
 
 \section{Scope and position in the refactor train}
@@ -431,18 +431,14 @@ The acquisition path has two logically separate responsibilities: recover the be
   \draw[failarr] (net.south) to[out=-90,in=90] node[labelbox,right]{no} (offline.north);
   \draw[failarr] (offline.east) to[out=0,in=-70] (lease.south);
 
-  \draw[failarr] (acq.north) to[out=55,in=125]
-    node[labelbox,above,text width=50mm]{current head resolves the service before cache/offline authorization}
-    (live.north);
-
-  \node[note,text width=122mm,below=9mm of hit,xshift=24mm] {\textbf{Dynamic rule.} Online $\rightarrow$ offline must prevent future poll, retry, refresh, validation, and auxiliary opens for existing entries. Offline $\rightarrow$ online needs an explicit refresh or governed re-arm rule.};
+  \node[note,text width=122mm,below=9mm of hit,xshift=24mm] {\textbf{Dynamic rule.} Online $\rightarrow$ offline prevents future resolver, poll, retry, refresh, validation, definition, and auxiliary opens for existing entries. Offline $\rightarrow$ online requires an explicit consumer refresh; lazy resolution then resumes safely.};
 \end{tikzpicture}}
-\caption{Target acquisition ordering and the current bypass. Offline is a network authorization boundary, not merely ``do not schedule the first background refresh.''}
+\caption{Implemented acquisition ordering. Offline is a network authorization boundary, not merely ``do not schedule the first background refresh.''}
 \label{fig:networkgate}
 \end{figure}
 
 \begin{reviewbox}
-At \code{metadataStore.ts:417}, the current head resolves the SQL Data Plane service before cache load and before the offline outcome is known. On a miss, \code{MetadataService.acquire()} immediately hydrates; on a hit it still starts polling unless the test/config happens to disable it. Explicit refresh, strict freshness, and auxiliary sections are also callable. The existing offline test seeds a guaranteed hit and uses \code{pollSeconds=0}, so it does not prove the advertised contract.
+The repaired store uses a shared lazy provider resolution and passes a live authorization closure into database engines, server engines, and both auxiliary sources. Cache hit, cache miss, explicit refresh, strict freshness, definitions, polling/retry, and online$\rightarrow$offline paths are exercised with resolver/session/query counters. Disposal is rechecked after an asynchronous provider resolution so a late result cannot open a session after ownership ended.
 \end{reviewbox}
 
 \subsection{Activation, maintenance, and shutdown}
@@ -483,7 +479,7 @@ The database store key is \code{serverFingerprint + requested database spelling}
   \item integrated authentication carries no secret provider.
 \end{itemize}
 
-The SQL Data Plane registry evaluates declared requirements before invoking credential closures. That ordering is an important tripwire. However, the public service view and the top-level \code{openSession()} currently both own Azure serverless wake wrapping, producing a nested retry path. Capability checking, credential deferral, provider availability, and wake/retry ownership should remain separate concerns with one owner each.
+The SQL Data Plane registry evaluates declared requirements before invoking credential closures. The repaired public service view is the single Azure serverless wake owner; top-level \code{openSession()} delegates through that view once. Static requirement failures remain non-retryable capability errors, while a live provider \code{canOpen()} refusal becomes retryable \code{unavailable}. This keeps capability checking, credential deferral, provider availability, and wake ownership separate.
 
 \subsection{Single-flight entries and ref-counted leases}
 
@@ -497,7 +493,7 @@ A database entry owns:
   \item one metadata engine, one lease handle, listeners, and cache-source state.
 \end{itemize}
 
-The resource split keeps ordinary metadata work away from user query sessions. It does \emph{not}, by itself, serialize different auxiliary sections: the auxiliary engine coalesces callers for the same section but allows two different section keys to open the same cached session concurrently. STS2 documents and tests one active query per connection; the second execute returns \code{Sts2.Busy}. A catalog-wide auxiliary lane is therefore required.
+The resource split keeps ordinary metadata work away from user query sessions. A catalog-wide FIFO lane now serializes different auxiliary section keys around session open and query completion, while same-section callers still coalesce. The deterministic fake-backend regression starts two distinct sections together and proves both complete through one STS2-compatible one-active-query session.
 
 \subsection{Fail-closed database identity and recovery}
 
@@ -593,7 +589,7 @@ Synonyms are honestly \code{lite}: identity is present, target traversal is not.
 
 The server service hydrates environment and database-list facts independently from database catalogs. Additional server and database folders use \code{AuxiliaryCatalog}: a keyed table of lazy sections with single-flight hydration and per-section refresh. This is the extension point for security, broker, storage, programmability leaves, logins, roles, credentials, endpoints, system objects, and designer facets without bloating connect-time hydration.
 
-Auxiliary queries use sources separate from the main hydration lane, which is the correct resource boundary. The current auxiliary engine serializes only callers for the \emph{same} section. Different keys can issue overlapping queries through one cached STS2 session, so a shared FIFO promise lane must sit around \code{sessions.open()} plus \code{runMetadataQuery()}. Names returned by auxiliary sections remain outside diagnostic events.
+Auxiliary queries use sources separate from the main hydration lane, which is the correct resource boundary. The repaired auxiliary engine retains same-section coalescing and adds a catalog-wide FIFO promise lane around \code{sessions.open()} plus \code{runMetadataQuery()}, so different section keys cannot overlap on one cached STS2 session. Names returned by auxiliary sections remain outside diagnostic events.
 
 \subsection{Deterministic schema context}
 
@@ -620,7 +616,7 @@ Auxiliary queries use sources separate from the main hydration lane, which is th
   \draw[failarr] (h3.south) to[out=-105,in=90] (failure.north);
   \draw[arrow] (failure.east)--(save.west);
 
-  \node[note,text width=91mm,below=7mm of save] {\textbf{Target containment.} Main-lane work is serialized. A watchdog fences the operation epoch, recycles the wedged source, and prevents late mutation. At the current head, the store wrapper omits \code{recycle()}, and auxiliary sections need their own shared lane.};
+  \node[note,text width=91mm,below=7mm of save] {\textbf{Implemented containment.} Main and auxiliary work are serialized. Watchdogs fence operation epochs, recycle wedged sources, and prevent late mutation; lazy resolution also rechecks disposal and the live offline gate before opening.};
 \end{tikzpicture}}
 \caption{Rows are accumulated privately and published as one immutable generation. Per-section failure truth survives publication and persistence eligibility.}
 \label{fig:hydrate}
@@ -644,7 +640,7 @@ The freshness API decouples consumer intent from cache and network mechanics. A 
 \code{allowStale} & completion, AI context & Return any snapshot immediately; optionally start background refresh. With no snapshot, join hydration only up to the caller's budget.\\
 \code{requireValidated} & diagnostics, OE browse & Accept a recent validation TTL; otherwise coalesce a cheap digest. Unchanged means validated; changed chains a full refresh. Timeout returns best snapshot as stale/unavailable, never cancels shared work.\\
 \code{requireLive} & scripting or destructive/fidelity-sensitive work & Join/start a forced refresh. Failure, timeout, or identity drift returns \code{unavailable}; a retained snapshot may still ride in the result for an explicit offline choice.\\
-\code{offlineSnapshot} & user-selected offline operation & Target: perform no backend resolution, SQL session open, poll, validation, refresh, or auxiliary query. Return disk/memory snapshot as stale with age, or unavailable if none exists. Current store-level offline wiring does not yet enforce this boundary.\\
+\code{offlineSnapshot} & user-selected offline operation & Perform no backend resolution, SQL session open, poll, validation, refresh, or auxiliary query. Return disk/memory snapshot as stale with age, or unavailable if none exists. The live store/engine/server/auxiliary gate enforces the same rule after an online$\rightarrow$offline transition.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -675,7 +671,7 @@ Freshness results distinguish \code{live}, \code{validated}, \code{refreshing}, 
   \node[risk,minimum width=39mm,below=of l1] (l2) {timeout/fail/drift\\\scriptsize unavailable, snapshot retained};
   \draw[arrow] (live)--(l1); \draw[failarr] (l1)--(l2);
 
-  \node[cache,minimum width=39mm,below=of offline] (o1) {target: no network\\\scriptsize current store bypasses gate};
+  \node[cache,minimum width=39mm,below=of offline] (o1) {no network\\\scriptsize live gate spans every entry path};
   \node[model,minimum width=39mm,below=of o1] (o2) {snapshot: stale + age\\\scriptsize none: unavailable};
   \draw[arrow] (offline)--(o1); \draw[arrow] (o1)--(o2);
 
@@ -714,7 +710,7 @@ A cache entry is attacker-shaped or corruption-shaped local input. The read path
   \item \textbf{policy compatibility}: privacy/readiness is intersected with current settings rather than elevated.
 \end{enumerate}
 
-The current implementation is strong on physical bounds, gzip limits, shape/ownership validation inside the payload, content-addressed filenames, and policy intersection. It does not yet bind the manifest to the requested key or recompute the canonical \code{contentHash} after decode.
+The repaired implementation verifies all four properties. Requested server fingerprint, derived database hash, and optional exact database spelling must match before adoption; decoded payloads are canonicalized and re-hashed after shape validation. Mismatch is a classified safe miss with best-effort quarantine.
 
 \subsection{Canonical payload and manifest}
 
@@ -728,7 +724,7 @@ The \code{cm2} payload is canonical-order JSON over environment, interned string
 The manifest records producer versions, writer ID, server fingerprint, database hash and optional exact database name, capture/generation/source, validation summary, environment, readiness, mode, counts/sizes, privacy policy, and the content-addressed payload filename.
 
 \begin{reviewbox}[title={Manifest key binding}]
-\code{readEntry(key)} structurally validates the manifest but does not compare \code{manifest.key.serverFingerprint}, \code{databaseHash}, or \code{databaseExact} with the requested key. A valid entry copied into another hashed directory can therefore be served under the second key. Centralize a \code{manifestMatchesKey()} check and use it in both manifest-only and full-entry reads; treat mismatch as a distinct safe miss/quarantine reason.
+\code{readEntry(key)} now compares \code{manifest.key.serverFingerprint}, \code{databaseHash}, and optional \code{databaseExact} with the requested key. The regression copies a fully valid A entry into B's already-derived directory and proves B returns \code{keyMismatch} and invalidates the manifest rather than adopting A's catalog.
 \end{reviewbox}
 
 \subsection{Privacy intersection}
@@ -764,7 +760,7 @@ A reader begins with the manifest because it is the trust root. It validates for
   \draw[arrow] (logical)--(policy); \draw[arrow] (policy)--(publish);
   \draw[failarr] (policy.south)--(miss.north);
 
-  \node[note,text width=76mm,below=5mm of miss] {Current head implements strong byte, shape, and policy checks, but omits requested-key equality and recomputation of the decoded canonical content hash.};
+  \node[note,text width=76mm,below=5mm of miss] {The repaired head implements the complete chain, including requested-key equality and recomputation of the decoded canonical content hash.};
 \end{tikzpicture}}
 \caption{Complete cache trust chain. A structurally valid manifest is not trusted merely because it sits in the expected directory.}
 \label{fig:cachetrust}
@@ -774,7 +770,7 @@ A reader begins with the manifest because it is the trust root. It validates for
 
 Payloads are content-addressed. A writer serializes and compresses, checks the cap, writes a same-directory temporary file with fsync, renames the payload into place, then writes and renames the manifest last. Transient Windows rename failures retry with bounded jitter. Content addressing prevents a manifest from accidentally referring to another writer's bytes with the same fixed filename.
 
-It does not, by itself, decide which capture is authoritative. The current coordinator reads the manifest, compares wall-clock capture plus a process-local generation, then later writes a new manifest. The comparison and publication are not one critical section, and generations from different extension hosts/windows are not globally ordered.
+Content addressing does not, by itself, decide which capture is authoritative. The repaired coordinator adds an exclusive-create per-key publication lock around re-read, authority comparison, payload/manifest commit, and postcheck. Authority uses the globally comparable capture instant, never a process-local generation; equal-instant unequal payloads use the ordinal content hash as a deterministic tie-break.
 
 \begin{figure}[H]
 \centering
@@ -799,9 +795,9 @@ It does not, by itself, decide which capture is authoritative. The current coord
     node[labelbox,right,text width=31mm]{B commits before A resumes}
     (a4.south west);
 
-  \node[note,text width=140mm,below=12mm of b2,xshift=20mm] {A's ``newer exists'' check happened before B published, so A can still install last and report success. A stale manifest-only writer has a related race: verify an old payload, let B replace/delete it, then reinstall a manifest that points to the missing old file.};
+  \node[note,text width=140mm,below=12mm of b2,xshift=20mm] {This was the failing interleaving at the prior head. The repaired per-key lock makes A's decision wait until B commits; A then observes B's newer capture and returns \code{newerExists}. A separate delayed manifest-only/full-writer test proves an old pointer cannot be resurrected.};
 \end{tikzpicture}}
-\caption{Uncovered two-window interleaving. Content-addressed payloads prevent byte mixing but do not make the authority decision atomic or globally ordered.}
+\caption{Formerly unsafe two-window interleaving, now retained as a deterministic regression. Content addressing protects bytes; the per-key critical section protects authority.}
 \label{fig:cacheinterleave}
 \end{figure}
 
@@ -812,13 +808,13 @@ It does not, by itself, decide which capture is authoritative. The current coord
 \label{tab:cachepublication}
 \begin{tabularx}{\textwidth}{@{}p{0.30\textwidth}p{0.28\textwidth}X@{}}
 \toprule
-\textbf{Property} & \textbf{Current mechanism} & \textbf{Required repair}\\
+\textbf{Property} & \textbf{Repaired mechanism} & \textbf{Closure evidence}\\
 \midrule
 Payload/manifest byte coherence & Content-addressed payload + manifest-last + SHA & Strong; retain bounded manifest re-read for reader/writer races.\\
-Newer capture cannot be overwritten & Pre-read wall clock plus local generation & Use a per-key cross-process lock around re-read/decision/manifest commit/cleanup, or immutable candidate manifests with deterministic reader selection. Do not compare process-local generations as global time.\\
-Manifest-only update cannot resurrect stale pointer & Check old payload existence, then rewrite later & Include the decision and commit under the same per-key authority mechanism; verify the referenced payload at commit.\\
-Logical equality is trustworthy & Manifest \code{contentHash} is used for skip-save & Recompute canonical content hash after decode and compare before adoption/manifest-only equality decisions.\\
-Reader key isolation & Directory path implies ownership & Compare manifest key fields to the requested key explicitly.\\
+Newer capture cannot be overwritten & Exclusive per-key lock + capture-time authority + deterministic equal-time hash tie-break & Reverse-order older/newer writer regression; newer capture remains authoritative even with lower local generation.\\
+Manifest-only update cannot resurrect stale pointer & Equality proof and manifest rewrite occur under the same lock using a fully validated payload & Delayed old manifest-only writer interleaves with a newer full writer; new payload remains readable.\\
+Logical equality is trustworthy & Decoded canonical \code{contentHash} is recomputed before adoption or manifest-only equality & Valid compressed bytes and shape with a false logical hash are rejected as corrupt.\\
+Reader key isolation & Manifest key fields are compared explicitly to the requested key & Valid A entry copied into B's directory returns \code{keyMismatch}.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -827,7 +823,7 @@ Reader key isolation & Directory path implies ownership & Compare manifest key f
 
 Maintenance coalesces re-entrant calls and throttles filesystem operations. Removal order is corrupt/unsupported and aged entries first, then least-recently-used entries until bytes fit. Manifest-less payloads, old temporary files, quarantine files, and superseded payloads receive an orphan grace. Clears remove manifests first, making remaining bytes inert before deleting payloads.
 
-The JSON index is a convenience cache for listing/access/LRU rather than the trust root. Because each window caches and rewrites the whole index, concurrent access updates can be lost. Manifests allow rebuild, so this is lower severity than catalog corruption, but the design should either document approximate cross-window LRU or merge the latest index under the same locking strategy used for authoritative publication.
+The JSON index is a convenience cache for listing/access/LRU rather than the trust root. Each window may still lose an access tick while replacing the whole index; source documentation now calls cross-window access/LRU approximate. Manifests remain authoritative for identity and content, and maintenance rebuilds membership and byte totals. Serializing this advisory file with catalog publication would widen a correctness-critical lock for no catalog-safety gain, so this limitation is accepted rather than hidden.
 
 \section{Language-service fit}
 
@@ -1026,14 +1022,14 @@ STS2 journals each sanitized envelope before dispatch, then publishes it in sequ
 
 The focused suite is unusually good at semantic failure modes: immutable publication, section readiness, deterministic ordering, exact catalog detail, same-key acquisition, lifecycle disposal, codec bounds, malformed payloads, torn writes, privacy canaries, poll governance, and large-catalog scaling. Prior review comments also drove concrete fixes for quadratic projection, delimiter collisions, UDT rendering, hidden columns, role-owned schemas, untrusted FKs, decompression bounds, content-addressed payloads, and shutdown flush.
 
-The remaining problem is not a lack of test volume; it is branch selection. Several current tests prove a nearby property while avoiding the unsafe interleaving or policy boundary.
+The original review found that test volume was high but several unsafe branches were not selected. The repaired head adds those adversarial boundaries directly, so the closure claim rests on exact interleavings and call-count assertions rather than nearby happy paths.
 
 \subsection{Current focused suite inventory}
 
-The current CI log at the pinned head reports 151 passing tests across the eleven new metadata/cache/catalog files below. Adding the touched profile-identity, private-preview/manifest, and SQL Data Plane registry files yields 197 passing tests in the immediately affected suite set; that second number is not a claim that every assertion in pre-existing touched files was introduced by this PR.
+The repaired local run reports 158 passing tests across the metadata/cache/catalog files below, including the new auxiliary-catalog suite. Adding the touched profile-identity, private-preview/manifest, and SQL Data Plane registry files yields 206 passing tests in the immediately affected suite set; that second number is not a claim that every assertion in pre-existing touched files was introduced by this PR.
 
 \begin{longtable}{@{}p{0.25\textwidth}p{0.12\textwidth}p{0.56\textwidth}@{}}
-\caption{Metadata test inventory at \code{9955ff9e6}.}\label{tab:testinventory}\\
+\caption{Metadata test inventory at \code{e5952174a}.}\label{tab:testinventory}\\
 \toprule
 \textbf{Suite} & \textbf{CI count} & \textbf{Principal invariants}\\
 \midrule
@@ -1042,43 +1038,44 @@ The current CI log at the pinned head reports 151 passing tests across the eleve
 \textbf{Suite} & \textbf{CI count} & \textbf{Principal invariants}\\
 \midrule
 \endhead
-\code{metadataCatalog} & 35 & H-ladder parsing, readiness/partial failures, resolution/search, DDL keyword detection, descriptions, lazy definitions, burst coalescing, hidden columns, safe IDs.\\
+\code{metadataCatalog} & 36 & H-ladder parsing, readiness/partial failures, resolution/search, exact-only unknown-case behavior, DDL keyword detection, descriptions, lazy definitions, burst coalescing, hidden columns, safe IDs.\\
 \code{metadataCatalogDetail} & 6 & Exact column/FK facts, UDT spelling/schema, identity text, defaults/computed detail, FK actions, and column identity.\\
 \code{metadataDeterminism} & 6 & Ordinal ordering, byte-stable schema context, catalog-collation case behavior, and digest-v2 rename detection.\\
-\code{metadataFreshness} & 8 & Four policy modes, TTL, timeout-as-race, section gates, and stale/live/unavailable honesty.\\
+\code{metadataFreshness} & 10 & Four policy modes, TTL, timeout-as-race, abort-listener balance, server watchdog/recycle recovery, section gates, and stale/live/unavailable honesty.\\
 \code{metadataPoll}\allowbreak\code{Governance} & 12 & Backoff, jitter bounds, focus suspension/resume, serverless cap, limiter behavior, and failure retry.\\
 \code{metadataStore} & 13 & A/B key isolation, same-key single flight, routed sessions, leases, refcounts, idle TTL/LRU, cleanup, and server catalogs.\\
 \code{metadataStoreCache} & 6 & Disk-before-live publication, manifest generation/digest baseline, background refresh, offline seeded hit, recovery, and A/B isolation with cache.\\
 \code{metadataStoreScale} & 6 & 10k-object hydration/counts, ordering/search, 1k-column table, bounded schema context, and warm reacquire without rehydration.\\
 \code{metadataStoreService} & 3 & Default-off composition, enabled coordinator, and data-plane-disabled fail-fast without backend acquisition.\\
 \code{metadataCacheCodec} & 20 & Live/disk round-trip equivalence, byte stability, content-hash perturbation, privacy stripping, strict shape/range/ownership validation, and model/version misses.\\
-\code{metadataCacheStore} & 36 & Path containment, byte integrity, oversize bounds, quarantine, rename retry, torn writes, selected two-writer/read races, eligibility/skips, policy intersection, manifest-only save, privacy canaries, index/eviction/clear/settings.\\
+\code{metadataCacheStore} & 39 & Path containment, requested-key and logical-hash integrity, oversize bounds, quarantine, rename retry, torn writes, older-last and manifest-only/full writer races, eligibility/skips, policy intersection, privacy canaries, index/eviction/clear/settings.\\
+\code{auxiliaryCatalog} & 1 & Two distinct sections started together complete FIFO through one one-active-query session.\\
 \midrule
-\textbf{Metadata subtotal} & \textbf{151} & Current GitHub Actions per-file counts at the pinned head; zero failures.\\
+\textbf{Metadata subtotal} & \textbf{158} & Repaired-head local hosted counts; zero failures.\\
 \bottomrule
 \end{longtable}
 
-This inventory demonstrates broad mechanism coverage, but its wording matters. For example, ``A/B isolation'' currently proves ordinary key/path separation; it does not prove that a structurally valid A manifest copied into B's already-derived directory is rejected. The regression matrix below names those stronger boundary tests explicitly.
+This inventory now includes the stronger boundary proofs. The regression matrix below records how each prior finding was closed and remains the checklist to retain through future refactors.
 
 \begin{table}[H]
 \centering
 \small
-\caption{Regression matrix required to close the current review findings.}
+\caption{Regression matrix closing the review findings at \code{e5952174a}.}
 \label{tab:regressions}
 \begin{tabularx}{\textwidth}{@{}p{0.08\textwidth}p{0.28\textwidth}p{0.29\textwidth}X@{}}
 \toprule
-\textbf{ID} & \textbf{Invariant} & \textbf{Current coverage} & \textbf{Missing deterministic proof}\\
+\textbf{ID} & \textbf{Invariant} & \textbf{Prior gap} & \textbf{Repaired-head proof}\\
 \midrule
-F1 & Offline setting means zero live work & Guaranteed disk hit, \code{pollSeconds=0}, session count & Miss; default polling; resolver count; explicit refresh/strict freshness; auxiliary; online$\rightarrow$offline.\\
-F2 & Wrong database never publishes; drift/timeout reopens & Correct-routing fixture and later digest drift & Backend ignores database; authoritative H0 mismatch; CS names; wrapper recycle; new session after drift/watchdog.\\
-F3 & One active query per auxiliary session & Same-section single flight & Two different section keys overlap; fake rejects concurrency; both complete with max active 1.\\
-F4 & Cache entry belongs to requested key & Path derivation/containment & Copy valid A manifest+payload into B directory; B must miss/quarantine.\\
-F5 & Newer authority cannot be overwritten & Winner observed between one writer's rename and reread & Older writer installs last; newer capture has lower local generation; manifest-only/full interleave; equal timestamps; clock skew.\\
-F6 & One serverless wake policy per open & Registry/service-view tripwires & Spy exact wake/status/open attempts through top-level and direct-view paths.\\
-F7 & Wait abort listener is removed & Server service has listener test & Database service success, timeout, and repeated reused-signal paths.\\
-F8 & Unknown case rule never folds optimistically & H0 success and collation divergence & H0 failure on case-sensitive names differing only by case.\\
-F9 & Server refresh recovers from hung completion & Caller timeout race & Hung completion, later refresh, recycled source, late result fenced.\\
-F10 & Manifest logical hash matches decoded payload & SHA and canonical hash unit tests separately & Valid compressed SHA/payload shape with incorrect manifest \code{contentHash}.\\
+F1 & Offline setting means zero live work & Seeded hit with polling disabled & Hit, miss, refresh, strict policies, auxiliary, polling, and online$\rightarrow$offline assert resolver/session/query counts remain zero.\\
+F2 & Wrong database never publishes; drift/timeout reopens & Correct routing and later digest drift & H0 returns \code{WrongDb}; no snapshot publishes, violation latches, and retry opens a fresh session through forwarded \code{recycle()}.\\
+F3 & One active query per auxiliary session & Same-section single flight & Two distinct delayed sections start together; both become ready through one fake one-active-query session.\\
+F4 & Cache entry belongs to requested key & Path derivation/containment & A valid A manifest/payload copied into B's directory returns \code{keyMismatch} and is invalidated.\\
+F5 & Newer authority cannot be overwritten & Post-save winner observation & Per-key lock tests force older-last and delayed manifest-only/full interleavings; capture time beats local generation and new data remains authoritative.\\
+F6 & One serverless wake policy per open & Registry/view tripwires & Top-level open reaches the provider exactly once; the existing eight-case wake suite pins eligible retry bounds; provider refusal is retryable unavailable.\\
+F7 & Wait abort listener is removed & Server service only & Database service proves add/remove balance after success and timeout while reusing the same signal.\\
+F8 & Unknown case rule never folds optimistically & H0 success and collation divergence & Unknown semantics resolve exact spellings independently and reject a folded-only spelling.\\
+F9 & Server refresh recovers from hung completion & Caller timeout race & Swallowed server completion times out, publishes failed/not-empty truth, recycles, and succeeds on the next refresh; epoch fencing blocks late mutation.\\
+F10 & Manifest logical hash matches decoded payload & SHA and canonical hash separately & Valid compressed SHA and payload shape with a false \code{contentHash} returns corrupt and quarantines.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1099,7 +1096,7 @@ A result such as \code{raceLost} is only meaningful if the final manifest is kno
 
 The embedded scenario \code{metadatacache-warm-acquire} is the correct performance boundary: cold fill/save, a fresh store in offline mode, disk verification and rehydration/publication, source-honesty assertion, and begin/end markers around only the warm acquire. It is exploratory rather than an official SLA gate. Before graduation it should run across representative catalog sizes, Windows/macOS/Linux, local and remote extension hosts, and repeated cold/warm profiles with pre-registered p50/p95 budgets.
 
-The current offline defect is directly relevant to this scenario: a benchmark can report a disk snapshot while still resolving live infrastructure or arming later polling. The probe should assert resolver calls and session opens are zero, not only that the returned source label is \code{disk}.
+The repaired offline unit matrix asserts resolver calls and session opens directly rather than relying only on a \code{disk} source label. The embedded performance scenario should retain the same counters if promoted from exploratory measurement to an SLA gate.
 
 Local package verification in this work session built the embedded perftest workspace and ran 347 tests passing with 16 explicit skips. Fifteen skips are central-store integrations and one is vendor-sync; the Query Studio scenario tests (158) and VS Code spawn tests (2) passed. This verifies registry/contracts/harness behavior, not a live SQL warm-cache benchmark run against a provisioned \code{PerfHarness} database.
 
@@ -1113,7 +1110,7 @@ Coverage supports the focused suites but does not settle the review findings. Ra
 
 \subsection{Current GitHub state observed independently}
 
-At \code{9955ff9e6}, analysis/CodeQL, Azure PR validation, packaging, normalization, CLA, and all six platform VSIX-launch jobs pass. The GitHub \code{build-and-test} check is red, but its metadata-relevant facts are more specific:
+At prior head \code{9955ff9e6}, analysis/CodeQL, Azure PR validation, packaging, normalization, CLA, and all six platform VSIX-launch jobs passed. Its GitHub \code{build-and-test} check was red, but its metadata-relevant facts were more specific:
 
 \begin{itemize}
   \item extension install/build, lint, package, and MSSQL unit-test steps pass;
@@ -1122,7 +1119,7 @@ At \code{9955ff9e6}, analysis/CodeQL, Azure PR validation, packaging, normalizat
   \item the aggregate job fails because SQL Projects unit tests return exit code 1 and one of 17 VSIX smoke tests---``MSSQL add connection webview is loaded correctly''---fails.
 \end{itemize}
 
-This is not a green-PR claim, and it is not evidence of a metadata failure. It is a current whole-job status that should be resolved or rerun before merge.
+This was not evidence of a metadata failure. Push \code{e5952174a} triggered a fresh workflow, so the live PR checks remain the authority for the eventual merge button; this PDF records the known prior aggregate failure without assuming the rerun result.
 
 \subsection{Independent local validation}
 
@@ -1131,14 +1128,17 @@ The local workspace was updated and built at the pinned commits before this repo
 \begin{table}[H]
 \centering
 \small
-\caption{Independent local validation snapshot, 28 August 2026.}
+\caption{Independent local validation snapshot, updated 29 August 2026.}
 \label{tab:localvalidation}
 \begin{tabularx}{\textwidth}{@{}p{0.25\textwidth}p{0.26\textwidth}X@{}}
 \toprule
 \textbf{Lane} & \textbf{Result} & \textbf{Interpretation / explicit exclusions}\\
 \midrule
-vscode-mssql build & Pass & Full extension build completed on \code{9955ff9e6}.\\
-vscode-mssql full tests & 5,880 pass; 13 fail; 31 skip & All metadata-specific tests pass (176 metadata/cache/catalog assertions in the local selection). The 13 failures cluster in Schema Visualizer, Query Studio bundling/activation, pinned results, OE v2, feature capture, Dockerode, and a missing PLP plugin---outside this PR's metadata files.\\
+vscode-mssql build & Pass & Full monorepo build completed on \code{e5952174a}: shared toolkit, MSSQL extension/typecheck/bundles/webviews/notebook renderer, SQL Database Projects, and Data Workspace.\\
+vscode-mssql lint & Pass & Root workspace lint exited zero. MSSQL is clean; 116 pre-existing SQL Database Projects warnings remain non-fatal and outside this PR.\\
+vscode-mssql focused tests & 206 pass; 0 fail & 158 metadata/cache/catalog assertions plus 48 profile/private-preview/data-plane assertions in the immediately affected set.\\
+vscode-mssql broad hosted tests & 3,970 pass; 0 fail; 12 skip & Complete inverse selection excludes exactly \code{QueryCompletionSoundService} and \code{Utility Tests - Path handling}. The full run otherwise reports eight failures, all reproduced alone as untouched Windows path-separator expectations (seven sound, one tilde path).\\
+Online packaging & Pass & Released STS \code{6.0.20260827.1}; MSSQL VSIX 100.86 MiB. The first sandboxed download hit a proxy reset; the approved network retry succeeded without source or dependency changes.\\
 Embedded perftest & 347 pass; 16 skip & All package tests/builds pass; skips are described above; the live provisioned warm-cache scenario was not executed.\\
 sqltoolsservice Release solution & Pass; serial MSBuild with shared compilation disabled & 0 errors; two ScriptDom locale warnings.\\
 STS2 unit + E2E & 496 pass / 10 SQL-server-gated skip; 6/6 E2E & Deterministic/runtime contract and process interop green; engine-gated skips explicitly reported.\\
@@ -1149,7 +1149,7 @@ ServiceLayer unit & 1,944 pass; 1 fail & One platform/provider DNS failure, not 
 \end{table}
 
 \begin{evidencebox}
-The local runs establish that the pinned trees build and that existing metadata, cache, STS2, and embedded-perftest suites pass. They do not close F1--F11: the required adversarial branches and interleavings are absent from the current tests, and the live provisioned warm-cache and on-prem SQL matrices were not run.
+The local runs establish that the repaired tree builds/packages and close F1--F10 with deterministic unit regressions. They do not replace live SQL compatibility testing, the provisioned warm-cache scenario, or on-prem/remote-host performance matrices; those remain graduation gates rather than merge blockers for this default-off substrate.
 \end{evidencebox}
 
 \subsection{Author- and review-reported evidence}
@@ -1178,7 +1178,7 @@ The implementation removes the most important algorithmic traps:
   \item focus-gated, backoff/jittered, per-server-limited polling.
 \end{itemize}
 
-Prior review measurements show that the fixed scale paths are orders of magnitude better than the earlier quadratic implementation. Those measurements are review-machine observations, not product SLAs. The more urgent performance risk at the current head is policy multiplication: nested serverless wake can multiply open/status/retry work, and un-serialized auxiliary sections convert ordinary concurrent expands into failed/retried work.
+Prior review measurements show that the fixed scale paths are orders of magnitude better than the earlier quadratic implementation. Those measurements are review-machine observations, not product SLAs. The repaired single wake owner and auxiliary FIFO remove the two policy-multiplication risks identified in the prior review; lock contention and cache-load latency should still be measured across local/remote filesystems before enabling persistence by default.
 
 A graduation performance plan should separate:
 
@@ -1195,21 +1195,21 @@ A graduation performance plan should separate:
 \begin{table}[H]
 \centering
 \small
-\caption{Load-bearing mechanisms, current evidence, and remaining closure condition.}
+\caption{Load-bearing mechanisms and repaired-head closure evidence.}
 \label{tab:traceability}
 \begin{tabularx}{\textwidth}{@{}p{0.24\textwidth}p{0.32\textwidth}X@{}}
 \toprule
-\textbf{Mechanism} & \textbf{Current evidence} & \textbf{Closure condition}\\
+\textbf{Mechanism} & \textbf{Current evidence} & \textbf{Disposition}\\
 \midrule
 Same-key single flight & Eight-way concurrency tests and explicit disposal coverage & Retain.\\
-Immutable deterministic snapshot & Catalog/detail/determinism/round-trip/scale suites & Retain; add H0-unknown semantics.\\
-Database identity & Requested database parameter, tripwire event, digest rider & Reject before publication and forward recycle; prove wrong-backend/rename/watchdog cases.\\
-Offline behavior & Freshness enum and a seeded-hit test & Dynamic network policy across resolver, hydration, poll, refresh, validation, and aux.\\
-STS2 one-query discipline & Main lane plus STS2 invariant/scenario & Add auxiliary FIFO and server-service watchdog/recycle.\\
-Cache byte integrity & Content-addressing, SHA, gzip bound, shape validation & Add requested-key and canonical-content-hash verification.\\
-Cache cross-window authority & Manifest-last, post-save reread, selected race tests & Atomic per-key authority mechanism and older-last/manifest-only interleaves.\\
-Privacy at rest & Codec stripping, manifest policy, disk canaries & Retain; re-run after cache changes.\\
-Data-plane capability/auth & Pure requirement checks and credential tripwires & Fix availability classification; choose one serverless wake owner.\\
+Immutable deterministic snapshot & Catalog/detail/determinism/round-trip/scale plus unknown-case exact-only regression & Closed; retain.\\
+Database identity & H0 mismatch-before-publication, violation latch, recycle/reopen and disposal-race tests & Closed; live SQL collation/database corpus remains a graduation gate.\\
+Offline behavior & Dynamic resolver/engine/server/auxiliary gate with hit/miss/transition call-count matrix & Closed.\\
+STS2 one-query discipline & Main lane, catalog-wide auxiliary FIFO, database/server watchdog and recycle tests & Closed.\\
+Cache byte integrity & Content addressing, SHA/gzip/shape, requested-key copy test, canonical logical-hash test & Closed.\\
+Cache cross-window authority & Per-key lock, capture-time ordering, older-last and manifest-only/full interleaves & Closed for catalog authority; advisory index LRU remains documented approximate.\\
+Privacy at rest & Codec stripping, manifest policy, disk canaries rerun after cache changes & Closed; retain.\\
+Data-plane capability/auth & Pure tripwires, retryable availability classification, one top-level provider open, wake suite & Closed.\\
 Consumer seam & Lease/snapshot/freshness APIs and refactor designs & Future provider equivalence, pinned-generation, no-keystroke-I/O, and honesty corpus.\\
 \bottomrule
 \end{tabularx}
@@ -1226,7 +1226,7 @@ The substrate reports rather than conceals incomplete domains. Synonym target tr
 The following gates should precede a language cutover:
 
 \begin{enumerate}
-  \item resolve F1--F3 so offline, identity, and STS2 lane contracts are trustworthy;
+  \item retain the now-closed F1--F3 regressions so offline, identity, and STS2 lane contracts remain trustworthy;
   \item implement the provider adapter and prove fixture/null/catalog provider equivalence;
   \item pin one generation per feature request and test a mid-request generation change;
   \item prove completion/hover/diagnostics make no network call on the keystroke path;
@@ -1248,25 +1248,25 @@ Before flipping \code{metadata.endpoints} to supported:
   \item extend STS2 envelope/privacy canaries so metadata names and definitions follow explicit capture policy.
 \end{enumerate}
 
-\subsection{Current-head implementation plan}\label{sec:blockers}
+\subsection{Completed closeout plan}\label{sec:blockers}
 
 \begin{table}[H]
 \centering
 \small
-\caption{Recommended repair order for PR \#22836.}
+\caption{Completed repair order for PR \#22836 at \code{e5952174a}.}
 \label{tab:repairorder}
 \begin{tabularx}{\textwidth}{@{}p{0.08\textwidth}p{0.30\textwidth}X@{}}
 \toprule
-\textbf{Order} & \textbf{Repair} & \textbf{Why this order}\\
+\textbf{Order} & \textbf{Repair} & \textbf{Closure status}\\
 \midrule
-1 & F2 fail-closed identity + recycle forwarding & Prevent wrong-key publication and restore watchdog/rename recovery before adding more cache/live behavior.\\
-2 & F1 dynamic offline network gate & Central policy affects acquisition, engine timers, freshness, and auxiliary work; settle it before tests depend on lifecycle details.\\
-3 & F3 auxiliary FIFO + F9 server watchdog & Align every metadata session with the STS2 one-active-query and recovery contracts.\\
-4 & F4 key binding + F10 logical-hash verification & Complete cache read trust before modifying write authority.\\
-5 & F5 per-key cross-window authority & Introduce lock/candidate protocol, then rerun torn-write, eviction, and manifest-only tests.\\
-6 & F6 single wake owner + availability classification & Restore one retry/error owner and pin call counts.\\
-7 & F7 abort listener + F8 unknown case behavior + index documentation/merge & Contained hardening after the main lifecycle/protocol shapes stabilize.\\
-8 & Full focused suites, Actions rerun, real-SQL matrix, warm-acquire probe & Produce closure evidence at the new head and update this report's pins/status.\\
+1 & F2 fail-closed identity + recycle forwarding & Implemented; mismatch cannot publish and later retry reopens.\\
+2 & F1 dynamic offline network gate & Implemented across store, engines, timers, definitions, and auxiliary paths.\\
+3 & F3 auxiliary FIFO + F9 server watchdog & Implemented and regression-tested.\\
+4 & F4 key binding + F10 logical-hash verification & Implemented and corruption/copy-tested.\\
+5 & F5 per-key cross-window authority & Implemented with exclusive-create lock and adversarial interleavings.\\
+6 & F6 single wake owner + availability classification & Implemented; registry/conformance/wake suites pass.\\
+7 & F7 abort listener + F8 unknown case behavior + index documentation & Implemented; advisory cross-window LRU explicitly accepted as approximate.\\
+8 & Full focused suites, broad hosted suite, build/lint/package, Actions rerun & Local gates complete; fresh GitHub Actions triggered. Live SQL/performance matrices remain pre-graduation work.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1276,11 +1276,11 @@ Before flipping \code{metadata.endpoints} to supported:
 \begin{takeawaybox}
 The architectural direction is good: one shared lease/store, immutable compact snapshots, explicit per-section truth, policy-routed freshness, default-off persistence, content-addressed payloads, and a future transport/provider seam are the right foundations for native language and AI-assisted SQL experiences.
 
-The current head is not yet a safe merge point for that foundation. Several claims in the original design narrative---zero-network offline operation, key-correct publication, one-active-query auxiliary behavior, newer-writer cache authority, and one serverless wake policy---are target invariants rather than properties enforced by \code{9955ff9e6}. The repair plan is bounded and testable. Once those gaps are closed, the same design can remain intact; the work is primarily to make the implementation honor its own boundaries.
+At \code{e5952174a}, the implementation enforces the design narrative's load-bearing claims: zero-network offline operation, key-correct publication, one-active-query auxiliary behavior, newer-writer cache authority, decoded logical integrity, bounded hydration recovery, and one serverless wake owner. The feature remains private-preview/default-off and no ordinary language, AI, OE, or Query Studio surface is cut over by this PR.
 \end{takeawaybox}
 
 \begin{statusbox}[title={Decision statement}]
-Recommended disposition: retain the design, request changes on the current implementation, rerun focused and whole-PR validation at the repaired head, and update the commit pins before treating this PDF as a merge artifact. The companion code-review Markdown contains exact line anchors and replacement/test guidance.
+Recommended disposition: code/design review findings are closed; proceed to CI and human merge review. Do not enable the substrate by default or cut over consumers based only on these unit/build results. Live SQL compatibility, remote-host cache behavior, and real workload performance remain graduation gates for later preview stages.
 \end{statusbox}
 
 \section*{Evidence and source map}
@@ -1296,13 +1296,13 @@ This report is pinned because the PR and related branches are active. Review thr
 \toprule
 \textbf{Evidence class} & \textbf{Primary sources used}\\
 \midrule
-PR state & \href{https://github.com/microsoft/vscode-mssql/pull/22836}{PR \#22836}, current body/discussions/check metadata, head \code{9955ff9e6}, base \code{69f54be2a}; all 46 changed filenames.\\
+PR state & \href{https://github.com/microsoft/vscode-mssql/pull/22836}{PR \#22836}, current body/discussions/check metadata, repaired head \code{e5952174a}, extraction base \code{69f54be2a}.\\
 Core implementation & \path{extensions/mssql/src/services/metadata/catalogModel.ts}; \path{metadataService.ts}; \path{metadataStore.ts}; \path{metadataStoreService.ts}; \path{serverMetadataService.ts}; \path{auxiliaryCatalog*.ts}; profile/auth/fingerprint modules.\\
 Cache implementation & \path{extensions/mssql/src/services/metadata/cache/metadataCacheCodec.ts}; \path{metadataCacheManifest.ts}; \path{metadataCacheStore.ts}; \path{metadataCacheCoordinator.ts}; \path{metadataFreshness.ts}; \path{metadataCacheSettings.ts}.\\
 Host/data plane & \path{mainController.ts}; \path{previewService.ts}; \path{sqlDataPlaneService.ts}; \path{languageservice/serviceclient.ts}; package settings/localization; \path{perfTelemetry.ts}.\\
 Tests & Metadata/cache/catalog/freshness/poll/store/scale suites, profile and data-plane tests, observability conformance, large-catalog fixture, and in-memory filesystem harness; CI per-file counts plus the independent local validation in \cref{tab:localvalidation}.\\
 Embedded perftest & \path{tools/perftest/packages/perftest-cli/src/scenarios/registry.ts} and the metadata warm-acquire command/marker wiring.\\
-Implementation review & Companion workspace review \path{vscode_mssql_pr_22836_code_review.md}; every finding was rechecked against local head \code{9955ff9e6} and the live PR head before publication.\\
+Implementation review & Companion workspace review \path{vscode_mssql_pr_22836_code_review.md}; every finding was rechecked against local and pushed head \code{e5952174a} before publication.\\
 Metadata/refactor designs & \path{vscode-ext-refactor/metadata-docs/*}, including substrate, cache/drift, and review addendum documents; current code controls when design notes and implementation differ.\\
 Language/observability designs & Native T-SQL language-service and observability notes under \path{vscode-ext-refactor}; treated as downstream contracts, not PR content.\\
 STS2 authority & \code{microsoft/sqltoolsservice dev/query} at \code{fe8300939}: generated contract, \path{docs/sts2/INVARIANTS.md}, runtime/client documentation, and \path{test/sts2/scenarios/second-query-while-active-busy.yaml}.\\
