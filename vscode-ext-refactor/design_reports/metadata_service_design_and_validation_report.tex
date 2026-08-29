@@ -188,17 +188,17 @@
 
 \vspace{0.12in}
 \begin{tcolorbox}[enhanced,colback=redbg,colframe=redish,boxrule=0.9pt,arc=2mm,left=4mm,right=4mm,top=2.5mm,bottom=2.5mm]
-\textbf{Review outcome at the merge-ready head.} The architecture and implementation now agree on the load-bearing boundaries. The six prior merge blockers---offline network enforcement, fail-closed database identity plus session recycling, auxiliary-session serialization, cache-key binding, cross-window cache publication ordering, and single serverless-wake ownership---are repaired and covered by deterministic regressions. The branch now includes current \code{main}; activation-snapshot context keys also prevent reload-required preview settings from exposing unregistered commands. Local build, lint, focused tests, and direct packaging are green subject only to two independently reproduced, untouched Windows path-fixture suites.
+\textbf{Review outcome at the merge-ready head.} The architecture and implementation now agree on the load-bearing boundaries. The six prior merge blockers---offline network enforcement, fail-closed database identity plus session recycling, auxiliary-session serialization, cache-key binding, cross-window cache publication ordering, and single serverless-wake ownership---are repaired and covered by deterministic regressions. The branch includes current \code{main}; activation-snapshot context keys prevent reload-required preview settings from exposing unregistered commands; and bound SQL Data Plane views preserve capability alternatives. Local build, lint, focused tests, and direct packaging are green subject only to two independently reproduced, untouched Windows path-fixture suites.
 \end{tcolorbox}
 
 \vspace{0.20in}
 \begin{tabular}{@{}ll@{}}
 Prepared for: & Karl Burtram\\
-Primary change: & \code{dev/karlb/query_04_metadata_service} at \code{37bf23fce}\\
-Current main merged: & \code{59c8ea50c}; original extraction base \code{69f54be2a}\\
+Primary change: & \code{dev/karlb/query_04_metadata_service} at \code{69ca292f8}\\
+Current main merged: & via \code{37bf23fce} from \code{59c8ea50c}; extraction base \code{69f54be2a}\\
 Related vscode ref: & \code{dev/query} at \code{5be148b1e}\\
 STS2 reference: & \code{sqltoolsservice dev/query} at \code{fe8300939}\\
-Refactor notes: & report source parent \code{581b926c}\\
+Refactor notes: & report source parent \code{176c1494}\\
 Report snapshot: & 29 August 2026, America/Los\_Angeles\\
 \end{tabular}
 
@@ -247,7 +247,7 @@ The source review is pinned to exact commits and current GitHub state. This repo
 \toprule
 \textbf{Source} & \textbf{Pinned state} & \textbf{Use in this report}\\
 \midrule
-PR \#22836 & merge-ready head \code{37bf23fce}; current-main parent \code{59c8ea50c}; extraction base \code{69f54be2a} & Current changed filenames, review discussions, Actions state, and exact line anchors.\\
+PR \#22836 & merge-ready head \code{69ca292f8}; current-main merge \code{37bf23fce} with parent \code{59c8ea50c}; extraction base \code{69f54be2a} & Current changed filenames, review discussions, Actions state, and exact line anchors.\\
 \code{vscode-mssql dev/query} & \code{5be148b1e} & Related query/data-plane refactor history and already-merged platform seams.\\
 \code{vscode-mssql dev/refactor} & \href{https://github.com/microsoft/vscode-mssql/tree/dev/refactor}{remote ref} at \code{a0880ad4f} & Integration-tree comparison and downstream refactor context; the branch was published during this closeout so the reference is reproducible.\\
 \code{sqltoolsservice dev/query} & \code{fe8300939} & STS2 generated contract, invariants, runtime behavior, and executable one-active-query scenario.\\
@@ -261,13 +261,13 @@ Evidence is ranked as follows:
 \begin{enumerate}
   \item \textbf{Pinned source and executable protocol contracts.} These establish control flow, ownership, serialization, identity, and persistence behavior.
   \item \textbf{Independent local validation.} The extension, embedded perftest, sqltoolsservice solution, STS2, authentication, language, and ServiceLayer lanes were run locally; exact results and exclusions appear in \cref{tab:localvalidation}.
-  \item \textbf{GitHub Actions logs.} At historical head \code{9955ff9e6}, analysis, packaging, normalization, and platform launch checks were green; the aggregate build-and-test check was red even though its MSSQL lane reported 3,975 passing, 0 failing, and 12 skipped. The aggregate failure came from SQL Projects unit exit code 1 and one of 17 VSIX smoke tests. At this report snapshot, fresh \code{37bf23fce} CodeQL, normalization, and CLA checks are green while build/test and VSIX launch packaging remain in progress; their conclusions are intentionally not predicted here.
+  \item \textbf{GitHub Actions logs.} At historical head \code{9955ff9e6}, analysis, packaging, normalization, and platform launch checks were green; the aggregate build-and-test check was red even though its MSSQL lane reported 3,975 passing, 0 failing, and 12 skipped. The aggregate failure came from SQL Projects unit exit code 1 and one of 17 VSIX smoke tests. At the final \code{69ca292f8} delayed-review snapshot, both analysis jobs, aggregate CodeQL, normalization, CLA, and MSSQL VSIX packaging were green; aggregate build/test and all six platform-launch jobs remained in progress. This artifact records observed results only and does not predict pending conclusions.
   \item \textbf{PR-body and prior-review results.} Additional focused pass counts, packaging measurements, and review-machine timing probes are useful reported evidence and remain identified as such.
   \item \textbf{Closure regressions.} The repaired head adds the adversarial branches that were missing: offline hit/miss/refresh/strict/auxiliary/transition paths, identity mismatch, auxiliary overlap, key-copy and logical-hash corruption, older-last and manifest-only publication races, abort-listener balance, unknown case semantics, provider availability, and server hydration timeout/recycle.
 \end{enumerate}
 
 \begin{statusbox}[title={Current review disposition}]
-The design remains the basis of the refactor and the repaired head is suitable for merge review. The original blockers and hardening findings in \cref{sec:blockers} are closed in code and tests. All 50 GitHub review threads were resolved at the pinned head. The remaining cross-window index caveat is explicit by design: access timestamps and LRU order are approximate across windows, while manifests remain authoritative and maintenance rebuilds membership and byte totals.
+The design remains the basis of the refactor and the repaired head is suitable for merge review. The original blockers and hardening findings in \cref{sec:blockers} are closed in code and tests. The final six-minute delayed recheck reported 52 GitHub review threads, zero unresolved, exact head \code{69ca292f8}, and a mergeable branch. The remaining cross-window index caveat is explicit by design: access timestamps and LRU order are approximate across windows, while manifests remain authoritative and maintenance rebuilds membership and byte totals.
 \end{statusbox}
 
 \section{Executive design summary}
@@ -1026,7 +1026,7 @@ The original review found that test volume was high but several unsafe branches 
 
 \subsection{Current focused suite inventory}
 
-The correctness-closeout run at \code{e5952174a} reported 158 passing tests across the metadata/cache/catalog files below, including the new auxiliary-catalog suite; adding touched profile-identity, private-preview/manifest, and SQL Data Plane files yielded 206. After merging current \code{main} and adding activation-snapshot coverage, the combined \code{Metadata|AuxiliaryCatalog|SQL Data Plane|PreviewFeaturesService|Private preview manifest|Extension API Tests} selection passed 260/260 at \code{37bf23fce}. These are executed-inventory counts, not a claim that every assertion in pre-existing touched files was introduced by this PR.
+The correctness-closeout run at \code{e5952174a} reported 158 passing tests across the metadata/cache/catalog files below, including the new auxiliary-catalog suite; adding touched profile-identity, private-preview/manifest, and SQL Data Plane files yielded 206. After merging current \code{main} and adding activation-snapshot coverage, the combined \code{Metadata|AuxiliaryCatalog|SQL Data Plane|PreviewFeaturesService|Private preview manifest|Extension API Tests} selection passed 260/260 at \code{37bf23fce}. The final public-view alternatives fix then passed its owning backend-registry suite 17/17 at \code{69ca292f8}. These are executed-inventory counts, not a claim that every assertion in pre-existing touched files was introduced by this PR.
 
 \begin{longtable}{@{}p{0.25\textwidth}p{0.12\textwidth}p{0.56\textwidth}@{}}
 \caption{Metadata closure inventory introduced by \code{e5952174a} and re-executed within the merged-head selection.}\label{tab:testinventory}\\
@@ -1060,7 +1060,7 @@ This inventory now includes the stronger boundary proofs. The regression matrix 
 \begin{table}[H]
 \centering
 \small
-\caption{Regression matrix closing the review findings at merged head \code{37bf23fce}.}
+\caption{Regression matrix closing the review findings at final head \code{69ca292f8}.}
 \label{tab:regressions}
 \begin{tabularx}{\textwidth}{@{}p{0.08\textwidth}p{0.28\textwidth}p{0.29\textwidth}X@{}}
 \toprule
@@ -1119,7 +1119,7 @@ At prior head \code{9955ff9e6}, analysis/CodeQL, Azure PR validation, packaging,
   \item the aggregate job fails because SQL Projects unit tests return exit code 1 and one of 17 VSIX smoke tests---``MSSQL add connection webview is loaded correctly''---fails.
 \end{itemize}
 
-This was not evidence of a metadata failure. The later correctness head became conflicting as \code{main} advanced. Merge commit \code{37bf23fce} incorporates current \code{main}, resolves that conflict, and triggered a fresh workflow. At this snapshot, CodeQL, normalization, and CLA are green while build/test and VSIX launch packaging remain in progress; live PR checks remain the authority for the eventual merge button.
+This was not evidence of a metadata failure. The later correctness head became conflicting as \code{main} advanced. Merge commit \code{37bf23fce} incorporates current \code{main} and resolves that conflict; final head \code{69ca292f8} adds only the reviewed public-view alternatives repair. At the final delayed-review snapshot, both analysis jobs, aggregate CodeQL, normalization, CLA, and MSSQL VSIX packaging were green. Aggregate build/test and all six platform VSIX-launch jobs remained in progress; live PR checks remain the authority for the eventual merge button.
 
 \subsection{Independent local validation}
 
@@ -1134,10 +1134,10 @@ The local workspace was updated and built at the pinned commits before this repo
 \toprule
 \textbf{Lane} & \textbf{Result} & \textbf{Interpretation / explicit exclusions}\\
 \midrule
-vscode-mssql build & Pass & Full monorepo build completed on \code{37bf23fce}: shared toolkit, MSSQL extension/typecheck/bundles/webviews/notebook renderer, merged SQL Projects runtime, legacy SQL Database Projects package, and Data Workspace.\\
+vscode-mssql build & Pass & Full monorepo build repeated on \code{69ca292f8}: shared toolkit, MSSQL extension/typecheck/bundles/webviews/notebook renderer, merged SQL Projects runtime, legacy SQL Database Projects package, and Data Workspace.\\
 vscode-mssql lint & Pass & Root lint exited zero for extension-toolkit, MSSQL, SQL Database Projects, and Data Workspace.\\
-Merged-head focused tests & 260 pass; 0 fail & Metadata/cache/catalog, auxiliary, profile/preview/manifest, SQL Data Plane, and extension activation-context selection.\\
-MSSQL broad hosted tests & 4,025 pass; 0 fail; 10 skip & Complete inverse selection excludes exactly \code{QueryCompletionSoundService} and \code{Utility Tests - Path handling}. The full run otherwise reports eight failures, all reproduced alone as untouched Windows path-separator expectations (seven sound, one tilde path).\\
+Focused tests & 260 pass; 0 fail at \code{37bf23fce}; 17 pass; 0 fail at \code{69ca292f8} & Broad metadata/cache/catalog, auxiliary, profile/preview/manifest, SQL Data Plane, and activation-context selection followed by the owning backend-registry suite for the final alternatives fix.\\
+MSSQL broad hosted tests & 4,025 pass; 0 fail; 10 skip at merge parent \code{37bf23fce} & Complete inverse selection excludes exactly \code{QueryCompletionSoundService} and \code{Utility Tests - Path handling}. The full run otherwise reports eight failures, all reproduced alone as untouched Windows path-separator expectations (seven sound, one tilde path). The final change is restricted to returning already-computed alternative identifiers and its focused suite, full build, and full lint were rerun.\\
 SQL Projects hosted tests & 205 pass; 0 fail; 6 skip & Current-main isolated SQL Database Projects unit lane, run in a separate VS Code host as required by the merged test configuration.\\
 Localization & Pass & Root extraction processed all four projects and extracted 3,064 MSSQL strings; commit hooks repeated extraction and lint-staged successfully.\\
 Direct packaging & Pass & MSSQL produced 2,453 files / 208.53 MiB with the worktree's existing 617.8 MiB expanded STS payload. SQL Projects produced 428.41 KiB, Data Workspace 17.10 KiB, and the keymap 7.14 KiB. The root wrapper cannot forward MSSQL-only \code{--online --skip-service-install} through SQL Projects because \code{vsce} rejects \code{--online}; direct workspace packages prove the artifacts themselves.\\
@@ -1158,7 +1158,7 @@ The local runs establish that the repaired tree builds/packages and close F1--F1
 
 The PR body reports additional focused host-composition, data-plane capability, observability, localization, packaging, and full-suite results. Prior review threads report targeted performance probes and repeated focused suites after earlier fixes. These are useful confidence signals and should remain in the PR record, but they are \reported{} rather than rerun as part of this review pass.
 
-All 50 review threads are resolved at the pinned head with source-attributed dispositions. Provider startup refusal is now retryable \code{unavailable}; the QuickPick keeps the localized capture label separate from fingerprint detail; and the final two Copilot findings are closed by activation-snapshot context keys. A reload-required setting can therefore be turned off and hide UI immediately, while turning it on cannot reveal commands until the reloaded host has registered their handlers.
+All 52 review threads are resolved at the pinned head with source-attributed dispositions. Provider startup refusal is retryable \code{unavailable}; the QuickPick separates localized capture text from fingerprint detail; activation-snapshot keys prevent pre-reload command exposure; and bound service views retain registry alternatives on a requirement failure. The CR-only line-comment suggestion was declined at the raised closeout threshold: VS Code documents support LF/CRLF, both are handled, and a synthetic CR-only miss would merely defer the best-effort DDL refresh to digest polling.
 
 \section{Performance mechanisms and evidence quality}
 
@@ -1250,7 +1250,7 @@ Before flipping \code{metadata.endpoints} to supported:
 \begin{table}[H]
 \centering
 \small
-\caption{Completed repair and merge-closeout order for PR \#22836 at \code{37bf23fce}.}
+\caption{Completed repair and merge-closeout order for PR \#22836 at \code{69ca292f8}.}
 \label{tab:repairorder}
 \begin{tabularx}{\textwidth}{@{}p{0.08\textwidth}p{0.30\textwidth}X@{}}
 \toprule
@@ -1273,7 +1273,7 @@ Before flipping \code{metadata.endpoints} to supported:
 \begin{takeawaybox}
 The architectural direction is good: one shared lease/store, immutable compact snapshots, explicit per-section truth, policy-routed freshness, default-off persistence, content-addressed payloads, and a future transport/provider seam are the right foundations for native language and AI-assisted SQL experiences.
 
-At \code{37bf23fce}, the implementation enforces the design narrative's load-bearing claims: zero-network offline operation, key-correct publication, one-active-query auxiliary behavior, newer-writer cache authority, decoded logical integrity, bounded hydration recovery, one serverless wake owner, and activation-consistent preview UI. The feature remains private-preview/default-off and no ordinary language, AI, OE, or Query Studio surface is cut over by this PR.
+At \code{69ca292f8}, the implementation enforces the design narrative's load-bearing claims: zero-network offline operation, key-correct publication, one-active-query auxiliary behavior, newer-writer cache authority, decoded logical integrity, bounded hydration recovery, one serverless wake owner, activation-consistent preview UI, and capability-alternative parity across public data-plane views. The feature remains private-preview/default-off and no ordinary language, AI, OE, or Query Studio surface is cut over by this PR.
 \end{takeawaybox}
 
 \begin{statusbox}[title={Decision statement}]
@@ -1293,13 +1293,13 @@ This report is pinned because the PR and related branches are active. Review thr
 \toprule
 \textbf{Evidence class} & \textbf{Primary sources used}\\
 \midrule
-PR state & \href{https://github.com/microsoft/vscode-mssql/pull/22836}{PR \#22836}, current body/discussions/check metadata, merge-ready head \code{37bf23fce}, current-main parent \code{59c8ea50c}, extraction base \code{69f54be2a}.\\
+PR state & \href{https://github.com/microsoft/vscode-mssql/pull/22836}{PR \#22836}, current body/discussions/check metadata, merge-ready head \code{69ca292f8}, current-main merge \code{37bf23fce}, main parent \code{59c8ea50c}, extraction base \code{69f54be2a}.\\
 Core implementation & \path{extensions/mssql/src/services/metadata/catalogModel.ts}; \path{metadataService.ts}; \path{metadataStore.ts}; \path{metadataStoreService.ts}; \path{serverMetadataService.ts}; \path{auxiliaryCatalog*.ts}; profile/auth/fingerprint modules.\\
 Cache implementation & \path{extensions/mssql/src/services/metadata/cache/metadataCacheCodec.ts}; \path{metadataCacheManifest.ts}; \path{metadataCacheStore.ts}; \path{metadataCacheCoordinator.ts}; \path{metadataFreshness.ts}; \path{metadataCacheSettings.ts}.\\
 Host/data plane & \path{mainController.ts}; \path{previewService.ts}; \path{sqlDataPlaneService.ts}; \path{languageservice/serviceclient.ts}; package settings/localization; \path{perfTelemetry.ts}.\\
 Tests & Metadata/cache/catalog/freshness/poll/store/scale suites, profile and data-plane tests, observability conformance, large-catalog fixture, and in-memory filesystem harness; CI per-file counts plus the independent local validation in \cref{tab:localvalidation}.\\
 Embedded perftest & \path{tools/perftest/packages/perftest-cli/src/scenarios/registry.ts} and the metadata warm-acquire command/marker wiring.\\
-Implementation review & Companion workspace review \path{vscode_mssql_pr_22836_code_review.md}; every finding was rechecked against local and pushed head \code{37bf23fce} before publication.\\
+Implementation review & Companion workspace review \path{vscode_mssql_pr_22836_code_review.md}; every finding was rechecked against local and pushed head \code{69ca292f8} before publication.\\
 Metadata/refactor designs & \path{vscode-ext-refactor/metadata-docs/*}, including substrate, cache/drift, and review addendum documents; current code controls when design notes and implementation differ.\\
 Language/observability designs & Native T-SQL language-service and observability notes under \path{vscode-ext-refactor}; treated as downstream contracts, not PR content.\\
 STS2 authority & \code{microsoft/sqltoolsservice dev/query} at \code{fe8300939}: generated contract, \path{docs/sts2/INVARIANTS.md}, runtime/client documentation, and \path{test/sts2/scenarios/second-query-while-active-busy.yaml}.\\
