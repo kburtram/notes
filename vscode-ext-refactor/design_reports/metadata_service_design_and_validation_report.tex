@@ -13,6 +13,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{float}
+\usepackage{pdflscape}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds,decorations.pathreplacing,shapes.geometric,shapes.multipart}
 \usepackage[most]{tcolorbox}
@@ -824,6 +825,199 @@ Reader key isolation & Manifest key fields are compared explicitly to the reques
 Maintenance coalesces re-entrant calls and throttles filesystem operations. Removal order is corrupt/unsupported and aged entries first, then least-recently-used entries until bytes fit. Manifest-less payloads, old temporary files, quarantine files, and superseded payloads receive an orphan grace. Clears remove manifests first, making remaining bytes inert before deleting payloads.
 
 The JSON index is a convenience cache for listing/access/LRU rather than the trust root. Each window may still lose an access tick while replacing the whole index; source documentation now calls cross-window access/LRU approximate. Manifests remain authoritative for identity and content, and maintenance rebuilds membership and byte totals. Serializing this advisory file with catalog publication would widen a correctness-critical lock for no catalog-safety gain, so this limitation is accepted rather than hidden.
+
+\subsection{Composite cache lifecycle and downstream consumer routing}
+
+The following view combines the reviewed cache substrate with the downstream consumer wiring present on \code{upstream/dev/refactor}. It is intentionally broader than the PR boundary: the store, snapshot, persistence, and STS2 paths are the mechanisms reviewed above, while the top-row consumer adapters are later integration work and must not be read as routes shipped by PR \#22836 itself.
+
+\begin{boundarybox}[title={Composite scope}]
+Consumers never read cache files or execute catalog SQL directly. They acquire leases or pinned views from the shared store. The cache is a verified projection of a published database snapshot; server catalogs and auxiliary sections remain live, lazy memory structures. Solid consumer arrows below describe the downstream \code{dev/refactor} composition, not the merge boundary of the reviewed PR.
+\end{boundarybox}
+
+\clearpage
+\begin{landscape}
+\begin{figure}[p]
+\centering
+\resizebox{0.99\linewidth}{!}{%
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \node[note,text width=220mm,align=center] at (12.5,16.0) {\textbf{Reading key:} violet = ownership / leases / policy; teal = immutable catalog data; amber = verified persistence; dashed = asynchronous or background work; muted red = reject, safe miss, or unavailable.};
+
+  % Consumers.
+  \node[ext,text width=39mm,minimum height=14mm] (qs) at (2.5,14.6) {\textbf{Query Studio}\\\scriptsize database binding + lease\\\scriptsize successful DDL $\rightarrow$ notify};
+  \node[ext,text width=39mm,minimum height=14mm] (lang) at (7.5,14.6) {\textbf{Native T-SQL language}\\\scriptsize pin once per request\\\scriptsize completion / hover / diagnostics};
+  \node[ext,text width=39mm,minimum height=14mm] (ai) at (12.5,14.6) {\textbf{AI completions}\\\scriptsize pinned snapshot $\rightarrow$ bounded context\\\scriptsize generation-keyed projection cache};
+  \node[ext,text width=39mm,minimum height=14mm] (oe) at (17.5,14.6) {\textbf{Object Explorer v2}\\\scriptsize one server + lazy DB leases\\\scriptsize pin once per expand};
+  \node[ext,text width=39mm,minimum height=14mm] (strict) at (22.5,14.6) {\textbf{Scripting / visualizer}\\\scriptsize strict or explicit offline policy\\\scriptsize one snapshot; no ad-hoc SQL};
+
+  \node[gate,text width=88mm,minimum height=10mm] (langseam) at (6.6,13.0) {\textbf{Language-provider seam}\\\scriptsize \code{ISqlLanguageMetadataProvider} / \code{IPinnedMetadataView}};
+  \node[gate,text width=118mm,minimum height=10mm] (leases) at (18.4,13.0) {\textbf{Lease surface}\\\scriptsize \code{ServerCatalogLease} / \code{DatabaseCatalogLease}};
+
+  \draw[arrow] (qs.south) -- (leases.north -| qs.south);
+  \draw[arrow] (lang.south) -- (langseam.north -| lang.south);
+  \draw[arrow] (ai.south) -- (leases.north -| ai.south);
+  \draw[arrow] (oe.south) -- (leases.north -| oe.south);
+  \draw[arrow] (strict.south) -- (leases.north -| strict.south);
+
+  % Store and policy.
+  \node[store,text width=220mm,minimum height=17mm] (store) at (12.5,11.3) {\textbf{MetadataStoreService / MetadataStore --- one per extension host}\\[-0.5mm]
+    \scriptsize Server map: \code{sfp_*} $\rightarrow$ \code{ServerMetadataService} + server auxiliary catalog \quad$\cdot$\quad
+    Database map: \code{(sfp_*, exact database)} $\rightarrow$ \code{MetadataService} + main/aux sources\\
+    \scriptsize same-key single flight $\cdot$ ref-counted leases $\cdot$ warm idle TTL + LRU cap $\cdot$ deferred auth $\cdot$ dynamic network gate $\cdot$ per-server validation limiter};
+  \node[gate,text width=220mm,minimum height=12mm] (policy) at (12.5,9.6) {\textbf{\code{ensureFresh(policy)}}\\[-0.5mm]
+    \scriptsize \code{allowStale}: serve now + background refresh \quad$\vert$\quad
+    \code{requireValidated}: TTL / coalesced T1 digest \quad$\vert$\quad
+    \code{requireLive}: full refresh or unavailable \quad$\vert$\quad
+    \code{offlineSnapshot}: zero live work; hit stale / miss unavailable};
+  \draw[arrow] (langseam.south) -- (store.north -| langseam.south);
+  \draw[arrow] (leases.south) -- (store.north -| leases.south);
+  \draw[arrow] (store) -- (policy);
+
+  % In-memory representation.
+  \node[model,text width=94mm,minimum height=34mm] (builder) at (6.5,7.0) {\textbf{CatalogBuilder --- private mutable hydration state}\\[-0.5mm]
+    \scriptsize \code{strings[]} + \code{stringIndex}; \code{objectIndexById} for $O(1)$ row attachment\\
+    \scriptsize parallel SoA tables: schemas; objects; columns + exact detail; PK/UQ; FKs + ordered pairs; parameters; descriptions\\
+    \scriptsize owner indexes join dependent rows; every \code{*Sym} is an integer into the intern table};
+  \node[model,text width=102mm,minimum height=34mm] (snap) at (18.7,7.0) {\textbf{CatalogSnapshot --- immutable generation N}\\[-0.5mm]
+    \scriptsize generation $\cdot$ capture time $\cdot$ optional content hash $\cdot$ mode \code{full|partial|lite}\\
+    \scriptsize readiness per section: \code{absent|loading|ready|failed|stale|lite}\\
+    \scriptsize same SoA + read-only indexes: object id, folded prefix, schema names, column/parameter ranges, key/FK/description maps\\
+    \scriptsize pure reads: resolve/search/list/columns/keys/FKs/params/bounded context; older pinned generations remain valid};
+  \draw[dataarr] (builder) -- (snap);
+  \node[pill,text width=20mm,align=center,font=\tiny\bfseries] at (12.6,7.55) {BUILD N+1\\ATOMIC REPLACE};
+  \draw[dataarr] (snap.north) to[out=100,in=-25] node[labelbox,right]{publish current\\notify leases} (store.east);
+
+  \begin{scope}[on background layer]
+    \node[draw=teal!45,dashed,rounded corners,fit=(builder)(snap),inner sep=3mm,label={[teal,font=\scriptsize\bfseries]above:in-memory catalog layout --- readiness is not freshness}] {};
+  \end{scope}
+
+  % Persistent cache.
+  \node[cache,text width=108mm,minimum height=43mm] (disk) at (6.5,2.7) {\textbf{Optional persistent database cache --- not authority}\\[-0.5mm]
+    \scriptsize \code{globalStorage/metadata-cache/v1/index.json} (advisory)\\
+    \scriptsize \code{databases/<sfp_*>/<dbh_...>/.publication.lock}\\
+    \scriptsize \code{manifest.json} + \code{catalog.<compressed-sha256>.json.gz}\\[0.4mm]
+    \scriptsize \textbf{Read:} manifest/codec/model $\rightarrow$ requested-key bind $\rightarrow$ size + compressed SHA + bounded gunzip $\rightarrow$ array/reference shape + canonical content hash $\rightarrow$ privacy/readiness intersection $\rightarrow$ rehydrate with original age/generation.\\
+    \scriptsize \textbf{Write:} debounce $\rightarrow$ canonical \code{cm2} JSON $\rightarrow$ strip prose/SQL definitions $\rightarrow$ \code{csh_*} $\rightarrow$ gzip/SHA $\rightarrow$ per-key capture-time authority $\rightarrow$ payload atomic $\rightarrow$ \textbf{manifest last}.\\
+    \scriptsize default off $\cdot$ 14 d $\cdot$ 256 MiB total $\cdot$ 32 MiB/entry $\cdot$ safe miss/quarantine $\cdot$ manifest-first clear};
+
+  % Live acquisition.
+  \node[sess,text width=108mm,minimum height=43mm] (live) at (18.7,2.7) {\textbf{Live hydration and drift --- dedicated background sessions}\\[-0.5mm]
+    \scriptsize \code{LazyMetadataConnection} $\rightarrow$ SQL Data Plane $\rightarrow$ STS2 $\rightarrow$ SQL Server \code{sys.*}\\
+    \scriptsize \code{v2/connection.open}; \code{v2/query.execute} $\rightarrow$ row pages + \code{query.complete}; no \code{v2/metadata.*} endpoint\\
+    \scriptsize main DB lane serializes H0--H7, T1 digest, and lazy definitions; DB auxiliary uses a separate source + catalog-wide FIFO; server/aux sources are independent; one active query per physical STS2 connection.\\[0.4mm]
+    \scriptsize H0 environment + authoritative \code{DB_NAME()} gate $\rightarrow$ H1 schemas $\rightarrow$ H2 objects/synonyms $\rightarrow$ H3 columns/details $\rightarrow$ H4 PK/UQ $\rightarrow$ H5/H5B FKs/pairs $\rightarrow$ H6 params $\rightarrow$ H7 descriptions.\\
+    \scriptsize DDL sniff + T1 digest + explicit policy $\rightarrow$ coalesced refresh; mismatch/timeout/drift fences the epoch, recycles, and cannot publish under the wrong key.};
+
+  \draw[async,draw=amber] (disk.north) -- node[labelbox,left]{verified load\\rehydrate} (builder.south);
+  \draw[dataarr] (live.north west) to[out=135,in=-45] node[labelbox,above]{H0--H7 row pages} (builder.south east);
+  \draw[async,draw=amber] (store.west) -- ++(-0.55,0) |- node[labelbox,left,pos=0.7]{cache-first load\\debounced save} (disk.west);
+  \draw[arrow] (policy.east) -- ++(0.55,0) |- node[labelbox,right,pos=0.7]{validated / live} (live.east);
+  \draw[failarr] (live.east) to[out=15,in=-15,looseness=5] node[labelbox,right]{identity reject / recycle} (live.east);
+
+  % Invariant pills.
+  \node[pill,text width=48mm,align=center,font=\tiny\bfseries] at (3.1,-0.35) {PIN ONCE PER RESPONSE};
+  \node[pill,text width=48mm,align=center,font=\tiny\bfseries] at (9.3,-0.35) {FAILURE IS NEVER EMPTINESS};
+  \node[pill,text width=48mm,align=center,font=\tiny\bfseries] at (15.5,-0.35) {NO NETWORK ON THE KEYSTROKE PATH};
+  \node[pill,text width=48mm,align=center,font=\tiny\bfseries] at (21.7,-0.35) {MANIFEST LAST; CACHE IS NOT AUTHORITY};
+\end{tikzpicture}}
+\caption{Composite memory, persistence, and consumer flow. The lower layers are the reviewed PR \#22836 substrate. The consumer routes at the top are traced from the downstream \code{dev/refactor} integration and preserve the same invariants: consumers pin one immutable generation, express freshness as policy, and never bypass the shared store.}
+\label{fig:cache-composite}
+\end{figure}
+\end{landscape}
+\clearpage
+
+\section{Architectural Diagram Gallery}
+
+The composite in \cref{fig:cache-composite} is the report-native architectural reference. This gallery retains two alternate composite renderings and the complete focused diagram set so that the same design can be reviewed at three levels: one-canvas synthesis, four-part index, and full-page vector detail. All assets, editable sources, the generator, the original archive, and the image-generation prompt live under \code{figures/metadata_cache/}. The \code{README.md} in that directory records their provenance and intended use.
+
+\begin{evidencebox}[title={Rendering and evidence boundary}]
+The alternate composites are visual design studies, not independent implementation evidence. Small generated labels can drift even when the overall topology is useful. If a rendered label conflicts with the reviewed source, tests, report prose, or deterministic TikZ figures, those reviewed artifacts control. The four focused diagrams are included from their vector PDF exports; equivalent SVG and 3840-by-2160 PNG files are retained beside them for editing and reuse.
+\end{evidencebox}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Gallery reading map.}
+\label{tab:diagram-gallery}
+\begin{tabularx}{\textwidth}{@{}p{0.23\textwidth}p{0.24\textwidth}X@{}}
+\toprule
+\textbf{Rendering} & \textbf{Best use} & \textbf{What it emphasizes}\\
+\midrule
+Single-canvas study, \cref{fig:cache-ai-composite} & Fast cross-layer scan & Consumer seams, ownership, memory generations, hydration, persistence, and invariants in one dense field.\\
+Tall composite, \cref{fig:cache-stacked-composite} & Continuous scrolling & A top-to-bottom progression from integration surface through memory and operation to disk protocol.\\
+Contact sheet, \cref{fig:cache-diagram-contact-sheet} & Side-by-side comparison & The four focused views at a common scale, useful as an index and review checklist.\\
+Focused vector set, \cref{fig:cache-architecture-overview,fig:cache-catalog-layout,fig:cache-acquisition-drift,fig:cache-persistence-protocol} & Detailed inspection & Full-size, zoomable labels and one concern per page; preferred when validating a specific mechanism.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\clearpage
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.99\linewidth,height=0.77\textheight,keepaspectratio]{figures/metadata_cache/composites/codex_metadata_cache_composite.png}
+\caption{Image-generated single-canvas design study. It brings the extension-host store, mutable builder, immutable generations, persistence trust chain, live STS2 hydration, language service, AI completions, Object Explorer v2, Query Studio, scripting, and schema visualization into one visual field. Use it for topology and emphasis; use \cref{fig:cache-architecture-overview,fig:cache-catalog-layout,fig:cache-acquisition-drift,fig:cache-persistence-protocol} for precise labels.}
+\label{fig:cache-ai-composite}
+\end{figure}
+\end{landscape}
+\clearpage
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.97\textwidth,height=0.78\textheight,keepaspectratio]{figures/metadata_cache/composites/external_metadata_cache_diagrams.png}
+\caption{Alternate tall composite rendering. The four stacked panels progress from system interactions to in-memory structure, live acquisition and freshness, and finally the persistent-cache read/write protocol. This form is convenient for scrolling and for reading the architecture as one continuous pipeline.}
+\label{fig:cache-stacked-composite}
+\end{figure}
+\clearpage
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.99\linewidth,height=0.77\textheight,keepaspectratio]{figures/metadata_cache/diagram_set/metadata_cache_diagrams_contact_sheet.png}
+\caption{Contact sheet for the focused diagram set. Clockwise from upper left: shared architecture and consumer flow, immutable catalog layout, persistent-cache trust and publication, and acquisition/freshness/drift. The following pages reproduce each panel from its vector PDF source.}
+\label{fig:cache-diagram-contact-sheet}
+\end{figure}
+\end{landscape}
+\clearpage
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.99\linewidth,height=0.77\textheight,keepaspectratio]{figures/metadata_cache/diagram_set/01_metadata_cache_architecture_overview.pdf}
+\caption{Shared metadata architecture and consumer flow. The PR \#22836 substrate owns key-correct leases, immutable catalog snapshots, live hydration, and optional persistence. Downstream language, AI, Query Studio, Object Explorer, scripting, and visualization consumers use leases or pinned views and do not bypass the shared store.}
+\label{fig:cache-architecture-overview}
+\end{figure}
+\end{landscape}
+\clearpage
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.99\linewidth,height=0.77\textheight,keepaspectratio]{figures/metadata_cache/diagram_set/02_metadata_catalog_data_layout.pdf}
+\caption{Compact immutable catalog layout. H0--H7 catalog rows accumulate in a private structure-of-arrays builder with one interned string table and owner indexes. \code{build()} atomically publishes a \code{CatalogSnapshot}; readers pin one generation and use pure synchronous APIs.}
+\label{fig:cache-catalog-layout}
+\end{figure}
+\end{landscape}
+\clearpage
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.99\linewidth,height=0.77\textheight,keepaspectratio]{figures/metadata_cache/diagram_set/03_metadata_acquisition_freshness_drift.pdf}
+\caption{Acquisition, freshness, and drift. Acquisition first attempts a verified local snapshot and resolves live infrastructure only when network policy permits. Consumers express freshness intent through \code{allowStale}, \code{requireValidated}, \code{requireLive}, or \code{offlineSnapshot}; drift signals coalesce into a full H0--H7 refresh.}
+\label{fig:cache-acquisition-drift}
+\end{figure}
+\end{landscape}
+\clearpage
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.99\linewidth,height=0.77\textheight,keepaspectratio]{figures/metadata_cache/diagram_set/04_metadata_cache_persistence_protocol.pdf}
+\caption{Persistent-cache trust and publication protocol. A disk entry is adopted only after manifest, key, byte, logical-shape/hash, and policy checks. Writes use canonical privacy-projected payloads, content addressing, a per-key authority lock, atomic payload replacement, and manifest-last publication.}
+\label{fig:cache-persistence-protocol}
+\end{figure}
+\end{landscape}
+\clearpage
 
 \section{Language-service fit}
 

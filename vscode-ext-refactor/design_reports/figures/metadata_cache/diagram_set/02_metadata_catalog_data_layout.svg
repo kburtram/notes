@@ -1,0 +1,397 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1350" viewBox="0 0 2400 1350">
+<defs>
+<style>text{font-family:Lato, 'Noto Sans', Arial, sans-serif;fill:#18222D;}.title{font-weight:900;letter-spacing:-0.4px;}.region{font-weight:800;}.cardtitle{font-weight:800;}.smallcaps{font-weight:800;letter-spacing:0.7px;}</style>
+<marker id="m1" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,5 L0,10 z" fill="#0C7C86"/></marker>
+</defs>
+<rect x="0" y="0" width="2400" height="1350" fill="#FFFFFF"/>
+<text x="70" y="72" text-anchor="start" style="font-size:55px;font-weight:900;fill:#18222D;" opacity="1.0" class="title">
+<tspan x="70" dy="0">Immutable Catalog Data Layout</tspan>
+</text>
+<text x="72" y="116" text-anchor="start" style="font-size:23px;font-weight:500;fill:#4D5B6A;" opacity="1.0">
+<tspan x="72" dy="0">SQL catalog row pages are accumulated in a private structure-of-arrays builder, then published as one immutable generation.</tspan>
+</text>
+<line x1="70" y1="137" x2="2330" y2="137" stroke="#C7D2DE" stroke-width="2" stroke-linecap="round" opacity="1.0"/>
+<rect x="60" y="170" width="395" height="1095" rx="24" fill="#FBFDFF" fill-opacity="1.0" stroke="#2D6CDF" stroke-width="3"/>
+<rect x="60" y="170" width="395" height="48" rx="24" fill="#EEF5FF" fill-opacity="1.0" stroke="#2D6CDF" stroke-width="0"/>
+<rect x="60" y="194" width="395" height="24" rx="0" fill="#EEF5FF" fill-opacity="1.0" stroke="#EEF5FF" stroke-width="0"/>
+<text x="78" y="204" text-anchor="start" style="font-size:26px;font-weight:850;fill:#2D6CDF;" opacity="1.0">
+<tspan x="78" dy="0">Live row pages</tspan>
+</text>
+<text x="84" y="235" text-anchor="start" style="font-size:22px;font-weight:900;fill:#2D6CDF;" opacity="1.0">
+<tspan x="84" dy="0">Dedicated main DB session</tspan>
+</text>
+<text x="84" y="267" text-anchor="start" style="font-size:17.5px;font-weight:650;fill:#4D5B6A;" opacity="1.0">
+<tspan x="84" dy="0">serial H0-H7; one active query</tspan>
+</text>
+<rect x="83" y="310" width="350" height="84" rx="14" fill="#EAF7F0" fill-opacity="1.0" stroke="#277A55" stroke-width="2"/>
+<text x="105" y="341" text-anchor="start" style="font-size:20px;font-weight:900;fill:#277A55;" opacity="1.0">
+<tspan x="105" dy="0">H0</tspan>
+</text>
+<text x="176" y="341" text-anchor="start" style="font-size:15.7px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="176" dy="0">environment + authoritative</tspan>
+<tspan x="176" dy="21">database identity</tspan>
+</text>
+<line x1="258" y1="394" x2="258" y2="411" stroke="#0C7C86" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="83" y="416" width="350" height="72" rx="14" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="105" y="447" text-anchor="start" style="font-size:20px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="105" dy="0">H1</tspan>
+</text>
+<text x="176" y="447" text-anchor="start" style="font-size:15.7px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="176" dy="0">schemas</tspan>
+</text>
+<line x1="258" y1="488" x2="258" y2="505" stroke="#0C7C86" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="83" y="510" width="350" height="72" rx="14" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="105" y="541" text-anchor="start" style="font-size:20px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="105" dy="0">H2</tspan>
+</text>
+<text x="176" y="541" text-anchor="start" style="font-size:15.7px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="176" dy="0">objects + synonyms</tspan>
+</text>
+<line x1="258" y1="582" x2="258" y2="599" stroke="#0C7C86" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="83" y="604" width="350" height="84" rx="14" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="105" y="635" text-anchor="start" style="font-size:20px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="105" dy="0">H3</tspan>
+</text>
+<text x="176" y="635" text-anchor="start" style="font-size:15.7px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="176" dy="0">columns + exact type/default/</tspan>
+<tspan x="176" dy="21">identity/computed facts</tspan>
+</text>
+<line x1="258" y1="688" x2="258" y2="705" stroke="#0C7C86" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="83" y="710" width="350" height="72" rx="14" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="105" y="741" text-anchor="start" style="font-size:20px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="105" dy="0">H4</tspan>
+</text>
+<text x="176" y="741" text-anchor="start" style="font-size:15.7px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="176" dy="0">primary + unique keys</tspan>
+</text>
+<line x1="258" y1="782" x2="258" y2="799" stroke="#0C7C86" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="83" y="804" width="350" height="84" rx="14" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="105" y="835" text-anchor="start" style="font-size:17px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="105" dy="0">H5/H5B</tspan>
+</text>
+<text x="205" y="835" text-anchor="start" style="font-size:15.7px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="205" dy="0">foreign keys + ordered</tspan>
+<tspan x="205" dy="21">column pairs</tspan>
+</text>
+<line x1="258" y1="888" x2="258" y2="905" stroke="#0C7C86" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="83" y="910" width="350" height="72" rx="14" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="105" y="941" text-anchor="start" style="font-size:20px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="105" dy="0">H6</tspan>
+</text>
+<text x="176" y="941" text-anchor="start" style="font-size:15.7px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="176" dy="0">parameters</tspan>
+</text>
+<line x1="258" y1="982" x2="258" y2="999" stroke="#0C7C86" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="83" y="1004" width="350" height="72" rx="14" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="105" y="1035" text-anchor="start" style="font-size:20px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="105" dy="0">H7</tspan>
+</text>
+<text x="176" y="1035" text-anchor="start" style="font-size:15.7px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="176" dy="0">descriptions</tspan>
+</text>
+<rect x="84" y="1138" width="350" height="48" rx="24.0" fill="#EAF7F0" fill-opacity="1.0" stroke="#277A55" stroke-width="2"/>
+<text x="259.0" y="1167.27" text-anchor="middle" style="font-size:15.5px;font-weight:800;fill:#277A55;" opacity="1.0">
+<tspan x="259.0" dy="0">H0 GATES EVERY LATER PUBLICATION</tspan>
+</text>
+<rect x="84" y="1200" width="350" height="48" rx="24.0" fill="#FFF0F1" fill-opacity="1.0" stroke="#A43842" stroke-width="2"/>
+<text x="259.0" y="1229.27" text-anchor="middle" style="font-size:15.5px;font-weight:800;fill:#A43842;" opacity="1.0">
+<tspan x="259.0" dy="0">H3-H7 FAILURE -&gt; FAILED/PARTIAL</tspan>
+</text>
+<rect x="500" y="170" width="1030" height="1095" rx="24" fill="#FBFEFD" fill-opacity="1.0" stroke="#0C7C86" stroke-width="3"/>
+<rect x="500" y="170" width="1030" height="48" rx="24" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="0"/>
+<rect x="500" y="194" width="1030" height="24" rx="0" fill="#E9F7F4" fill-opacity="1.0" stroke="#E9F7F4" stroke-width="0"/>
+<text x="518" y="204" text-anchor="start" style="font-size:26px;font-weight:850;fill:#0C7C86;" opacity="1.0">
+<tspan x="518" dy="0">CatalogBuilder - private, mutable during hydration</tspan>
+</text>
+<rect x="1270" y="236" width="225" height="40" rx="20.0" fill="#FFF0F1" fill-opacity="1.0" stroke="#A43842" stroke-width="2"/>
+<text x="1382.5" y="260.93" text-anchor="middle" style="font-size:14.5px;font-weight:800;fill:#A43842;" opacity="1.0">
+<tspan x="1382.5" dy="0">NOT VISIBLE TO READERS</tspan>
+</text>
+<rect x="528" y="246" width="610" height="160" rx="16" fill="#FFFFFF" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2.5"/>
+<text x="550" y="278" text-anchor="start" style="font-size:22px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="550" dy="0">strings[] - one intern table</tspan>
+</text>
+<rect x="550" y="300" width="82" height="54" rx="8" fill="#F3FBFA" fill-opacity="1.0" stroke="#0C7C86" stroke-width="1.6"/>
+<text x="591.0" y="322" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#4D5B6A;" opacity="1.0">
+<tspan x="591.0" dy="0">0</tspan>
+</text>
+<text x="591.0" y="344" text-anchor="middle" style="font-size:15.5px;font-weight:750;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="591.0" dy="0">dbo</tspan>
+</text>
+<rect x="642" y="300" width="112" height="54" rx="8" fill="#F3FBFA" fill-opacity="1.0" stroke="#0C7C86" stroke-width="1.6"/>
+<text x="698.0" y="322" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#4D5B6A;" opacity="1.0">
+<tspan x="698.0" dy="0">1</tspan>
+</text>
+<text x="698.0" y="344" text-anchor="middle" style="font-size:15.5px;font-weight:750;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="698.0" dy="0">Users</tspan>
+</text>
+<rect x="764" y="300" width="74" height="54" rx="8" fill="#F3FBFA" fill-opacity="1.0" stroke="#0C7C86" stroke-width="1.6"/>
+<text x="801.0" y="322" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#4D5B6A;" opacity="1.0">
+<tspan x="801.0" dy="0">2</tspan>
+</text>
+<text x="801.0" y="344" text-anchor="middle" style="font-size:15.5px;font-weight:750;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="801.0" dy="0">int</tspan>
+</text>
+<rect x="848" y="300" width="142" height="54" rx="8" fill="#F3FBFA" fill-opacity="1.0" stroke="#0C7C86" stroke-width="1.6"/>
+<text x="919.0" y="322" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#4D5B6A;" opacity="1.0">
+<tspan x="919.0" dy="0">3</tspan>
+</text>
+<text x="919.0" y="344" text-anchor="middle" style="font-size:15.5px;font-weight:750;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="919.0" dy="0">CreatedAt</tspan>
+</text>
+<rect x="1000" y="300" width="130" height="54" rx="8" fill="#F3FBFA" fill-opacity="1.0" stroke="#0C7C86" stroke-width="1.6"/>
+<text x="1065.0" y="322" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#4D5B6A;" opacity="1.0">
+<tspan x="1065.0" dy="0">4</tspan>
+</text>
+<text x="1065.0" y="344" text-anchor="middle" style="font-size:15.5px;font-weight:750;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="1065.0" dy="0">nvarchar</tspan>
+</text>
+<text x="550" y="385" text-anchor="start" style="font-size:16.5px;font-weight:650;fill:#4D5B6A;" opacity="1.0">
+<tspan x="550" dy="0">Every *Sym column stores an integer into this table.</tspan>
+</text>
+<rect x="1165" y="246" width="337" height="160" rx="16" fill="#FFFFFF" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2.5"/>
+<text x="1190" y="278" text-anchor="start" style="font-size:22px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="1190" dy="0">Build-time indexes</tspan>
+</text>
+<text x="1190" y="312" text-anchor="start" style="font-size:15.2px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="1190" dy="0">stringIndex: string -&gt; sym</tspan>
+<tspan x="1190" dy="21">objectIndexById: objectId -&gt; row</tspan>
+<tspan x="1190" dy="21">foreignKeyConstraintIds: Set</tspan>
+</text>
+<rect x="1190" y="369" width="280" height="30" rx="15.0" fill="#EAF7F0" fill-opacity="1.0" stroke="#277A55" stroke-width="2"/>
+<text x="1330.0" y="388.25" text-anchor="middle" style="font-size:12.5px;font-weight:800;fill:#277A55;" opacity="1.0">
+<tspan x="1330.0" dy="0">O(1) dependent-row attachment</tspan>
+</text>
+<text x="532" y="452" text-anchor="start" style="font-size:23px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="532" dy="0">Parallel structure-of-arrays tables</tspan>
+</text>
+<text x="940" y="452" text-anchor="start" style="font-size:16.5px;font-weight:650;fill:#4D5B6A;" opacity="1.0">
+<tspan x="940" dy="0">owner indexes join dependent rows; no per-item heap-object tree</tspan>
+</text>
+<rect x="528" y="480" width="314" height="205" rx="14" fill="#FFFFFF" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="546" y="512" text-anchor="start" style="font-size:19.5px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="546" dy="0">Schemas</tspan>
+</text>
+<text x="546" y="546" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="546" dy="0">schemaIds[]</tspan>
+<tspan x="546" dy="25">schemaNameSyms[]</tspan>
+</text>
+<rect x="858" y="480" width="314" height="205" rx="14" fill="#FFFFFF" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="876" y="512" text-anchor="start" style="font-size:19.5px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="876" dy="0">Objects</tspan>
+</text>
+<text x="876" y="546" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="876" dy="0">objectIds[]</tspan>
+<tspan x="876" dy="25">objectSchemaIds[]</tspan>
+<tspan x="876" dy="25">objectNameSyms[]</tspan>
+<tspan x="876" dy="25">objectKinds[]</tspan>
+<tspan x="876" dy="25">modifyDates[]</tspan>
+</text>
+<rect x="1188" y="480" width="314" height="205" rx="14" fill="#FFFFFF" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="1206" y="512" text-anchor="start" style="font-size:19.5px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="1206" dy="0">Columns</tspan>
+</text>
+<text x="1206" y="546" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="1206" dy="0">columnOwner[]</tspan>
+<tspan x="1206" dy="25">columnNameSyms[]</tspan>
+<tspan x="1206" dy="25">columnTypeSyms[]</tspan>
+<tspan x="1206" dy="25">nullable/identity/computed[]</tspan>
+<tspan x="1206" dy="25">+ exact detail arrays</tspan>
+</text>
+<rect x="1206" y="642" width="278" height="29" rx="14.5" fill="#F0EEFF" fill-opacity="1.0" stroke="#6D5BD0" stroke-width="2"/>
+<text x="1345.0" y="660.852" text-anchor="middle" style="font-size:12.8px;font-weight:800;fill:#4E3DA8;" opacity="1.0">
+<tspan x="1345.0" dy="0">owner[] -&gt; object table row</tspan>
+</text>
+<rect x="528" y="703" width="314" height="205" rx="14" fill="#FFFFFF" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="546" y="735" text-anchor="start" style="font-size:19.5px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="546" dy="0">Keys</tspan>
+</text>
+<text x="546" y="769" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="546" dy="0">keyConstraintOwner[]</tspan>
+<tspan x="546" dy="25">constraintNameSyms[]</tspan>
+<tspan x="546" dy="25">kind[]</tspan>
+<tspan x="546" dy="25">ordered columnSyms[]</tspan>
+</text>
+<rect x="858" y="703" width="314" height="205" rx="14" fill="#FFFFFF" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="876" y="735" text-anchor="start" style="font-size:19.5px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="876" dy="0">Foreign keys</tspan>
+</text>
+<text x="876" y="769" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="876" dy="0">fkFrom[] / fkTo[]</tspan>
+<tspan x="876" dy="25">fkNameSyms[]</tspan>
+<tspan x="876" dy="25">constraintIds[]</tspan>
+<tspan x="876" dy="25">delete/update actions[]</tspan>
+</text>
+<rect x="1188" y="703" width="314" height="205" rx="14" fill="#FFFFFF" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="1206" y="735" text-anchor="start" style="font-size:19.5px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="1206" dy="0">FK pairs</tspan>
+</text>
+<text x="1206" y="769" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="1206" dy="0">constraintIds[]</tspan>
+<tspan x="1206" dy="25">ordinals[]</tspan>
+<tspan x="1206" dy="25">from/to columnSyms[]</tspan>
+<tspan x="1206" dy="25">from/to columnIds[]</tspan>
+</text>
+<rect x="528" y="926" width="314" height="205" rx="14" fill="#FFFFFF" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="546" y="958" text-anchor="start" style="font-size:19.5px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="546" dy="0">Parameters</tspan>
+</text>
+<text x="546" y="992" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="546" dy="0">paramOwner[]</tspan>
+<tspan x="546" dy="25">ordinals[]</tspan>
+<tspan x="546" dy="25">name/typeSyms[]</tspan>
+<tspan x="546" dy="25">output[]</tspan>
+</text>
+<rect x="546" y="1088" width="278" height="29" rx="14.5" fill="#F0EEFF" fill-opacity="1.0" stroke="#6D5BD0" stroke-width="2"/>
+<text x="685.0" y="1106.852" text-anchor="middle" style="font-size:12.8px;font-weight:800;fill:#4E3DA8;" opacity="1.0">
+<tspan x="685.0" dy="0">owner[] -&gt; object table row</tspan>
+</text>
+<rect x="858" y="926" width="314" height="205" rx="14" fill="#FFFFFF" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="876" y="958" text-anchor="start" style="font-size:19.5px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="876" dy="0">Descriptions</tspan>
+</text>
+<text x="876" y="992" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="876" dy="0">descriptionOwner[]</tspan>
+<tspan x="876" dy="25">optional columnSym[]</tspan>
+<tspan x="876" dy="25">valueSym[]</tspan>
+<tspan x="876" dy="25">live-only by current policy</tspan>
+</text>
+<rect x="876" y="1088" width="278" height="29" rx="14.5" fill="#F0EEFF" fill-opacity="1.0" stroke="#6D5BD0" stroke-width="2"/>
+<text x="1015.0" y="1106.852" text-anchor="middle" style="font-size:12.8px;font-weight:800;fill:#4E3DA8;" opacity="1.0">
+<tspan x="1015.0" dy="0">owner[] -&gt; object table row</tspan>
+</text>
+<rect x="1188" y="926" width="314" height="205" rx="14" fill="#EAF0F5" fill-opacity="1.0" stroke="#2D6CDF" stroke-width="2"/>
+<text x="1206" y="958" text-anchor="start" style="font-size:19.5px;font-weight:900;fill:#2D6CDF;" opacity="1.0">
+<tspan x="1206" dy="0">Environment</tspan>
+</text>
+<text x="1206" y="992" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="1206" dy="0">engineEdition</tspan>
+<tspan x="1206" dy="25">defaultSchema</tspan>
+<tspan x="1206" dy="25">collationName</tspan>
+<tspan x="1206" dy="25">caseSensitive / unknown</tspan>
+</text>
+<polyline points="830,406 830,430 685.0,430 685.0,480" fill="none" stroke="#0C7C86" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.75" stroke-dasharray="7 7" marker-end="url(#m1)"/>
+<polyline points="830,406 830,430 1015.0,430 1015.0,480" fill="none" stroke="#0C7C86" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.75" stroke-dasharray="7 7" marker-end="url(#m1)"/>
+<polyline points="830,406 830,430 1345.0,430 1345.0,480" fill="none" stroke="#0C7C86" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.75" stroke-dasharray="7 7" marker-end="url(#m1)"/>
+<polyline points="830,406 830,430 1345.0,430 1345.0,703" fill="none" stroke="#0C7C86" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.75" stroke-dasharray="7 7" marker-end="url(#m1)"/>
+<polyline points="830,406 830,430 1015.0,430 1015.0,926" fill="none" stroke="#0C7C86" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.75" stroke-dasharray="7 7" marker-end="url(#m1)"/>
+<line x1="455" y1="400" x2="500" y2="400" stroke="#0C7C86" stroke-width="4" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<line x1="455" y1="560" x2="500" y2="560" stroke="#0C7C86" stroke-width="4" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<line x1="455" y1="740" x2="500" y2="740" stroke="#0C7C86" stroke-width="4" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<line x1="455" y1="930" x2="500" y2="930" stroke="#0C7C86" stroke-width="4" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<text x="477" y="376" text-anchor="middle" style="font-size:14.5px;font-weight:800;fill:#075D66;" opacity="1.0">
+<tspan x="477" dy="0">typed compact rows</tspan>
+</text>
+<rect x="1548" y="566" width="142" height="130" rx="18" fill="#F3FBFA" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2.5"/>
+<text x="1619" y="601" text-anchor="middle" style="font-size:15.2px;font-weight:850;fill:#075D66;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="1619" dy="0">build(N+1,</tspan>
+<tspan x="1619" dy="23">readiness,</tspan>
+<tspan x="1619" dy="23">mode)</tspan>
+</text>
+<line x1="1530" y1="631" x2="1548" y2="631" stroke="#0C7C86" stroke-width="5" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<line x1="1690" y1="631" x2="1710" y2="631" stroke="#0C7C86" stroke-width="5" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="1539" y="714" width="160" height="42" rx="21.0" fill="#EAF7F0" fill-opacity="1.0" stroke="#277A55" stroke-width="2"/>
+<text x="1619.0" y="739.42" text-anchor="middle" style="font-size:13px;font-weight:800;fill:#277A55;" opacity="1.0">
+<tspan x="1619.0" dy="0">ATOMIC FULL REPLACE</tspan>
+</text>
+<rect x="1710" y="170" width="630" height="1095" rx="24" fill="#FBFEFD" fill-opacity="1.0" stroke="#0C7C86" stroke-width="3"/>
+<rect x="1710" y="170" width="630" height="48" rx="24" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="0"/>
+<rect x="1710" y="194" width="630" height="24" rx="0" fill="#E9F7F4" fill-opacity="1.0" stroke="#E9F7F4" stroke-width="0"/>
+<text x="1728" y="204" text-anchor="start" style="font-size:24px;font-weight:850;fill:#0C7C86;" opacity="1.0">
+<tspan x="1728" dy="0">CatalogSnapshot - immutable generation N</tspan>
+</text>
+<rect x="2074" y="293.48" width="140" height="502.4" rx="14" fill="#FFFFFF" fill-opacity="0.4" stroke="#0C7C86" stroke-width="2"/>
+<text x="2144" y="328.48" text-anchor="middle" style="font-size:17px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="2144" dy="0">N-3</tspan>
+</text>
+<rect x="2102" y="281.72" width="140" height="513.6" rx="14" fill="#FFFFFF" fill-opacity="0.56" stroke="#0C7C86" stroke-width="2"/>
+<text x="2172" y="316.72" text-anchor="middle" style="font-size:17px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="2172" dy="0">N-2</tspan>
+</text>
+<rect x="2130" y="269.96" width="140" height="524.8" rx="14" fill="#FFFFFF" fill-opacity="0.72" stroke="#0C7C86" stroke-width="2"/>
+<text x="2200" y="304.96" text-anchor="middle" style="font-size:17px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="2200" dy="0">N-1</tspan>
+</text>
+<rect x="1738" y="254" width="420" height="560" rx="18" fill="#FFFFFF" fill-opacity="1.0" stroke="#0C7C86" stroke-width="3"/>
+<text x="1759" y="290" text-anchor="start" style="font-size:21px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="1759" dy="0">A. Header / truth</tspan>
+</text>
+<text x="1760" y="326" text-anchor="start" style="font-size:16.2px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1760" dy="0">generation + capturedAtUtc</tspan>
+<tspan x="1760" dy="24">optional contentHash</tspan>
+<tspan x="1760" dy="24">mode: full | partial | lite</tspan>
+<tspan x="1760" dy="24">section state: absent/loading/</tspan>
+<tspan x="1760" dy="24">ready/failed/stale/lite</tspan>
+</text>
+<rect x="1760" y="446" width="375" height="42" rx="21.0" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="1947.5" y="471.76" text-anchor="middle" style="font-size:14px;font-weight:800;fill:#A86500;" opacity="1.0">
+<tspan x="1947.5" dy="0">READINESS != FRESHNESS / AGE</tspan>
+</text>
+<text x="1759" y="520" text-anchor="start" style="font-size:21px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="1759" dy="0">B. Shared SoA + read-only indexes</tspan>
+</text>
+<text x="1760" y="556" text-anchor="start" style="font-size:15.7px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1760" dy="0">same interned arrays</tspan>
+<tspan x="1760" dy="23">objectId -&gt; object row</tspan>
+<tspan x="1760" dy="23">folded-name prefix index</tspan>
+<tspan x="1760" dy="23">schemaId -&gt; schema name</tspan>
+<tspan x="1760" dy="23">column/parameter [start,end) ranges</tspan>
+<tspan x="1760" dy="23">PK/UQ, FK-pair, degree, description maps</tspan>
+</text>
+<text x="1759" y="702" text-anchor="start" style="font-size:21px;font-weight:900;fill:#075D66;" opacity="1.0">
+<tspan x="1759" dy="0">C. Pure synchronous APIs</tspan>
+</text>
+<text x="1760" y="737" text-anchor="start" style="font-size:15.7px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="1760" dy="0">resolveName / search / list</tspan>
+<tspan x="1760" dy="23">getColumns / getKeys / getFKs</tspan>
+<tspan x="1760" dy="23">getParameters / bounded context</tspan>
+</text>
+<text x="2210" y="600" text-anchor="middle" style="font-size:17px;font-weight:850;fill:#075D66;" opacity="1.0">
+<tspan x="2210" dy="0">older</tspan>
+<tspan x="2210" dy="23">generations</tspan>
+<tspan x="2210" dy="23">remain valid</tspan>
+<tspan x="2210" dy="23">for holders</tspan>
+</text>
+<rect x="1738" y="816" width="574" height="170" rx="16" fill="#F0EEFF" fill-opacity="1.0" stroke="#6D5BD0" stroke-width="2.5"/>
+<text x="1762" y="854" text-anchor="start" style="font-size:22px;font-weight:900;fill:#4E3DA8;" opacity="1.0">
+<tspan x="1762" dy="0">Pinned reader contract</tspan>
+</text>
+<circle cx="1768" cy="887.41" r="3.5" fill="#6D5BD0" stroke="#6D5BD0" stroke-width="1"/>
+<text x="1781" y="892" text-anchor="start" style="font-size:17px;font-weight:450;fill:#18222D;" opacity="1.0">
+<tspan x="1781" dy="0">pin one generation for the whole response</tspan>
+</text>
+<circle cx="1768" cy="912.41" r="3.5" fill="#6D5BD0" stroke="#6D5BD0" stroke-width="1"/>
+<text x="1781" y="917" text-anchor="start" style="font-size:17px;font-weight:450;fill:#18222D;" opacity="1.0">
+<tspan x="1781" dy="0">never mix N and N+1 during one operation</tspan>
+</text>
+<circle cx="1768" cy="937.41" r="3.5" fill="#6D5BD0" stroke="#6D5BD0" stroke-width="1"/>
+<text x="1781" y="942" text-anchor="start" style="font-size:17px;font-weight:450;fill:#18222D;" opacity="1.0">
+<tspan x="1781" dy="0">read methods perform no I/O and no mutation</tspan>
+</text>
+<rect x="1738" y="1016" width="574" height="155" rx="16" fill="#FFFFFF" fill-opacity="1.0" stroke="#2D6CDF" stroke-width="2.5"/>
+<path d="M1767.0,1052.0 L1785.0,1052.0 L1793.0,1060.0 L1793.0,1088.0 L1767.0,1088.0 Z" fill="none" stroke="#2D6CDF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" opacity="1.0"/>
+<line x1="1785.0" y1="1052.0" x2="1785.0" y2="1061.2" stroke="#2D6CDF" stroke-width="3.2" stroke-linecap="round" opacity="1.0"/>
+<line x1="1785.0" y1="1061.2" x2="1793.0" y2="1061.2" stroke="#2D6CDF" stroke-width="3.2" stroke-linecap="round" opacity="1.0"/>
+<line x1="1771.8" y1="1068.4" x2="1787.8" y2="1068.4" stroke="#2D6CDF" stroke-width="3.2" stroke-linecap="round" opacity="1.0"/>
+<line x1="1771.8" y1="1075.6" x2="1787.8" y2="1075.6" stroke="#2D6CDF" stroke-width="3.2" stroke-linecap="round" opacity="1.0"/>
+<text x="1815" y="1075" text-anchor="start" style="font-size:21px;font-weight:900;fill:#2D6CDF;" opacity="1.0">
+<tspan x="1815" dy="0">Lazy module definitions</tspan>
+</text>
+<text x="1760" y="1113" text-anchor="start" style="font-size:16.2px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1760" dy="0">sys.sql_modules on explicit resolve</tspan>
+<tspan x="1760" dy="24">cached only for the current generation</tspan>
+<tspan x="1760" dy="24">never included in the persistent payload</tspan>
+</text>
+<rect x="1738" y="1200" width="276" height="48" rx="24.0" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2"/>
+<text x="1876.0" y="1229.27" text-anchor="middle" style="font-size:15.5px;font-weight:800;fill:#0C7C86;" opacity="1.0">
+<tspan x="1876.0" dy="0">INTERNED + COMPACT</tspan>
+</text>
+<rect x="2036" y="1200" width="276" height="48" rx="24.0" fill="#EAF7F0" fill-opacity="1.0" stroke="#277A55" stroke-width="2"/>
+<text x="2174.0" y="1229.27" text-anchor="middle" style="font-size:15.5px;font-weight:800;fill:#277A55;" opacity="1.0">
+<tspan x="2174.0" dy="0">CONSISTENT + IMMUTABLE</tspan>
+</text>
+<rect x="60" y="1280" width="2280" height="44" rx="14" fill="#FFFFFF" fill-opacity="1.0" stroke="#C7D2DE" stroke-width="1.5"/>
+<text x="1200" y="1308" text-anchor="middle" style="font-size:18px;font-weight:800;fill:#4D5B6A;" opacity="1.0">
+<tspan x="1200" dy="0">Private mutable build  -&gt;  atomic CatalogSnapshot  -&gt;  pinned generation  -&gt;  synchronous consumer reads</tspan>
+</text>
+</svg>

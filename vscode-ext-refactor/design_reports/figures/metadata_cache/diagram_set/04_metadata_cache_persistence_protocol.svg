@@ -1,0 +1,341 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1350" viewBox="0 0 2400 1350">
+<defs>
+<style>text{font-family:Lato, 'Noto Sans', Arial, sans-serif;fill:#18222D;}.title{font-weight:900;letter-spacing:-0.4px;}.region{font-weight:800;}.cardtitle{font-weight:800;}.smallcaps{font-weight:800;letter-spacing:0.7px;}</style>
+<marker id="m1" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,5 L0,10 z" fill="#A86500"/></marker>
+<marker id="m2" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,5 L0,10 z" fill="#A43842"/></marker>
+<marker id="m3" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,5 L0,10 z" fill="#6D5BD0"/></marker>
+</defs>
+<rect x="0" y="0" width="2400" height="1350" fill="#FFFFFF"/>
+<text x="70" y="72" text-anchor="start" style="font-size:55px;font-weight:900;fill:#18222D;" opacity="1.0" class="title">
+<tspan x="70" dy="0">Persistent Catalog Cache: Trust and Publication Protocol</tspan>
+</text>
+<text x="72" y="116" text-anchor="start" style="font-size:23px;font-weight:500;fill:#4D5B6A;" opacity="1.0">
+<tspan x="72" dy="0">The cache is an optional projection of a published database snapshot. It is verified local input, never catalog authority.</tspan>
+</text>
+<line x1="70" y1="137" x2="2330" y2="137" stroke="#C7D2DE" stroke-width="2" stroke-linecap="round" opacity="1.0"/>
+<rect x="60" y="170" width="2280" height="180" rx="24" fill="#FFFEFA" fill-opacity="1.0" stroke="#A86500" stroke-width="3"/>
+<rect x="60" y="170" width="2280" height="48" rx="24" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="0"/>
+<rect x="60" y="194" width="2280" height="24" rx="0" fill="#FFF5DD" fill-opacity="1.0" stroke="#FFF5DD" stroke-width="0"/>
+<text x="78" y="204" text-anchor="start" style="font-size:26px;font-weight:850;fill:#A86500;" opacity="1.0">
+<tspan x="78" dy="0">On-disk representation</tspan>
+</text>
+<rect x="94.0" y="255.0" width="32.0" height="24.0" rx="4" fill="none" fill-opacity="1.0" stroke="#A86500" stroke-width="4.0"/>
+<path d="M101.0,255.0 L101.0,248.0 C101.0,234.5 119.0,234.5 119.0,248.0 L119.0,255.0" fill="none" stroke="#A86500" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round" opacity="1.0"/>
+<text x="153" y="246" text-anchor="start" style="font-size:23px;font-weight:900;fill:#A86500;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="153" dy="0">globalStorage/metadata-cache/v1/</tspan>
+</text>
+<text x="153" y="282" text-anchor="start" style="font-size:17px;font-weight:650;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="153" dy="0">index.json (advisory listing/LRU; approximate across windows)</tspan>
+</text>
+<text x="765" y="246" text-anchor="start" style="font-size:21px;font-weight:850;fill:#A86500;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="765" dy="0">databases/&lt;sfp_*&gt;/&lt;dbh_...&gt;/</tspan>
+</text>
+<rect x="765" y="263" width="185" height="38" rx="9" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="1.5"/>
+<text x="857.5" y="288" text-anchor="middle" style="font-size:13.2px;font-weight:700;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="857.5" dy="0">.publication.lock</tspan>
+</text>
+<rect x="962" y="263" width="165" height="38" rx="9" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="1.5"/>
+<text x="1044.5" y="288" text-anchor="middle" style="font-size:13.2px;font-weight:700;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="1044.5" dy="0">manifest.json</tspan>
+</text>
+<rect x="1139" y="263" width="390" height="38" rx="9" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="1.5"/>
+<text x="1334.0" y="288" text-anchor="middle" style="font-size:13.2px;font-weight:700;fill:#18222D;" opacity="1.0" font-family="'DejaVu Sans Mono', Consolas, monospace">
+<tspan x="1334.0" dy="0">catalog.&lt;compressed-sha256&gt;.json.gz</tspan>
+</text>
+<rect x="1735" y="224" width="560" height="45" rx="22.5" fill="#EAF0F5" fill-opacity="1.0" stroke="#2D6CDF" stroke-width="2"/>
+<text x="2015.0" y="251.77" text-anchor="middle" style="font-size:15.5px;font-weight:800;fill:#2D6CDF;" opacity="1.0">
+<tspan x="2015.0" dy="0">ONLY DATABASE SNAPSHOTS ARE PERSISTED</tspan>
+</text>
+<text x="2015" y="299" text-anchor="middle" style="font-size:14.5px;font-weight:650;fill:#4D5B6A;" opacity="1.0">
+<tspan x="2015" dy="0">server catalogs and auxiliary sections remain live/lazy memory structures</tspan>
+</text>
+<rect x="60" y="390" width="1085" height="800" rx="24" fill="#FFFEFA" fill-opacity="1.0" stroke="#A86500" stroke-width="3"/>
+<rect x="60" y="390" width="1085" height="48" rx="24" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="0"/>
+<rect x="60" y="414" width="1085" height="24" rx="0" fill="#FFF5DD" fill-opacity="1.0" stroke="#FFF5DD" stroke-width="0"/>
+<text x="78" y="424" text-anchor="start" style="font-size:26px;font-weight:850;fill:#A86500;" opacity="1.0">
+<tspan x="78" dy="0">Verified READ path</tspan>
+</text>
+<rect x="1190" y="390" width="1150" height="800" rx="24" fill="#FFFEFA" fill-opacity="1.0" stroke="#A86500" stroke-width="3"/>
+<rect x="1190" y="390" width="1150" height="48" rx="24" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="0"/>
+<rect x="1190" y="414" width="1150" height="24" rx="0" fill="#FFF5DD" fill-opacity="1.0" stroke="#FFF5DD" stroke-width="0"/>
+<text x="1208" y="424" text-anchor="start" style="font-size:26px;font-weight:850;fill:#A86500;" opacity="1.0">
+<tspan x="1208" dy="0">Atomic WRITE and cross-window authority</tspan>
+</text>
+<circle cx="105" cy="512" r="24" fill="#A86500" stroke="#A86500" stroke-width="1"/>
+<text x="105" y="520" text-anchor="middle" style="font-size:18px;font-weight:900;fill:#FFFFFF;" opacity="1.0">
+<tspan x="105" dy="0">1</tspan>
+</text>
+<rect x="145" y="470" width="940" height="89" rx="15" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="170" y="504" text-anchor="start" style="font-size:20px;font-weight:900;fill:#A86500;" opacity="1.0">
+<tspan x="170" dy="0">Manifest contract</tspan>
+</text>
+<text x="170" y="534" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="170" dy="0">format / codec / model / shape</tspan>
+</text>
+<line x1="105" y1="536" x2="105" y2="572" stroke="#A86500" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<circle cx="105" cy="617" r="24" fill="#A86500" stroke="#A86500" stroke-width="1"/>
+<text x="105" y="625" text-anchor="middle" style="font-size:18px;font-weight:900;fill:#FFFFFF;" opacity="1.0">
+<tspan x="105" dy="0">2</tspan>
+</text>
+<rect x="145" y="575" width="940" height="89" rx="15" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="170" y="609" text-anchor="start" style="font-size:20px;font-weight:900;fill:#A86500;" opacity="1.0">
+<tspan x="170" dy="0">Requested-key binding</tspan>
+</text>
+<text x="170" y="639" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="170" dy="0">server fingerprint + database hash + optional exact name</tspan>
+</text>
+<line x1="105" y1="641" x2="105" y2="677" stroke="#A86500" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<circle cx="105" cy="722" r="24" fill="#A86500" stroke="#A86500" stroke-width="1"/>
+<text x="105" y="730" text-anchor="middle" style="font-size:18px;font-weight:900;fill:#FFFFFF;" opacity="1.0">
+<tspan x="105" dy="0">3</tspan>
+</text>
+<rect x="145" y="680" width="940" height="89" rx="15" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="170" y="714" text-anchor="start" style="font-size:20px;font-weight:900;fill:#A86500;" opacity="1.0">
+<tspan x="170" dy="0">Physical bytes</tspan>
+</text>
+<text x="170" y="744" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="170" dy="0">file exists; compressed-size bound; SHA-256; bounded gunzip</tspan>
+</text>
+<line x1="105" y1="746" x2="105" y2="782" stroke="#A86500" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<circle cx="105" cy="827" r="24" fill="#A86500" stroke="#A86500" stroke-width="1"/>
+<text x="105" y="835" text-anchor="middle" style="font-size:18px;font-weight:900;fill:#FFFFFF;" opacity="1.0">
+<tspan x="105" dy="0">4</tspan>
+</text>
+<rect x="145" y="785" width="940" height="89" rx="15" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="170" y="819" text-anchor="start" style="font-size:20px;font-weight:900;fill:#A86500;" opacity="1.0">
+<tspan x="170" dy="0">Logical payload</tspan>
+</text>
+<text x="170" y="849" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="170" dy="0">parallel-array + referential invariants; canonical contentHash</tspan>
+</text>
+<line x1="105" y1="851" x2="105" y2="887" stroke="#A86500" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<circle cx="105" cy="932" r="24" fill="#A86500" stroke="#A86500" stroke-width="1"/>
+<text x="105" y="940" text-anchor="middle" style="font-size:18px;font-weight:900;fill:#FFFFFF;" opacity="1.0">
+<tspan x="105" dy="0">5</tspan>
+</text>
+<rect x="145" y="890" width="940" height="89" rx="15" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="170" y="924" text-anchor="start" style="font-size:20px;font-weight:900;fill:#A86500;" opacity="1.0">
+<tspan x="170" dy="0">Policy intersection</tspan>
+</text>
+<text x="170" y="954" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="170" dy="0">privacy/readiness may be reduced, never elevated</tspan>
+</text>
+<line x1="105" y1="956" x2="105" y2="992" stroke="#A86500" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<circle cx="105" cy="1037" r="24" fill="#277A55" stroke="#277A55" stroke-width="1"/>
+<text x="105" y="1045" text-anchor="middle" style="font-size:18px;font-weight:900;fill:#FFFFFF;" opacity="1.0">
+<tspan x="105" dy="0">6</tspan>
+</text>
+<rect x="145" y="995" width="940" height="89" rx="15" fill="#EAF7F0" fill-opacity="1.0" stroke="#277A55" stroke-width="2"/>
+<text x="170" y="1029" text-anchor="start" style="font-size:20px;font-weight:900;fill:#277A55;" opacity="1.0">
+<tspan x="170" dy="0">Publish from disk</tspan>
+</text>
+<text x="170" y="1059" text-anchor="start" style="font-size:15.8px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="170" dy="0">rehydrate with original capture age + generation</tspan>
+</text>
+<line x1="145" y1="512" x2="82" y2="512" stroke="#A43842" stroke-width="2" stroke-linecap="round" opacity="1.0" stroke-dasharray="7 7"/>
+<line x1="145" y1="617" x2="82" y2="617" stroke="#A43842" stroke-width="2" stroke-linecap="round" opacity="1.0" stroke-dasharray="7 7"/>
+<line x1="145" y1="722" x2="82" y2="722" stroke="#A43842" stroke-width="2" stroke-linecap="round" opacity="1.0" stroke-dasharray="7 7"/>
+<line x1="145" y1="827" x2="82" y2="827" stroke="#A43842" stroke-width="2" stroke-linecap="round" opacity="1.0" stroke-dasharray="7 7"/>
+<line x1="145" y1="932" x2="82" y2="932" stroke="#A43842" stroke-width="2" stroke-linecap="round" opacity="1.0" stroke-dasharray="7 7"/>
+<polyline points="82,512 82,1125 165,1125" fill="none" stroke="#A43842" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="1.0" stroke-dasharray="10 8" marker-end="url(#m2)"/>
+<rect x="165" y="1092" width="920" height="76" rx="16" fill="#FFF0F1" fill-opacity="1.0" stroke="#A43842" stroke-width="2.5"/>
+<text x="190" y="1121" text-anchor="start" style="font-size:19px;font-weight:900;fill:#A43842;" opacity="1.0">
+<tspan x="190" dy="0">Any failed proof -&gt; SAFE MISS</tspan>
+</text>
+<text x="190" y="1142" text-anchor="start" style="font-size:13.2px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="190" dy="0">invalidate manifest; quarantine/delete best effort</tspan>
+<tspan x="190" dy="17">live hydrate only if network policy allows</tspan>
+</text>
+<rect x="760" y="1109" width="295" height="42" rx="21.0" fill="#FFFFFF" fill-opacity="1.0" stroke="#A43842" stroke-width="2"/>
+<text x="907.5" y="1134.488" text-anchor="middle" style="font-size:13.2px;font-weight:800;fill:#A43842;" opacity="1.0">
+<tspan x="907.5" dy="0">NEVER ADOPT PARTIAL TRUST</tspan>
+</text>
+<rect x="1220" y="475" width="230" height="132" rx="16" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2.5"/>
+<text x="1335.0" y="509" text-anchor="middle" style="font-size:18.5px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="1335.0" dy="0">Eligible snapshot</tspan>
+</text>
+<text x="1335.0" y="541" text-anchor="middle" style="font-size:14.2px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1335.0" dy="0">published DB snapshot</tspan>
+<tspan x="1335.0" dy="20">debounce 5 s</tspan>
+<tspan x="1335.0" dy="20">latest generation wins</tspan>
+</text>
+<rect x="1482" y="475" width="245" height="132" rx="16" fill="#E9F7F4" fill-opacity="1.0" stroke="#0C7C86" stroke-width="2.5"/>
+<text x="1604.5" y="509" text-anchor="middle" style="font-size:18.5px;font-weight:900;fill:#0C7C86;" opacity="1.0">
+<tspan x="1604.5" dy="0">Canonical projection</tspan>
+</text>
+<text x="1604.5" y="541" text-anchor="middle" style="font-size:14.2px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1604.5" dy="0">CatalogCodecView -&gt; cm2 JSON</tspan>
+<tspan x="1604.5" dy="20">frozen field order</tspan>
+<tspan x="1604.5" dy="20">strip prose / SQL definitions</tspan>
+</text>
+<rect x="1759" y="475" width="230" height="132" rx="16" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="2.5"/>
+<text x="1874.0" y="509" text-anchor="middle" style="font-size:18.5px;font-weight:900;fill:#A86500;" opacity="1.0">
+<tspan x="1874.0" dy="0">Hash + compress</tspan>
+</text>
+<text x="1874.0" y="541" text-anchor="middle" style="font-size:14.2px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1874.0" dy="0">logical csh_* over canonical JSON</tspan>
+<tspan x="1874.0" dy="20">gzip + compressed SHA</tspan>
+<tspan x="1874.0" dy="20">enforce 32 MiB cap</tspan>
+</text>
+<rect x="2021" y="475" width="260" height="132" rx="16" fill="#F0EEFF" fill-opacity="1.0" stroke="#6D5BD0" stroke-width="2.5"/>
+<text x="2151.0" y="509" text-anchor="middle" style="font-size:18.5px;font-weight:900;fill:#6D5BD0;" opacity="1.0">
+<tspan x="2151.0" dy="0">Per-key authority</tspan>
+</text>
+<text x="2151.0" y="541" text-anchor="middle" style="font-size:14.2px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="2151.0" dy="0">exclusive per-key lock</tspan>
+<tspan x="2151.0" dy="20">capturedAtUtc authority</tspan>
+<tspan x="2151.0" dy="20">equal time -&gt; ordinal contentHash</tspan>
+</text>
+<line x1="1450.0" y1="541" x2="1482.0" y2="541" stroke="#A86500" stroke-width="4" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<line x1="1727.0" y1="541" x2="1759.0" y2="541" stroke="#A86500" stroke-width="4" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<line x1="1989.0" y1="541" x2="2021.0" y2="541" stroke="#A86500" stroke-width="4" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<text x="1224" y="650" text-anchor="start" style="font-size:21px;font-weight:900;fill:#A86500;" opacity="1.0">
+<tspan x="1224" dy="0">Commit sequence under the winning publication decision</tspan>
+</text>
+<rect x="1220" y="694" width="175" height="118" rx="15" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="2.3"/>
+<circle cx="1245" cy="719" r="18" fill="#A86500" stroke="#A86500" stroke-width="1"/>
+<text x="1245" y="725" text-anchor="middle" style="font-size:14px;font-weight:900;fill:#FFFFFF;" opacity="1.0">
+<tspan x="1245" dy="0">1</tspan>
+</text>
+<text x="1314.5" y="742" text-anchor="middle" style="font-size:16.2px;font-weight:900;fill:#A86500;" opacity="1.0">
+<tspan x="1314.5" dy="0">payload temp</tspan>
+</text>
+<text x="1307.5" y="773" text-anchor="middle" style="font-size:12.8px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1307.5" dy="0">write + fsync</tspan>
+</text>
+<line x1="1395" y1="753" x2="1411" y2="753" stroke="#A86500" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="1413" y="694" width="205" height="118" rx="15" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="2.3"/>
+<circle cx="1438" cy="719" r="18" fill="#A86500" stroke="#A86500" stroke-width="1"/>
+<text x="1438" y="725" text-anchor="middle" style="font-size:14px;font-weight:900;fill:#FFFFFF;" opacity="1.0">
+<tspan x="1438" dy="0">2</tspan>
+</text>
+<text x="1522.5" y="742" text-anchor="middle" style="font-size:15.5px;font-weight:900;fill:#A86500;" opacity="1.0">
+<tspan x="1522.5" dy="0">payload rename</tspan>
+</text>
+<text x="1515.5" y="773" text-anchor="middle" style="font-size:12.8px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1515.5" dy="0">content-addressed filename</tspan>
+</text>
+<line x1="1618" y1="753" x2="1634" y2="753" stroke="#A86500" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="1636" y="694" width="175" height="118" rx="15" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="2.3"/>
+<circle cx="1661" cy="719" r="18" fill="#A86500" stroke="#A86500" stroke-width="1"/>
+<text x="1661" y="725" text-anchor="middle" style="font-size:14px;font-weight:900;fill:#FFFFFF;" opacity="1.0">
+<tspan x="1661" dy="0">3</tspan>
+</text>
+<text x="1730.5" y="742" text-anchor="middle" style="font-size:16.2px;font-weight:900;fill:#A86500;" opacity="1.0">
+<tspan x="1730.5" dy="0">manifest temp</tspan>
+</text>
+<text x="1723.5" y="773" text-anchor="middle" style="font-size:12.8px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1723.5" dy="0">write + fsync</tspan>
+</text>
+<line x1="1811" y1="753" x2="1827" y2="753" stroke="#A86500" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="1829" y="694" width="225" height="118" rx="15" fill="#EAF7F0" fill-opacity="1.0" stroke="#277A55" stroke-width="2.3"/>
+<circle cx="1854" cy="719" r="18" fill="#277A55" stroke="#277A55" stroke-width="1"/>
+<text x="1854" y="725" text-anchor="middle" style="font-size:14px;font-weight:900;fill:#FFFFFF;" opacity="1.0">
+<tspan x="1854" dy="0">4</tspan>
+</text>
+<text x="1948.5" y="742" text-anchor="middle" style="font-size:15.5px;font-weight:900;fill:#277A55;" opacity="1.0">
+<tspan x="1948.5" dy="0">manifest rename LAST</tspan>
+</text>
+<text x="1941.5" y="773" text-anchor="middle" style="font-size:12.8px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1941.5" dy="0">pointer becomes authoritative</tspan>
+</text>
+<line x1="2054" y1="753" x2="2070" y2="753" stroke="#A86500" stroke-width="3" stroke-linecap="round" opacity="1.0" marker-end="url(#m1)"/>
+<rect x="2072" y="694" width="170" height="118" rx="15" fill="#FFFFFF" fill-opacity="1.0" stroke="#A86500" stroke-width="2.3"/>
+<circle cx="2097" cy="719" r="18" fill="#A86500" stroke="#A86500" stroke-width="1"/>
+<text x="2097" y="725" text-anchor="middle" style="font-size:14px;font-weight:900;fill:#FFFFFF;" opacity="1.0">
+<tspan x="2097" dy="0">5</tspan>
+</text>
+<text x="2164.0" y="742" text-anchor="middle" style="font-size:16.2px;font-weight:900;fill:#A86500;" opacity="1.0">
+<tspan x="2164.0" dy="0">postcheck</tspan>
+</text>
+<text x="2157.0" y="773" text-anchor="middle" style="font-size:12.8px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="2157.0" dy="0">winning writer / equality proof</tspan>
+</text>
+<text x="1224" y="860" text-anchor="start" style="font-size:21px;font-weight:900;fill:#4E3DA8;" opacity="1.0">
+<tspan x="1224" dy="0">Why the per-key lock is load-bearing</tspan>
+</text>
+<rect x="1220" y="895" width="1090" height="206" rx="17" fill="#FFFFFF" fill-opacity="1.0" stroke="#6D5BD0" stroke-width="2.5"/>
+<text x="1245" y="928" text-anchor="start" style="font-size:17.5px;font-weight:900;fill:#A43842;" opacity="1.0">
+<tspan x="1245" dy="0">Writer A - older capture</tspan>
+</text>
+<text x="1245" y="1004" text-anchor="start" style="font-size:17.5px;font-weight:900;fill:#277A55;" opacity="1.0">
+<tspan x="1245" dy="0">Writer B - newer capture</tspan>
+</text>
+<line x1="1500" y1="925" x2="2245" y2="925" stroke="#C7D2DE" stroke-width="3" stroke-linecap="round" opacity="1.0"/>
+<line x1="1500" y1="1001" x2="2245" y2="1001" stroke="#C7D2DE" stroke-width="3" stroke-linecap="round" opacity="1.0"/>
+<circle cx="1560" cy="925" r="8" fill="#A43842" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1560" y="957" text-anchor="middle" style="font-size:13px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1560" dy="0">read M0</tspan>
+</text>
+<circle cx="1760" cy="925" r="8" fill="#A43842" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1760" y="957" text-anchor="middle" style="font-size:13px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1760" dy="0">A pauses</tspan>
+</text>
+<circle cx="2040" cy="925" r="8" fill="#6D5BD0" stroke="#FFFFFF" stroke-width="2"/>
+<text x="2040" y="957" text-anchor="middle" style="font-size:13px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="2040" dy="0">waits for lock</tspan>
+</text>
+<circle cx="2220" cy="925" r="8" fill="#6D5BD0" stroke="#FFFFFF" stroke-width="2"/>
+<text x="2220" y="957" text-anchor="middle" style="font-size:13px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="2220" dy="0">sees newer B</tspan>
+</text>
+<circle cx="1605" cy="1001" r="8" fill="#277A55" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1605" y="1033" text-anchor="middle" style="font-size:13px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1605" dy="0">read M0</tspan>
+</text>
+<circle cx="1795" cy="1001" r="8" fill="#277A55" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1795" y="1033" text-anchor="middle" style="font-size:13px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1795" dy="0">lock</tspan>
+</text>
+<circle cx="1955" cy="1001" r="8" fill="#277A55" stroke="#FFFFFF" stroke-width="2"/>
+<text x="1955" y="1033" text-anchor="middle" style="font-size:13px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1955" dy="0">payload</tspan>
+</text>
+<circle cx="2085" cy="1001" r="8" fill="#277A55" stroke="#FFFFFF" stroke-width="2"/>
+<text x="2085" y="1033" text-anchor="middle" style="font-size:13px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="2085" dy="0">manifest last</tspan>
+</text>
+<circle cx="2220" cy="1001" r="8" fill="#277A55" stroke="#FFFFFF" stroke-width="2"/>
+<text x="2220" y="1033" text-anchor="middle" style="font-size:13px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="2220" dy="0">commit</tspan>
+</text>
+<polyline points="1795,1001 1795,1072 2040,1072 2040,925" fill="none" stroke="#6D5BD0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="1.0" stroke-dasharray="8 7" marker-end="url(#m3)"/>
+<rect x="1530" y="1052" width="720" height="38" rx="19.0" fill="#F0EEFF" fill-opacity="1.0" stroke="#6D5BD0" stroke-width="2"/>
+<text x="1890.0" y="1075.59" text-anchor="middle" style="font-size:13.5px;font-weight:800;fill:#4E3DA8;" opacity="1.0">
+<tspan x="1890.0" dy="0">A&#x27;S DECISION WAITS; A CANNOT INSTALL AN OLDER MANIFEST AFTER B</tspan>
+</text>
+<rect x="1220" y="1118" width="780" height="58" rx="12" fill="#EAF0F5" fill-opacity="1.0" stroke="#2D6CDF" stroke-width="2"/>
+<text x="1610" y="1140" text-anchor="middle" style="font-size:12.2px;font-weight:650;fill:#18222D;" opacity="1.0">
+<tspan x="1610" dy="0">Manifest: producer | writerId | key | capture/generation/source | validation</tspan>
+<tspan x="1610" dy="18">environment | readiness/mode | payload file/SHA/contentHash</tspan>
+</text>
+<rect x="2015" y="1124" width="295" height="46" rx="23.0" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="2162.5" y="1151.182" text-anchor="middle" style="font-size:12.3px;font-weight:800;fill:#A86500;" opacity="1.0">
+<tspan x="2162.5" dy="0">CONTENT ADDRESSING PROTECTS BYTES</tspan>
+</text>
+<rect x="60" y="1215" width="2280" height="92" rx="18" fill="#FFFFFF" fill-opacity="1.0" stroke="#C7D2DE" stroke-width="2"/>
+<rect x="82" y="1238" width="190" height="46" rx="23.0" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="177.0" y="1265.93" text-anchor="middle" style="font-size:14.5px;font-weight:800;fill:#A86500;" opacity="1.0">
+<tspan x="177.0" dy="0">DEFAULT OFF</tspan>
+</text>
+<rect x="287" y="1238" width="235" height="46" rx="23.0" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="404.5" y="1265.93" text-anchor="middle" style="font-size:14.5px;font-weight:800;fill:#A86500;" opacity="1.0">
+<tspan x="404.5" dy="0">MAX AGE 14 DAYS</tspan>
+</text>
+<rect x="537" y="1238" width="220" height="46" rx="23.0" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="647.0" y="1265.93" text-anchor="middle" style="font-size:14.5px;font-weight:800;fill:#A86500;" opacity="1.0">
+<tspan x="647.0" dy="0">TOTAL 256 MiB</tspan>
+</text>
+<rect x="772" y="1238" width="315" height="46" rx="23.0" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="929.5" y="1265.93" text-anchor="middle" style="font-size:14.5px;font-weight:800;fill:#A86500;" opacity="1.0">
+<tspan x="929.5" dy="0">32 MiB COMPRESSED / ENTRY</tspan>
+</text>
+<rect x="1102" y="1238" width="270" height="46" rx="23.0" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="1237.0" y="1265.93" text-anchor="middle" style="font-size:14.5px;font-weight:800;fill:#A86500;" opacity="1.0">
+<tspan x="1237.0" dy="0">ORPHAN GRACE 10 MIN</tspan>
+</text>
+<rect x="1387" y="1238" width="600" height="46" rx="23.0" fill="#FFF5DD" fill-opacity="1.0" stroke="#A86500" stroke-width="2"/>
+<text x="1687.0" y="1265.93" text-anchor="middle" style="font-size:14.5px;font-weight:800;fill:#A86500;" opacity="1.0">
+<tspan x="1687.0" dy="0">CLEAR MANIFEST FIRST; REMAINING BYTES ARE INERT</tspan>
+</text>
+</svg>
