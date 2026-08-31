@@ -684,7 +684,7 @@ The same live-catalog comparison found that all 157 curated built-in function na
 
 \subsection{GitHub validation snapshot}
 
-At report freeze, GitHub reports the PR open, mergeable, non-draft, labeled \code{Automated Review}, and still requiring human review. At final head \code{b66db2d8f}, build-and-test, actions and JavaScript/TypeScript analysis, CodeQL, normalization, CLA, package creation, and five of six Linux/macOS/Windows x64/arm64 VSIX-launch jobs are green. The Windows arm64 launch job and Azure \code{VSCode MSSQL - Pull Request} validation are still in progress/pending and are not represented as passed.
+At report freeze, GitHub reports the PR open, mergeable, non-draft, labeled \code{Automated Review}, and still requiring human review. At final head \code{b66db2d8f}, build-and-test, actions and JavaScript/TypeScript analysis, CodeQL, normalization, CLA, package creation, Azure \code{VSCode MSSQL - Pull Request} validation, and all six Linux/macOS/Windows x64/arm64 VSIX-launch jobs are green. Human approval is the only remaining reported PR gate.
 
 The GitHub package comparison is stronger than the absolute local size for this scope question: target and head are both 85,347 KiB for MSSQL, with zero delta for every packaged extension. Codecov reports 94.34331\% patch coverage with 1,041 changed lines uncovered and project coverage rising from 78.22\% to 79.86\%. The largest uncovered concentration is the production metadata adapter; hover, diagnostics, definition, completion, sketch/context, cursor expectation, engine, and text snapshot also retain uncovered branches.
 
