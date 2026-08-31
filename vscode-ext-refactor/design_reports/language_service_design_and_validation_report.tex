@@ -183,18 +183,18 @@
 
 \vspace{0.09in}
 \begin{tcolorbox}[enhanced,colback=amberbg,colframe=amber,boxrule=0.9pt,arc=2mm,left=4mm,right=4mm,top=2.4mm,bottom=2.4mm]
-\textbf{Assessment at the reviewed head.} PR \#22860 establishes a coherent, source-only language and scripting foundation. Its dependency boundaries, pinned metadata seam, deterministic feature pipeline, stale-safe diagnostics scheduler, and strict scripting provenance are sound. Review commit \code{b66db2d8f} closes the original 26 threads and one immediate follow-up, including the eight reproduced ordinary-SQL trust defects, with focused regression coverage and a real catalog-builder/store/provider-to-engine path. Exact-head local validation passed 707 owned language/scripting tests, 47 adjacent tests, the 4,742-test broad MSSQL lane, SQL Projects, build, lint, formatting, hooks, and online packaging; all hosted checks are green and the packaged MSSQL VSIX has a zero-byte delta. A later review found one residual spaced alias-column-list variant, so automated closeout has one valid correctness thread remaining; consumer activation remains gated independently on preview composition and integration proof.
+\textbf{Assessment at the reviewed head.} PR \#22860 establishes a coherent, source-only language and scripting foundation. Its dependency boundaries, pinned metadata seam, deterministic feature pipeline, stale-safe diagnostics scheduler, and strict scripting provenance are sound. Review commit \code{b66db2d8f} closes the original 26 threads and one immediate follow-up, including the eight reproduced ordinary-SQL trust defects. Final commit \code{2bc5811e3} closes the later spaced alias-column-list residual and implements the full T-SQL positional rename semantics for derived and VALUES sources. Exact-head targeted validation passes 708 owned language/scripting tests plus seven observability tests (715/715); the preceding full sign-off also passed the 4,742-test broad MSSQL lane, SQL Projects, build, lint, formatting, hooks, and online packaging with a zero-byte VSIX delta. All 28 threads are resolved. The final hosted rerun is in progress; consumer activation remains gated independently on preview composition and integration proof.
 \end{tcolorbox}
 
 \vspace{0.14in}
 \begin{tabular}{@{}ll@{}}
 Prepared for: & Karl Burtram\\
-Primary change: & \code{dev/karlb/query_05_language_service} at \code{b66db2d8f}\\
-Extraction base: & \code{95cf790e5}; 59 files, +26,391 / -0\\
+Primary change: & \code{dev/karlb/query_05_language_service} at \code{2bc5811e3}\\
+Extraction base: & \code{95cf790e5}; 59 files, approximately +26,427 / -0\\
 Live PR base: & \code{53b707bbe} on \code{main}\\
-Current \code{main}: & \code{c6d2baa442}; topic ahead 3 / behind 9\\
+Current \code{main}: & \code{c6d2baa442}; topic ahead 4 / behind 9\\
 Metadata prerequisite: & merged PR \#22836 / shared metadata substrate\\
-Focused corpus: & 707 owned / 754 total focused tests\\
+Focused corpus: & 708 owned / 715 exact-head targeted tests\\
 Report snapshot: & 31 August 2026, America/Los\_Angeles\\
 \end{tabular}
 
@@ -238,7 +238,7 @@ The strongest evidence is deterministic unit behavior and source-boundary inspec
 
 \subsection{Pinned repository state}
 
-The review separates three different baselines that are easy to blur together. The feature was authored on extraction base \code{95cf790e5}; the pull request currently identifies \code{53b707bbe} as its live base; and the repository's \code{main} branch has since advanced to \code{c6d2baa442}. The exact reviewed topic is three commits ahead of and nine commits behind current \code{main}. This does not invalidate the isolated source review, but a future consumer must begin from refreshed \code{main}; a maintainer may also choose to refresh this inert extraction before merge.
+The review separates three different baselines that are easy to blur together. The feature was authored on extraction base \code{95cf790e5}; the pull request currently identifies \code{53b707bbe} as its live base; and the repository's \code{main} branch has since advanced to \code{c6d2baa442}. The exact reviewed topic is four commits ahead of and nine commits behind current \code{main}. This does not invalidate the isolated source review, but a future consumer must begin from refreshed \code{main}; a maintainer may also choose to refresh this inert extraction before merge.
 
 \begin{table}[H]
 \centering
@@ -249,15 +249,15 @@ The review separates three different baselines that are easy to blur together. T
 \toprule
 \textbf{Dimension} & \textbf{Observed value} & \textbf{What it proves}\\
 \midrule
-PR head & \code{b66db2d8fde1} & Exact source and local validation target reviewed in this report.\\
+PR head & \code{2bc5811e3abf} & Exact source and targeted validation target reviewed in this report.\\
 Extraction base & \code{95cf790e5cfe} & Metadata PR \#22836 is already present in the authored topic history.\\
 Live PR base & \code{53b707bbed5d} & Base recorded by the active pull request.\\
 Current \code{main} & \code{c6d2baa44247} & Nine mainline-only commits remain outside the isolated topic.\\
-Change size & 59 files; +26,391 / -0 & A large but isolated source extraction, dominated by new language, scripting, and test files.\\
-GitHub workflows & Build/test, CodeQL, normalization, and six-platform VSIX launch all green & Existing build, lint, hosted test, package, and launch lanes pass at the pinned head.\\
-Package comparison & MSSQL 85,347 KiB on target and PR; 0 KiB delta & The new source is not an input to the shipped extension bundle.\\
+Change size & 59 files; approximately +26,427 / -0 & A large but isolated source extraction, dominated by new language, scripting, and test files.\\
+GitHub workflows & Final-head rerun in progress; CodeQL/normalization lanes already green & The preceding head was fully green; completion of the final rerun remains a merge gate.\\
+Package comparison & Pre-final target/head both 85,347 KiB; 0 KiB delta & The source was not an input to the shipped extension bundle; final-head packaging is rerunning.\\
 Coverage & 94.34331\% patch at the reported run; 1,041 changed lines uncovered & Broad execution, but not semantic completeness; coverage is supporting evidence rather than the trust boundary.\\
-Review state & 27 resolved threads; one later residual thread open & Original closeout is complete; the ordinary spaced alias-list variant is a valid final correctness repair.\\
+Review state & 28 resolved threads; zero unresolved & The original closeout and later alias-list residual both have source-attributed dispositions.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -269,7 +269,7 @@ Review state & 27 resolved threads; one later residual thread open & Original cl
 \resizebox{0.97\textwidth}{!}{%
 \begin{tikzpicture}[node distance=7mm and 7mm]
   \node[model,minimum width=31mm] (source) {Pinned source\\\scriptsize contracts + implementations};
-  \node[model,minimum width=31mm,right=of source] (focused) {Focused tests\\\scriptsize 707 owned / 754 total};
+  \node[model,minimum width=31mm,right=of source] (focused) {Focused tests\\\scriptsize 708 owned / 715 targeted};
   \node[host,minimum width=31mm,right=of focused] (ci) {Repository CI\\\scriptsize build + lint + hosted suites};
   \node[gate,minimum width=31mm,right=of ci] (package) {Package evidence\\\scriptsize 0 KiB bundle delta};
   \node[targetnode,minimum width=34mm,right=of package] (product) {Future product proof\\\scriptsize gated consumer + live corpus};
@@ -289,7 +289,7 @@ Review state & 27 resolved threads; one later residual thread open & Original cl
 \end{figure}
 
 \begin{evidencebox}
-The strongest current claims are architectural isolation, deterministic behavior on the focused corpus, package invisibility, and repair coverage for the original review findings. The weakest claim remains real-world semantic authority across the full T-SQL grammar. The external differential review improved the honesty corpus and then found one residual whitespace variant; that is exactly why activation requires a broader live differential corpus rather than relying on aggregate coverage alone.
+The strongest current claims are architectural isolation, deterministic behavior on the focused corpus, package invisibility, and repair coverage for all current review findings. The weakest claim remains real-world semantic authority across the full T-SQL grammar. The external differential review improved the honesty corpus and found a residual whitespace variant that the final commit then repaired; that sequence shows why activation requires a broader live differential corpus rather than relying on aggregate coverage alone.
 \end{evidencebox}
 
 \subsection{Executive scorecard}
@@ -306,13 +306,13 @@ The strongest current claims are architectural isolation, deterministic behavior
 Pure, consumer-neutral engine boundary & \yes & JSON-safe, VS Code-neutral contracts and linted import direction.\\
 One metadata generation per answer & \yes & Every feature pins an immutable view; definition is the single sanctioned lazy read.\\
 No metadata wait on keystroke paths & \yes & Interactive features read synchronously and may only request background hydration.\\
-Honest diagnostic suppression & \partialmark & The original eight reproduced legal-SQL defects are repaired; one spaced alias-column-list variant remains open.\\
+Honest diagnostic suppression & \yes & The original eight reproduced defects and the later spaced/newline alias-column-list variant are repaired and regression-tested.\\
 Stale-result containment & \yes & Scheduled diagnostics stamp document version plus metadata generation and abort stale publication.\\
 Per-feature fallback containment & \partialmark & Throw/rejection circuits work; a timer cannot preempt synchronous extension-host CPU work.\\
 Strict scripting provenance & \yes & Freshness/refusal/offline provenance and pathological comment sanitization are explicit and regression-tested.\\
 Production metadata-adapter confidence & \partialmark & A real builder/snapshot/provider-to-engine test now exists; broader live-server and generation-drift coverage remains preview work.\\
 Private-preview invisibility & \yes & No activation, provider registration, command, setting, or bundle input lands in this PR.\\
-Current-main merge readiness & \partialmark & The branch is mergeable and fully green, but one valid review repair remains and the topic is nine mainline commits behind.\\
+Current-main merge readiness & \partialmark & The branch is mergeable with zero unresolved threads; the final hosted rerun is in progress and the topic is nine mainline commits behind.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -405,7 +405,7 @@ PR \#22860 is extraction PR05. The accepted refactor layers beneath it are alrea
 The package bot reports the MSSQL VSIX as 85,347 KiB on both target and PR branches, and the other packaged extensions also show zero delta. That is stronger scope evidence than merely observing that no command or setting was added: the build graph itself does not include the new source at this head.
 
 \begin{boundarybox}[title={Branch-drift note}]
-The PR was authored from extraction base \code{95cf790e5}; the active PR now names \code{53b707bbe} as its base, while current \code{main} is \code{c6d2baa442}. The nine-mainline-commit gap touches integration surfaces such as \path{mainController.ts}, \path{sqlDocumentService.ts}, package metadata, and general extension infrastructure. The language source remains isolated and exact-head packaging is green, but every later consumer must start from refreshed \code{main} and rerun the integration assertions.
+The PR was authored from extraction base \code{95cf790e5}; the active PR now names \code{53b707bbe} as its base, while current \code{main} is \code{c6d2baa442}. The nine-mainline-commit gap touches integration surfaces such as \path{mainController.ts}, \path{sqlDocumentService.ts}, package metadata, and general extension infrastructure. The language source remains isolated and preceding-head packaging is green; final-head packaging is rerunning. Every later consumer must start from refreshed \code{main} and rerun the integration assertions.
 \end{boundarybox}
 
 \section{Public contracts and dependency boundaries}
@@ -639,7 +639,7 @@ Completion first classifies cursor expectation, then uses the legacy context cla
 
 Candidate selection is deterministic: category gates run before fuzzy matching; scores are stable; ordinal comparison breaks ties; output is capped at 600. Partial metadata does not produce an authoritative empty list. Member-access on an object with unloaded columns returns an incomplete reason and can kick background hydration.
 
-The original differential review reproduced a statement-location fallback that bypassed comment suppression plus derived-alias, \code{UPDATE TOP}, \code{db..table}, temp-overlay, case-sensitive dedupe, and bare-\code{alias.} edit gaps. Review commit \code{b66db2d8f} repairs and regression-tests those cases. A later probe found that whitespace between a derived alias and its column list still bypasses the balance skip; that remaining variant is tracked explicitly in \cref{sec:tiera} and is not hidden behind the word ``preview.''
+The original differential review reproduced a statement-location fallback that bypassed comment suppression plus derived-alias, \code{UPDATE TOP}, \code{db..table}, temp-overlay, case-sensitive dedupe, and bare-\code{alias.} edit gaps. Review commit \code{b66db2d8f} repairs and regression-tests those cases. A later probe found that whitespace between a derived alias and its column list still bypassed the balance skip; final commit \code{2bc5811e3} advances through trivia, captures the alias list, and applies its positional column renames in the binder. Spaced and newline-separated forms now have sketch and diagnostic-honesty coverage.
 
 \subsection{Diagnostics}
 
@@ -882,7 +882,7 @@ Do not add raw document text, SQL batches, connection strings, result rows, or u
 
 \subsection{Focused semantic corpus}
 
-The 15 owned language and scripting unit files execute 707 tests at the pinned head: 707 passed, zero failed, zero skipped. The value is not just volume; the suites target incomplete syntax, partial truth, deterministic ordering, stale publication, refusal behavior, and every material repair through \code{b66db2d8f}. The exact-head sign-off also ran 47 adjacent scripting-service and observability tests, for 754 focused passes in total.
+The 15 owned language and scripting unit files execute 708 tests at the pinned head: 708 passed, zero failed, zero skipped. The value is not just volume; the suites target incomplete syntax, partial truth, deterministic ordering, stale publication, refusal behavior, and every material repair through \code{2bc5811e3}. Final-head targeted validation also ran seven observability tests, for 715 passes in that selection. The preceding \code{b66db2d8f} sign-off ran 707 owned plus 47 adjacent tests (754 total) before the final 43-addition/7-deletion residual fix.
 
 \begin{longtable}{@{}p{0.21\textwidth}p{0.10\textwidth}p{0.62\textwidth}@{}}
 \caption{Focused language and scripting inventory.}\label{tab:tests}\\
@@ -898,7 +898,7 @@ Completion & 82 & Member access, table sources, joins/FKs, expressions, CTE/deri
 Cursor expectation & 17 & Category/confidence selection and quiet positions before completion producers run.\\
 Core / router & 24 & Lexer coverage/Unicode whitespace, segmenter, feature routing, async timeout, maturity, fallback/circuit behavior, and LS-0 surface.\\
 Definition & 56 & Aliases, variables, CTE/temp/script-local objects, catalog table/module scripts, honesty ladder, and capability routing.\\
-Diagnostics & 181 & Lexical, \code{GO}, structural and recovery T1; 208/207/209 T2; expanded zero-unexpected-diagnostic honesty corpus; overlay/case/cache suppression; lazy hydration; engine pass.\\
+Diagnostics & 182 & Lexical, \code{GO}, structural and recovery T1; 208/207/209 T2; expanded zero-unexpected-diagnostic honesty corpus including spaced derived aliases; overlay/case/cache suppression; lazy hydration; engine pass.\\
 Diagnostics freshness & 6 & Freshness gate and scheduler drift classification.\\
 Hover & 124 & Catalog and local symbol families, H7 descriptions, partial truth, \code{USE}/cross-database/MERGE, DML positions, never-hover contexts, and system catalog.\\
 Journal & 3 & Normal versus elevated-capture diagnostic fields.\\
@@ -910,18 +910,18 @@ System catalog & 16 & Exact TVF result shapes, static data helpers, live-over-fa
 SQL scripting & 77 & Module rewrites/anchors/honesty; table F2/F1/anchors; comment-injection safety; DML; capabilities/routing; provenance/offline banners.\\
 Strict scripting host & 11 & Freshness policy, timeout/refusal, pin ordering, provenance, and explicit offline behavior.\\
 \midrule
-\textbf{Total} & \textbf{707} & \textbf{Zero failures and zero skips in the owned focused selection.}\\
+\textbf{Total} & \textbf{708} & \textbf{Zero failures and zero skips in the owned focused selection.}\\
 \bottomrule
 \end{longtable}
 
 \subsection{Exact-head local validation and observed CI}
 
-Validation was rerun after review commit \code{b66db2d8f} on the topic branch rooted at extraction base \code{95cf790e5}:
+The full matrix was run at review commit \code{b66db2d8f}; final residual commit \code{2bc5811e3} then received targeted exact-head validation over its owning language/sketch/binder surface plus observability:
 
 \begin{table}[H]
 \centering
 \small
-\caption{Independent local validation at \code{b66db2d8f}; hosted conclusions refreshed on 31 August 2026.}
+\caption{Independent local validation through final head \code{2bc5811e3}; hosted final-head rerun in progress.}
 \label{tab:validation}
 \begin{tabularx}{\textwidth}{@{}p{0.24\textwidth}p{0.20\textwidth}X@{}}
 \toprule
@@ -929,19 +929,20 @@ Validation was rerun after review commit \code{b66db2d8f} on the topic branch ro
 \midrule
 MSSQL build & Pass & Toolkit plus MSSQL extension typecheck, emit, extension/webview/notebook bundles.\\
 MSSQL lint / repository format & Pass & Target ESLint and full-tree Prettier check completed without errors.\\
-Owned language/scripting & 707 pass; 0 fail & All files in \cref{tab:tests}; no skipped cases.\\
-Adjacent service/observability & 47 pass; 0 fail & Scripting service and three accepted observability suites; 754 total focused passes.\\
-Broad MSSQL hosted tests & 4,742 pass; 0 fail; 10 skip & Inverse selection excludes only two independently documented current-main Windows baseline suites: \code{Utility Tests - Path handling} and \code{QueryCompletionSoundService}.\\
-SQL Projects hosted tests & 205 pass; 0 fail; 6 skip & Executed in its separate VS Code host.\\
+Owned language/scripting at final head & 708 pass; 0 fail & All files in \cref{tab:tests}; spaced/newline alias lists and positional renames included.\\
+Exact-head observability & 7 pass; 0 fail & Combined final-head targeted selection is 715/715.\\
+Pre-final adjacent extended selection & 47 pass; 0 fail & Scripting service and accepted observability suites at \code{b66db2d8f}; 754 total with the then-current 707 owned tests.\\
+Broad MSSQL hosted tests & 4,742 pass; 0 fail; 10 skip & Full pre-final sign-off; inverse selection excludes only two independently documented current-main Windows baseline suites: \code{Utility Tests - Path handling} and \code{QueryCompletionSoundService}.\\
+SQL Projects hosted tests & 205 pass; 0 fail; 6 skip & Full pre-final sign-off in its separate VS Code host.\\
 Pre-commit / diff audit & Pass & Staged hooks and \code{git diff --check} clean; validation-generated toolkit locales restored; no manifest, setting, command, or lockfile change.\\
-Production online package & Pass & Released STS \code{6.0.20260827.1}; local artifact 1,542 files / 104.9 MB. Metafile contains no new language/scripting bundle input.\\
+Production online package & Pass at pre-final head & Released STS \code{6.0.20260827.1}; local artifact 1,542 files / 104.9 MB. Metafile contains no new language/scripting bundle input; final hosted package rerun is pending.\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \subsection{Review-machine scale and differential probes}
 
-The Fable review added useful \reported{} evidence beyond the fixture suites. At pre-fix head \code{eafbbdc046}, it ran the then-current language/scripting and observability suites, hydrated the real PR04 \code{MetadataStore} with a 10,201-object B16 fixture, adapted it through \code{CatalogLanguageMetadataProvider}, and exercised \code{NativeSqlLanguageEngine}. It also ran malformed-input/depth probes and compared the curated system catalog with a live SQL Server 2025 instance. These observations motivated the repair corpus; exact-head local validation then reran the product suites at \code{b66db2d8f}.
+The Fable review added useful \reported{} evidence beyond the fixture suites. At pre-fix head \code{eafbbdc046}, it ran the then-current language/scripting and observability suites, hydrated the real PR04 \code{MetadataStore} with a 10,201-object B16 fixture, adapted it through \code{CatalogLanguageMetadataProvider}, and exercised \code{NativeSqlLanguageEngine}. It also ran malformed-input/depth probes and compared the curated system catalog with a live SQL Server 2025 instance. Those observations motivated the repair corpus. At \code{b66db2d8f} the original matrix was re-probed; at \code{2bc5811e3} the 12-case false-positive matrix is clean, controls still fire, completion after \code{v.} exposes renamed columns, and a table-hint control such as \code{o (NOLOCK)} remains unaffected.
 
 \begin{table}[H]
 \centering
@@ -966,12 +967,12 @@ The same live-catalog comparison found that all 157 curated built-in function na
 
 \subsection{GitHub validation snapshot}
 
-At report freeze, GitHub reports the PR open, mergeable, non-draft, labeled \code{Automated Review}, and still requiring human review. At head \code{b66db2d8f}, build-and-test, actions and JavaScript/TypeScript analysis, CodeQL, normalization, CLA, package creation, Azure \code{VSCode MSSQL - Pull Request} validation, and all six Linux/macOS/Windows x64/arm64 VSIX-launch jobs are green.
+At report freeze, GitHub reports the PR open, mergeable, non-draft, labeled \code{Automated Review}, and still requiring human review. At final head \code{2bc5811e3}, action and JavaScript/TypeScript analysis, CodeQL, normalization, and CLA are green; build-and-test, package/launch, and Azure PR validation are still running. The immediately preceding head was fully green across all of those lanes and all six Linux/macOS/Windows x64/arm64 VSIX-launch jobs.
 
 The GitHub package comparison is stronger than the absolute local size for this scope question: target and head are both 85,347 KiB for MSSQL, with zero delta for every packaged extension. Codecov reports 94.34331\% patch coverage with 1,041 changed lines uncovered and project coverage rising from 78.22\% to 79.86\%. The largest uncovered concentration is the production metadata adapter; hover, diagnostics, definition, completion, sketch/context, cursor expectation, engine, and text snapshot also retain uncovered branches.
 
 \begin{evidencebox}
-High patch coverage and 754 exact-head focused passes support the implementation, but the important properties are semantic: one generation per answer, suppression when metadata authority is unavailable, no stale diagnostic publication, deterministic ranking, and strict scripting refusal. Coverage percentage alone cannot prove these; the differential probes were valuable precisely because they found ordinary constructs missing from the prior honesty corpus. Conversely, zero bundle-size delta proves inert packaging, not live feature quality.
+High patch coverage, 754 pre-final focused passes, and 715 final-head targeted passes support the implementation, but the important properties are semantic: one generation per answer, suppression when metadata authority is unavailable, no stale diagnostic publication, deterministic ranking, and strict scripting refusal. Coverage percentage alone cannot prove these; the differential probes were valuable precisely because they found ordinary constructs missing from the prior honesty corpus. Conversely, zero bundle-size delta proves inert packaging, not live feature quality.
 \end{evidencebox}
 
 \begin{table}[H]
@@ -1010,17 +1011,17 @@ High patch coverage and 754 exact-head focused passes support the implementation
   \node[gate,minimum width=35mm,below=11mm of parser] (host) {Host containment\\\scriptsize exact-text memo + cooperative timeout};
   \node[gate,minimum width=35mm,left=of host] (script) {Scripting safety\\\scriptsize sanitization + anchor coverage};
   \node[gate,minimum width=35mm,right=of host] (data) {Static / integration\\\scriptsize exact TVFs + real adapter};
-  \node[risk,minimum width=35mm,below=11mm of host] (copilot) {1 residual thread\\\scriptsize whitespace before alias column list};
+  \node[gate,minimum width=35mm,below=11mm of host] (copilot) {Residual repaired\\\scriptsize significant-token walk + positional rename};
 
-  \node[note,below=8mm of copilot,minimum width=73mm] (total) {27 threads resolved; one later ordinary-formatting variant remains open.};
+  \node[note,below=8mm of copilot,minimum width=73mm] (total) {28 threads resolved; zero current unresolved threads.};
 \end{tikzpicture}}
-\caption{Review disposition map at \code{b66db2d8f}. The remaining red item is a narrow but valid semantic-trust repair.}
+\caption{Review disposition map at final head \code{2bc5811e3}. All current threads have explicit dispositions.}
 \label{fig:findings-map}
 \end{figure}
 
-\subsection{Review snapshot: original closeout plus one residual}
+\subsection{Review snapshot: 28 dispositioned threads}
 
-The pre-fix PR had 26 current review threads at \code{eafbbdc046}: two from Copilot and 24 from a later source-attributed Fable review posted through the PR author's account. Every initial thread received an explicit disposition and was resolved after review commit \code{b66db2d8f}. One immediate Copilot follow-up about the documented newline precondition of \code{withHeader} was dispositioned after a complete production call-site audit, producing 27 resolved threads. A later Fable probe then found one valid residual variant: whitespace between a derived alias and its column list prevents the current raw-token-index guard from seeing the opening parenthesis. At report freeze that new thread is the sole unresolved thread.
+The pre-fix PR had 26 current review threads at \code{eafbbdc046}: two from Copilot and 24 from a later source-attributed Fable review posted through the PR author's account. Every initial thread received an explicit disposition and was resolved after review commit \code{b66db2d8f}. One immediate Copilot follow-up about the documented newline precondition of \code{withHeader} was dispositioned after a complete production call-site audit. A later Fable probe then found one valid residual variant: whitespace between a derived alias and its column list prevented the raw-token-index guard from seeing the opening parenthesis. Final commit \code{2bc5811e3} fixes that variant, adds full positional alias semantics, and closes the 28th thread. At report freeze the live API returns zero unresolved threads.
 
 The two original Copilot threads were narrow and are fixed:
 
@@ -1031,14 +1032,14 @@ The two original Copilot threads were narrow and are fixed:
 
 \subsection{Tier A: ordinary-SQL trust defects}\label{sec:tiera}
 
-The eight original Tier-A findings were not architectural failures, but they were the exact user-trust failure class the diagnostic honesty design is intended to prevent. All eight have direct repairs at \code{b66db2d8f}; the fifth repair needs one additional significant-token walk to cover ordinary whitespace before the alias column list.
+The eight original Tier-A findings were not architectural failures, but they were the exact user-trust failure class the diagnostic honesty design is intended to prevent. All eight have direct repairs, and final head \code{2bc5811e3} closes the last formatting variant of the fifth repair.
 
 \begin{enumerate}[label=\textbf{A\arabic*.},leftmargin=2.2em,itemsep=5pt]
   \item \textbf{Trailing comments and unterminated constructs} (\path{nativeEngine.ts}). Lexical suppression now runs before the undefined-statement fallback; comment, string, SQLCMD, and exact-EOF opener cases return no completion.
   \item \textbf{Alias assignment and positioned update} (\path{diagnostics.ts}). Select-list \code{alias = expr} heads and \code{CURRENT OF} cursor names are excluded from column diagnostics.
   \item \textbf{\code{WITHIN GROUP (ORDER BY ...)}} (diagnostics / keyword data). Contextual \code{WITHIN} plus ordered-set clause handling prevents the false missing-\code{BY} recovery.
   \item \textbf{\code{AT TIME ZONE}} (diagnostics / keyword data). Contextual \code{AT}/\code{ZONE} entries break the false expression-unit run without reserving legal identifiers.
-  \item \textbf{Derived/VALUES alias lists} (\path{sketch/index.ts}). Unspaced \code{v(a,b)} lists are balance-skipped so commas cannot create phantom sources. \gap{} A space or newline before \code{(a,b)} still leaves the guard on trivia; advance to the next significant token and add spaced sketch/honesty cases.
+  \item \textbf{Derived/VALUES alias lists} (\path{sketch/index.ts}, \path{binder.ts}). The parser advances through trivia, captures the balanced alias list, and the binder applies names positionally. Unspaced, spaced, and newline-separated lists cannot create phantom sources; VALUES columns gain their declared names and renamed-away originals no longer resolve.
   \item \textbf{Non-breaking space in pasted SQL} (\path{lexer.ts}). Unicode horizontal space separators, including U+00A0, are whitespace rather than identifier characters.
   \item \textbf{\code{UPDATE TOP (n) target}} (\path{sketch/index.ts}). Update sketching skips TOP count forms and optional PERCENT before reading the target.
   \item \textbf{Default-schema shorthand \code{db..table}} (\path{sketch/index.ts}). Empty multipart components are preserved, and binder arity uses raw parts to reach honest cross-database/linked-server handling.
@@ -1066,7 +1067,7 @@ Static data / integration evidence & Two \code{dm_exec_*} TVF result schemas; fi
 \end{tabularx}
 \end{table}
 
-The original findings are resolved or explicitly dispositioned in the PR. The later spaced-alias-list reproduction remains a valid correctness repair. The fully green build/test matrix proves regression stability against the existing corpus; it does not negate a newly reproduced case outside that corpus.
+All current findings are resolved or explicitly dispositioned in the PR. The final-head targeted matrix pins the later spaced-alias-list reproduction and its rename semantics. The preceding fully green broad matrix plus final targeted evidence prove regression stability against the encoded corpus; neither is a claim of complete T-SQL equivalence.
 
 \subsection{Deliberate implementation limits}
 
@@ -1082,13 +1083,13 @@ The original findings are resolved or explicitly dispositioned in the PR. The la
 
 \subsection{Branch-drift boundary}
 
-The topic includes extraction base \code{95cf790e5}; the live PR API identifies base \code{53b707bbe}; and current repository \code{main} is \code{c6d2baa442}. The exact topic is three commits ahead of and nine commits behind current \code{main}. The mainline-only commits touch controller, document-service, package, test, and extension infrastructure. The PR remains mergeable and all hosted checks are green; every subsequent consumer must nevertheless start from refreshed \code{main} and repeat build, focused/broad semantics, package, launch, and review checks.
+The topic includes extraction base \code{95cf790e5}; the live PR API identifies base \code{53b707bbe}; and current repository \code{main} is \code{c6d2baa442}. The exact topic is four commits ahead of and nine commits behind current \code{main}. The mainline-only commits touch controller, document-service, package, test, and extension infrastructure. The PR remains mergeable while the final hosted rerun completes; every subsequent consumer must nevertheless start from refreshed \code{main} and repeat build, focused/broad semantics, package, launch, and review checks.
 
 \section{Integration and graduation plan}
 
 \subsection{Next implementation step}
 
-The next PR should be a gated consumer, not another implicit activation edit scattered across the extension. Before that consumer is made reachable, the remaining spaced alias-list variant in \cref{sec:tiera} should be repaired and pinned by the honesty/suppression corpus. The consumer PR should then:
+The next PR should be a gated consumer, not another implicit activation edit scattered across the extension. The source-only trust findings in \cref{sec:tiera} are closed; the consumer PR should then:
 
 \begin{enumerate}
   \item add one composition root that adapts VS Code documents and result types to the consumer-neutral contracts;
@@ -1123,7 +1124,7 @@ Before moving from private preview toward default-on, validation should add:
 \toprule
 \textbf{Gate} & \textbf{Current state} & \textbf{Required closure}\\
 \midrule
-Ordinary-SQL trust corpus & Nearly closed & Original eight cases are repaired; add significant-token handling and spaced/newline alias-list regressions for the remaining variant.\\
+Ordinary-SQL trust corpus & Current review closed & Original eight cases plus spaced/newline alias-list variants and positional renames are repaired; continue expanding the live differential corpus.\\
 Production metadata adapter & Partial & One real \code{CatalogBuilder}/snapshot/provider/engine path now exists; extend it with generation drift, partial readiness, and live-server variants.\\
 Router and long-work containment & Partial & Explicit synchronous limitation, bounded algorithms, timeout test for yielding paths, and cooperative/worker plan for heavy work.\\
 Private-preview composition & Not present & One default-off composition root with hierarchical flags, complete manifest visibility gates, disposal, and disable/reload tests.\\
@@ -1146,8 +1147,8 @@ Privacy & Architecture present & Elevated-capture audit and product-level journa
 Pure analysis contracts & Import shape, fixture engines, hosted unit tests & Consumer adapter tests in the first activation PR.\\
 Pinned-generation metadata & Provider types and fixture/null/system tests; reviewer real-store probe & CI end-to-end real-snapshot suite plus forced generation change.\\
 No hot-path network wait & Synchronous pin contract, lazy kick tests, and reviewer real-store timings & Instrumented product/perftest assertion under hydration.\\
-Completion determinism & Category/rank/ordinal tests; repaired suppression, dedupe, overlay, and edit-range cases & Close the spaced alias-list residual; add cross-platform replay.\\
-Diagnostic honesty & T1/T2 split, expanded honesty suite, freshness/drift tests, and original Tier-A repairs & Pin the residual formatting variant and add a real-server/native-vs-STS differential corpus.\\
+Completion determinism & Category/rank/ordinal tests; repaired suppression, dedupe, overlay, edit-range, and derived-alias cases & Add cross-platform replay and product-level latency budgets.\\
+Diagnostic honesty & T1/T2 split, expanded honesty suite, freshness/drift tests, Tier-A repairs, and spaced-alias regression & Add a real-server/native-vs-STS differential corpus.\\
 Stale-result suppression & Deterministic scheduler stamp tests & VS Code integration under edit/hydration storms.\\
 Strict scripting provenance & Freshness/refusal/offline and emitter tests & Live permissions/encryption/definition corpus.\\
 Failure containment & Three preference/maturity/throw-circuit/reset tests; sliced scheduler tests & Cooperative bound for synchronous work, timeout test, real bridge/fallback telemetry.\\
@@ -1161,11 +1162,11 @@ Private-preview invisibility & No manifest/controller/bundle inputs; zero packag
 \begin{takeawaybox}
 PR \#22860 is a strong extraction boundary. It converts the earlier language-service plan into a concrete, testable library without prematurely changing product behavior. The core architecture is the right one: tolerant analysis over unfinished text; a claim hierarchy that preserves lower-level truth; one pinned metadata generation per answer; explicit readiness and suppression; deterministic candidate order; sliced, stale-safe diagnostic publication; provenance-bearing scripting; and per-feature rollout/fallback.
 
-The later review materially strengthened the correctness disposition. The eight original ordinary-SQL trust defects now have direct repairs and regression cases; the broader cache-identity, completion-edit, provider, scripting-sanitization, static-data, and real-adapter gaps are closed or explicitly dispositioned. The router timeout is accurately documented as cooperative rather than preemptive for synchronous work. One residual ordinary-formatting variant remains: whitespace before a derived alias column list can still create a phantom source and false 208 diagnostic. Green CI proves the encoded corpus is stable; zero package delta proves current users cannot reach the code. Neither makes that newly reproduced case disappear.
+The later review materially strengthened the correctness disposition. The eight original ordinary-SQL trust defects and the later spaced/newline alias-list variant now have direct repairs and regression cases; the broader cache-identity, completion-edit, provider, scripting-sanitization, static-data, and real-adapter gaps are closed or explicitly dispositioned. Final-head alias capture also implements the actual positional rename semantics instead of merely skipping commas. The router timeout is accurately documented as cooperative rather than preemptive for synchronous work. The preceding broad matrix and final targeted matrix are green; final hosted lanes are rerunning. Zero package delta proves current users cannot reach the code, not full language equivalence.
 \end{takeawaybox}
 
 \begin{statusbox}[title={Decision statement}]
-Recommended disposition at this snapshot: \textbf{accept the architecture and retain the source-only boundary, but close the one valid residual review thread before final automated sign-off}. Exact-head local and hosted validation is otherwise green, all prior threads are dispositioned, and the PR is mergeable subject to human review. A later consumer PR must independently satisfy the full private-preview umbrella/feature gates, invisible command/menu contribution, runtime fail-closed behavior, and integration-level scenario validation before exposing the engine through Query Studio, a VS Code provider, command, or AI context path.
+Recommended disposition at this snapshot: \textbf{automated source review is complete for the inert foundation at \code{2bc5811e3}}. All 28 threads have explicit dispositions, the live API reports zero unresolved threads, the exact-head targeted matrix is green, and the PR is mergeable. Wait for the final hosted rerun and human review before merge. A later consumer PR must independently satisfy the full private-preview umbrella/feature gates, invisible command/menu contribution, runtime fail-closed behavior, and integration-level scenario validation before exposing the engine through Query Studio, a VS Code provider, command, or AI context path.
 \end{statusbox}
 
 \section*{Evidence and source map}
@@ -1180,7 +1181,7 @@ This report is pinned to an active PR. Review threads, Actions conclusions, main
 \toprule
 \textbf{Evidence class} & \textbf{Primary sources used}\\
 \midrule
-PR state & \href{https://github.com/microsoft/vscode-mssql/pull/22860}{PR \#22860}, head \code{b66db2d8f}, extraction base \code{95cf790e5}, live API base \code{53b707bbe}, 27 resolved threads plus one later unresolved residual, Copilot review, source-attributed Fable review and probe report, exact-head sign-off comment, fully green Actions/Azure rollup, package-size bot, and Codecov report.\\
+PR state & \href{https://github.com/microsoft/vscode-mssql/pull/22860}{PR \#22860}, head \code{2bc5811e3}, extraction base \code{95cf790e5}, live API base \code{53b707bbe}, 28 dispositioned threads / zero unresolved, Copilot review, source-attributed Fable reviews and probe reports, the pre-final sign-off comment, final-head targeted validation, hosted rerun state, package-size bot, and Codecov report.\\
 Public API / host & \path{extensions/mssql/src/sqlLanguage/api.ts}; \path{host/nativeEngine.ts}; \path{host/router.ts}; \path{host/scheduler.ts}; \path{host/scriptingHost.ts}.\\
 Analysis core & \path{core/text/textSnapshot.ts}; \path{core/lexer.ts}; \path{core/segmenter.ts}; \path{core/sketch/*}; \path{core/parser/cursorExpectation.ts}; \path{core/binder.ts}; \path{core/overlay.ts}; database/name/fuzzy/quote helpers.\\
 Language features & \path{features/completion.ts}; \path{diagnostics.ts}; \path{hover.ts}; \path{signatureHelp.ts}; \path{definition.ts}; \path{folding.ts}; \path{documentSymbols.ts}; generated keyword/built-in/default/system data.\\
