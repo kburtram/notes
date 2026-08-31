@@ -11,6 +11,7 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{caption}
+\usepackage{subcaption}
 \usepackage{float}
 \usepackage{pdflscape}
 \usepackage{tikz}
@@ -73,6 +74,10 @@
 \newcommand{\target}{\textcolor{violetdark}{\textbf{Target invariant}}}
 \newcommand{\gap}{\textcolor{redish}{\textbf{Open finding}}}
 \newcommand{\reported}{\textcolor{slate}{\textbf{Reported evidence}}}
+\newcommand{\na}{\textcolor{slate}{--}}
+\newcommand{\yes}{\textcolor{greenish}{\checkmark}}
+\newcommand{\partialmark}{\textcolor{amber}{$\triangle$}}
+\newcommand{\no}{\textcolor{redish}{$\times$}}
 
 \newtcolorbox{takeawaybox}[1][]{
   enhanced,breakable,colback=lavender,colframe=violet,
@@ -98,6 +103,11 @@
   enhanced,breakable,colback=redbg,colframe=redish,
   boxrule=0.7pt,arc=2mm,left=2.5mm,right=2.5mm,top=1.8mm,bottom=1.8mm,
   fonttitle=\bfseries,title={Current limitation},#1
+}
+\newtcolorbox{reviewbox}[1][]{
+  enhanced,breakable,colback=redbg,colframe=redish,
+  boxrule=0.9pt,arc=2mm,left=2.7mm,right=2.7mm,top=2mm,bottom=2mm,
+  fonttitle=\bfseries,title={Current-head review finding},#1
 }
 \newtcolorbox{evidencebox}[1][]{
   enhanced,breakable,colback=bluegray,colframe=violetdark,
@@ -133,6 +143,8 @@
   gate/.style={comp,fill=amberbg,draw=amber!70},
   ext/.style={comp,fill=white,draw=slate!55,dashed},
   risk/.style={comp,fill=redbg,draw=redish!70},
+  targetnode/.style={comp,fill=lavender,draw=violetdark!80,dashed},
+  currentnode/.style={comp,fill=redbg,draw=redish!75},
   state/.style={draw=slate!60,rounded corners=7pt,fill=bluegray,minimum width=24mm,minimum height=9mm,align=center,inner sep=3pt},
   goodstate/.style={state,fill=greenbg,draw=greenish!70},
   arrow/.style={->,very thick,draw=ink!75},
@@ -149,44 +161,46 @@
 
 \begin{titlepage}
 \thispagestyle{empty}
-\vspace*{0.30in}
+\enlargethispage{0.28in}
+\vspace*{0.22in}
 
 {\color{violetdark}\rule{\textwidth}{2.2pt}}
-\vspace{0.22in}
+\vspace{0.18in}
 
 {\Huge\bfseries\color{ink} Native T-SQL Language Service\par}
+\vspace{0.08in}
+{\LARGE\bfseries\color{violetdark} Pure Analysis, Pinned Metadata, Feature Routing, and SQL Scripting\par}
 \vspace{0.10in}
-{\LARGE\bfseries\color{violetdark} Analysis, Metadata, Features, and SQL Scripting\par}
-\vspace{0.12in}
 {\Large\color{slate} Design, implementation, and validation review\par}
 
-\vspace{0.24in}
+\vspace{0.20in}
 {\large For \href{https://github.com/microsoft/vscode-mssql/pull/22860}{vscode-mssql PR \#22860}\par}
 
-\vspace{0.24in}
-\begin{tcolorbox}[enhanced,colback=lavender,colframe=violet,boxrule=1pt,arc=2mm,left=4mm,right=4mm,top=3mm,bottom=3mm]
-\textbf{Central question.} How can vscode-mssql provide deterministic, low-latency T-SQL completion, diagnostics, hover, signature help, definition, folding, document symbols, and script generation over one immutable metadata generation---while remaining useful with partial or offline metadata, avoiding network I/O on an interactive request, and staying invisible until a later private-preview consumer explicitly composes it?
+\vspace{0.20in}
+\begin{tcolorbox}[enhanced,colback=lavender,colframe=violet,boxrule=1pt,arc=2mm,left=4mm,right=4mm,top=2.6mm,bottom=2.6mm]
+\textbf{Central question.} How can vscode-mssql replace remote, document-coupled language features with a deterministic TypeScript engine that remains useful on incomplete SQL, pins one immutable metadata generation per answer, distinguishes syntax truth from catalog-dependent claims, and refuses to turn uncertainty into false diagnostics or authoritative scripts?
 \end{tcolorbox}
 
-\vspace{0.12in}
-\begin{tcolorbox}[enhanced,colback=greenbg,colframe=greenish,boxrule=0.9pt,arc=2mm,left=4mm,right=4mm,top=2.5mm,bottom=2.5mm]
-\textbf{Assessment at the reviewed head.} PR \#22860 establishes a coherent source-only language and scripting library. Its contracts are VS Code-neutral; requests pin one immutable metadata view; completion and hover can request background hydration without awaiting it; and diagnostics distinguish syntax truth from metadata-dependent claims. The branch adds no commands, settings, provider registration, controller, activation path, or extension bundle input. Review commit \code{b66db2d8f} closes the reproduced ordinary-SQL trust defects and the material Tier-B/C findings with focused regression coverage. Exact-head local validation passed 707 owned language/scripting tests, 47 adjacent service/observability tests, the 4,742-test broad MSSQL lane, SQL Projects, build, lint, formatting, hooks, and online packaging. All 26 initial threads plus one follow-up have explicit dispositions; a six-minute delayed audit found zero unresolved threads. The remaining gates are hosted CI completion and human review, not known semantic blockers.
+\vspace{0.09in}
+\begin{tcolorbox}[enhanced,colback=amberbg,colframe=amber,boxrule=0.9pt,arc=2mm,left=4mm,right=4mm,top=2.4mm,bottom=2.4mm]
+\textbf{Assessment at the reviewed head.} PR \#22860 establishes a coherent, source-only language and scripting foundation. Its dependency boundaries, pinned metadata seam, deterministic feature pipeline, stale-safe diagnostics scheduler, and strict scripting provenance are sound. Review commit \code{b66db2d8f} closes the original 26 threads and one immediate follow-up, including the eight reproduced ordinary-SQL trust defects, with focused regression coverage and a real catalog-builder/store/provider-to-engine path. Exact-head local validation passed 707 owned language/scripting tests, 47 adjacent tests, the 4,742-test broad MSSQL lane, SQL Projects, build, lint, formatting, hooks, and online packaging; all hosted checks are green and the packaged MSSQL VSIX has a zero-byte delta. A later review found one residual spaced alias-column-list variant, so automated closeout has one valid correctness thread remaining; consumer activation remains gated independently on preview composition and integration proof.
 \end{tcolorbox}
 
-\vspace{0.18in}
+\vspace{0.14in}
 \begin{tabular}{@{}ll@{}}
 Prepared for: & Karl Burtram\\
 Primary change: & \code{dev/karlb/query_05_language_service} at \code{b66db2d8f}\\
 Extraction base: & \code{95cf790e5}; 59 files, +26,391 / -0\\
-Live PR base observed: & \code{53b707bbe}; mergeable, human review required\\
-Metadata prerequisite: & merged PR \#22836 / shared metadata service in \code{main}\\
-Report source parent: & \code{617567f17} in \code{kburtram/notes main}\\
+Live PR base: & \code{53b707bbe} on \code{main}\\
+Current \code{main}: & \code{c6d2baa442}; topic ahead 3 / behind 9\\
+Metadata prerequisite: & merged PR \#22836 / shared metadata substrate\\
+Focused corpus: & 707 owned / 754 total focused tests\\
 Report snapshot: & 31 August 2026, America/Los\_Angeles\\
 \end{tabular}
 
-\vspace{0.14in}
+\vspace{0.11in}
 {\small\color{slate}
-This is an as-built report. Historical refactor documents explain intent, but the pinned implementation, tests, PR state, and package artifacts control when the documents and code differ.}
+This is an as-built, evidence-qualified report. Historical design notes explain intent; the pinned implementation, exact-head tests, live review state, Actions state, and package artifacts control where the documents and implementation differ.}
 
 \end{titlepage}
 
@@ -206,7 +220,8 @@ The report keeps implementation, intended invariants, executable evidence, and f
   \item[\impl] Present in the pinned PR head and traced to source.
   \item[\target] A behavior or safety contract the library is intended to preserve.
   \item[\valid] Exercised by a named test, build lane, package check, or observed repository state.
-  \item[\gap] An evidence gap, preview-graduation requirement, or limitation that remains at report freeze.
+  \item[\gap] A live review finding or evidence gap that remains at report freeze.
+  \item[\reported] A source-attributed measurement or probe not independently rerun while preparing this document.
   \item[\future] A consumer, bridge, activation path, or maturity step not shipped by this PR.
 \end{description}
 
@@ -217,6 +232,90 @@ PR \#22860 is not a replacement language service that users can turn on. It is t
 \begin{evidencebox}
 The strongest evidence is deterministic unit behavior and source-boundary inspection. Local packaging proves the tree packages; GitHub's package comparison more directly proves that the new source contributes zero size to the shipped VSIX at this head. Neither proves live-catalog semantic equivalence across the full T-SQL grammar. That is a later preview-graduation gate.
 \end{evidencebox}
+
+
+\section{Review snapshot and evidence model}
+
+\subsection{Pinned repository state}
+
+The review separates three different baselines that are easy to blur together. The feature was authored on extraction base \code{95cf790e5}; the pull request currently identifies \code{53b707bbe} as its live base; and the repository's \code{main} branch has since advanced to \code{c6d2baa442}. The exact reviewed topic is three commits ahead of and nine commits behind current \code{main}. This does not invalidate the isolated source review, but a future consumer must begin from refreshed \code{main}; a maintainer may also choose to refresh this inert extraction before merge.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Current-head repository and evidence snapshot.}
+\label{tab:snapshot}
+\begin{tabularx}{\textwidth}{@{}p{0.23\textwidth}p{0.24\textwidth}X@{}}
+\toprule
+\textbf{Dimension} & \textbf{Observed value} & \textbf{What it proves}\\
+\midrule
+PR head & \code{b66db2d8fde1} & Exact source and local validation target reviewed in this report.\\
+Extraction base & \code{95cf790e5cfe} & Metadata PR \#22836 is already present in the authored topic history.\\
+Live PR base & \code{53b707bbed5d} & Base recorded by the active pull request.\\
+Current \code{main} & \code{c6d2baa44247} & Nine mainline-only commits remain outside the isolated topic.\\
+Change size & 59 files; +26,391 / -0 & A large but isolated source extraction, dominated by new language, scripting, and test files.\\
+GitHub workflows & Build/test, CodeQL, normalization, and six-platform VSIX launch all green & Existing build, lint, hosted test, package, and launch lanes pass at the pinned head.\\
+Package comparison & MSSQL 85,347 KiB on target and PR; 0 KiB delta & The new source is not an input to the shipped extension bundle.\\
+Coverage & 94.34331\% patch at the reported run; 1,041 changed lines uncovered & Broad execution, but not semantic completeness; coverage is supporting evidence rather than the trust boundary.\\
+Review state & 27 resolved threads; one later residual thread open & Original closeout is complete; the ordinary spaced alias-list variant is a valid final correctness repair.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Evidence ladder}
+
+\begin{figure}[H]
+\centering
+\resizebox{0.97\textwidth}{!}{%
+\begin{tikzpicture}[node distance=7mm and 7mm]
+  \node[model,minimum width=31mm] (source) {Pinned source\\\scriptsize contracts + implementations};
+  \node[model,minimum width=31mm,right=of source] (focused) {Focused tests\\\scriptsize 707 owned / 754 total};
+  \node[host,minimum width=31mm,right=of focused] (ci) {Repository CI\\\scriptsize build + lint + hosted suites};
+  \node[gate,minimum width=31mm,right=of ci] (package) {Package evidence\\\scriptsize 0 KiB bundle delta};
+  \node[targetnode,minimum width=34mm,right=of package] (product) {Future product proof\\\scriptsize gated consumer + live corpus};
+
+  \draw[arrow] (source)--(focused);
+  \draw[arrow] (focused)--(ci);
+  \draw[arrow] (ci)--(package);
+  \draw[async] (package)--(product);
+
+  \node[note,below=10mm of focused,minimum width=55mm] (semantic) {Tests prove the cases they encode.\\They do not prove the rest of T-SQL.};
+  \node[note,below=10mm of package,minimum width=56mm] (scope) {Package parity proves inert delivery.\\It does not prove semantic quality.};
+  \draw[async] (focused)--(semantic);
+  \draw[async] (package)--(scope);
+\end{tikzpicture}}
+\caption{Evidence ladder. Each layer strengthens a different claim; green CI and zero package delta cannot substitute for a live semantic truth corpus.}
+\label{fig:evidence-ladder}
+\end{figure}
+
+\begin{evidencebox}
+The strongest current claims are architectural isolation, deterministic behavior on the focused corpus, package invisibility, and repair coverage for the original review findings. The weakest claim remains real-world semantic authority across the full T-SQL grammar. The external differential review improved the honesty corpus and then found one residual whitespace variant; that is exactly why activation requires a broader live differential corpus rather than relying on aggregate coverage alone.
+\end{evidencebox}
+
+\subsection{Executive scorecard}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Design objective versus current evidence.}
+\label{tab:scorecard}
+\begin{tabularx}{\textwidth}{@{}p{0.28\textwidth}cX@{}}
+\toprule
+\textbf{Objective} & \textbf{State} & \textbf{Assessment}\\
+\midrule
+Pure, consumer-neutral engine boundary & \yes & JSON-safe, VS Code-neutral contracts and linted import direction.\\
+One metadata generation per answer & \yes & Every feature pins an immutable view; definition is the single sanctioned lazy read.\\
+No metadata wait on keystroke paths & \yes & Interactive features read synchronously and may only request background hydration.\\
+Honest diagnostic suppression & \partialmark & The original eight reproduced legal-SQL defects are repaired; one spaced alias-column-list variant remains open.\\
+Stale-result containment & \yes & Scheduled diagnostics stamp document version plus metadata generation and abort stale publication.\\
+Per-feature fallback containment & \partialmark & Throw/rejection circuits work; a timer cannot preempt synchronous extension-host CPU work.\\
+Strict scripting provenance & \yes & Freshness/refusal/offline provenance and pathological comment sanitization are explicit and regression-tested.\\
+Production metadata-adapter confidence & \partialmark & A real builder/snapshot/provider-to-engine test now exists; broader live-server and generation-drift coverage remains preview work.\\
+Private-preview invisibility & \yes & No activation, provider registration, command, setting, or bundle input lands in this PR.\\
+Current-main merge readiness & \partialmark & The branch is mergeable and fully green, but one valid review repair remains and the topic is nine mainline commits behind.\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \section{Executive summary}
 
@@ -239,46 +338,101 @@ It does not claim full T-SQL parsing, ScriptDOM equivalence, semantic-token or d
 No dedicated setting is added because there is no activated feature to gate. That is safer than a dead setting that suggests usable behavior. The first integration PR must require the umbrella experimental/private-preview flag \emph{and} a dedicated feature-area flag, default both off, hide all contributed UI, and register runtime consumers only when the effective gate is true at activation.
 \end{boundarybox}
 
-\section{Placement in the refactor train}
 
-PR \#22860 is extraction PR05. Perftest, core observability, SQL Data Plane/STS2 foundation, and the metadata substrate are already in \code{main}; the Debug Console remains an independent UX track. PR05 builds directly from \code{main}, not from Debug Console PR03, and consumes only the accepted metadata APIs.
+\subsection{The claim hierarchy}
+
+The implementation is best understood as a ladder of increasingly expensive claims. Each higher level depends on every lower level plus additional authority. When a lower level is uncertain, the engine should retain lower-level usefulness and remove the unsupported higher-level claim.
 
 \begin{figure}[H]
 \centering
-\resizebox{\textwidth}{!}{%
-\begin{tikzpicture}[node distance=7mm and 16mm]
-  \node[ext,minimum width=42mm] (consumer) {Future gated consumer\\\scriptsize VS Code adapters / Query Studio / AI};
-  \node[gate,minimum width=38mm,left=of consumer] (flags) {Future effective gate\\\scriptsize umbrella AND feature flag};
-  \node[ext,minimum width=38mm,right=of consumer] (vscode) {Future VS Code registration\\\scriptsize providers / commands / UI};
+\resizebox{0.93\textwidth}{!}{%
+\begin{tikzpicture}[node distance=7mm]
+  \node[model,minimum width=78mm] (l0) {L0: text and position truth\\\scriptsize UTF-16 offsets, trivia, token spans, lexical faults};
+  \node[model,minimum width=78mm,above=of l0] (l1) {L1: structural truth\\\scriptsize batches, statements, clauses, scopes, local declarations};
+  \node[engine,minimum width=78mm,above=of l1] (l2) {L2: local semantic truth\\\scriptsize aliases, CTEs, temp objects, variables, derived columns};
+  \node[host,minimum width=78mm,above=of l2] (l3) {L3: catalog truth\\\scriptsize one pinned generation, readiness, object/column/parameter facts};
+  \node[gate,minimum width=78mm,above=of l3] (l4) {L4: execution-worthy output\\\scriptsize freshness-qualified scripting + provenance + fidelity};
 
-  \node[engine,minimum width=38mm,below=of consumer] (router) {Feature router\\\scriptsize maturity + timeout + circuit};
-  \node[engine,minimum width=38mm,below=of router] (native) {Native engine\\\scriptsize analysis + feature dispatch};
-  \node[ext,minimum width=38mm,right=of native] (bridge) {Future STS bridge\\\scriptsize lazy fallback adapter};
-  \node[model,minimum width=38mm,below=of native] (provider) {Language provider\\\scriptsize one pinned generation};
-  \node[host,minimum width=38mm,below=of provider] (metadata) {Shared metadata service\\\scriptsize merged PR04 substrate};
-  \node[note,below=of metadata,minimum width=62mm] (scope) {Solid nodes are implemented in PR05 or already in main.\\Dashed nodes are intentionally not composed by PR05.};
+  \draw[arrow] (l0)--(l1);
+  \draw[arrow] (l1)--(l2);
+  \draw[arrow] (l2)--(l3);
+  \draw[arrow] (l3)--(l4);
 
-  \draw[async] (flags)--(consumer);
-  \draw[async] (vscode)--(consumer);
-  \draw[arrow] (consumer)--(router);
-  \draw[arrow] (router)--(native);
-  \draw[async] (router) to[out=0,in=90] node[labelbox,right]{fallback} (bridge);
-  \draw[dataarr] (native)--(provider);
-  \draw[dataarr] (provider)--(metadata);
+  \node[risk,right=20mm of l2,minimum width=48mm] (uncertain) {Uncertainty rule\\\scriptsize keep lower levels; suppress, mark incomplete, or refuse above};
+  \draw[failarr] (l4.east) to[out=0,in=90] (uncertain.north);
+  \draw[failarr] (l3.east) to[out=0,in=150] (uncertain.west);
+  \draw[failarr] (l2.east)--(uncertain.west);
 \end{tikzpicture}}
-\caption{PR05 placement. The language library and metadata adapter exist, but every path from a user-visible consumer is still a future, gated composition step.}
+\caption{Claim hierarchy. The engine is useful before it is omniscient: uncertainty removes authority rather than fabricating certainty.}
+\label{fig:claim-hierarchy}
+\end{figure}
+
+\begin{designbox}[title={The central safety invariant}]
+A missing token may reduce structural confidence; a missing metadata section may reduce catalog confidence; an unvalidated snapshot may block scripting. None of those conditions should erase facts from a lower tier that remain independently true. This is why lexical diagnostics can continue while binder diagnostics are suppressed, and why keywords/local symbols can remain available while catalog completion is incomplete.
+\end{designbox}
+
+\section{Placement in the refactor train}
+
+PR \#22860 is extraction PR05. The accepted refactor layers beneath it are already in the authored base: core observability, SQL Data Plane and STS2 transport, and the shared metadata substrate from PR \#22836. This PR adds the pure language/scripting library and the production metadata adapter, but deliberately stops before any VS Code or Query Studio consumer registration.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.96\textwidth}{!}{%
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \node[host,text width=34mm] (obs) at (0.0,3.6) {Core observability\\{\scriptsize accepted in main}};
+  \node[host,text width=34mm] (dp) at (5.1,3.6) {SQL Data Plane / STS2\\{\scriptsize accepted in main}};
+  \node[host,text width=34mm] (metadata) at (10.5,3.6) {Shared metadata service\\{\scriptsize PR \#22836 merged}};
+
+  \node[ext,text width=32mm] (bridge) at (0.0,1.8) {Future STS bridge\\{\scriptsize per-feature fallback}};
+  \node[engine,text width=64mm] (lang) at (5.1,1.8) {PR \#22860: native language and scripting library\\{\scriptsize contracts, analysis, features, routing, scheduling, metadata adapter}};
+  \node[gate,text width=36mm] (composition) at (10.5,1.8) {Future gated composition\\{\scriptsize umbrella and feature flag}};
+
+  \node[ext,text width=42mm] (editor) at (3.0,0.0) {Future editor adapter\\{\scriptsize Query Studio or VS Code APIs}};
+  \node[ext,text width=42mm] (consumer) at (8.0,0.0) {Future feature consumers\\{\scriptsize deterministic language and AI context}};
+
+  \draw[dataarr] (obs)--(lang.north west);
+  \draw[dataarr] (dp)--(lang.north);
+  \draw[dataarr] (metadata)--(lang.north east);
+  \draw[async] (bridge)--(lang);
+  \draw[async] (lang)--(composition);
+  \draw[async] (composition.south west)--(editor.north east);
+  \draw[async] (composition.south)--(consumer.north east);
+\end{tikzpicture}}
+\caption{Refactor placement. Solid lower layers and the violet PR05 library exist; dashed consumer and fallback paths are intentionally absent from this pull request.}
 \label{fig:placement}
 \end{figure}
 
-This placement is why the GitHub package comparison reports exactly the same MSSQL VSIX size for target and PR branches: 85,347 KiB in both. The extension bundler has no \code{sqlLanguage} or \code{sqlScripting} input at this head.
+The package bot reports the MSSQL VSIX as 85,347 KiB on both target and PR branches, and the other packaged extensions also show zero delta. That is stronger scope evidence than merely observing that no command or setting was added: the build graph itself does not include the new source at this head.
+
+\begin{boundarybox}[title={Branch-drift note}]
+The PR was authored from extraction base \code{95cf790e5}; the active PR now names \code{53b707bbe} as its base, while current \code{main} is \code{c6d2baa442}. The nine-mainline-commit gap touches integration surfaces such as \path{mainController.ts}, \path{sqlDocumentService.ts}, package metadata, and general extension infrastructure. The language source remains isolated and exact-head packaging is green, but every later consumer must start from refreshed \code{main} and rerun the integration assertions.
+\end{boundarybox}
 
 \section{Public contracts and dependency boundaries}
 
 \subsection{Consumer-neutral API}
 
-\path{sqlLanguage/api.ts} defines request and response data for completion, hover, signature help, diagnostics, definition, folding, document symbols, highlights, and semantic tokens. Every request carries text, version, URI, and position/range data without importing VS Code. This boundary lets a later host translate editor objects once, then test the engine with ordinary values.
+\path{sqlLanguage/api.ts} defines JSON-safe request and response data for completion, hover, signature help, diagnostics, definition, folding, document symbols, highlights, and semantic tokens. Point requests carry the full document text, a version, and a zero-based UTF-16 position; diagnostics/structure requests carry text and version. The contract deliberately carries no VS Code document, URI, cancellation token, metadata object, or STS DTO. A future host owns document identity, routing, cancellation, and translation to editor-native result types.
+
+The v1 request shape sends the full document text on each call. That is a simple and highly testable extraction boundary, not a commitment to permanent full-text transport. A later Query Studio or VS Code adapter can add incremental synchronization or per-document engine instances without changing the pure feature algorithms.
 
 The same file defines feature maturity and a capability table. The shipped native capability table marks completion, hover, signature, diagnostics, definition, folding, and document symbols as preview; highlights and semantic tokens remain off. Having types for a feature is therefore not the same as advertising an implementation.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Public request-shape boundary.}
+\label{tab:request-shapes}
+\begin{tabularx}{\textwidth}{@{}p{0.22\textwidth}p{0.30\textwidth}X@{}}
+\toprule
+\textbf{Request family} & \textbf{Carries} & \textbf{Intentionally owned by the future host}\\
+\midrule
+Point features & Full text, version, UTF-16 line/character; completion also carries trigger kind/character & URI/document identity, connection binding, cancellation, VS Code/Monaco result adaptation.\\
+Diagnostics/structure & Full text, version; diagnostics may carry a host-derived metadata freshness verdict & Debounce, scheduling, publication, editor marker ownership, current metadata stamp.\\
+Definition/scripting & Point request plus target resolution; scripting request plus provenance/fidelity contracts & Virtual document storage, reveal behavior, strict lease policy, user-facing refusal UX.\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \begin{table}[H]
 \centering
@@ -314,11 +468,13 @@ Interactive feature code consumes a synchronous \code{IPinnedMetadataView}; it d
 
 \subsection{From text to reusable structure}
 
-The native engine analyzes one immutable text snapshot, then reuses structural work across feature calls when document version and text length match. The stages are deliberately tolerant:
+The native engine analyzes one immutable text snapshot, then reuses structural work across feature calls. Review commit \code{b66db2d8f} strengthens both analysis and diagnostics memoization to require exact text identity in addition to version/length context. Same-version, same-length replacement text can no longer reuse the wrong analysis, while ordinary repeat requests still share immutable structural work.
+
+The stages are deliberately tolerant:
 
 \begin{enumerate}
   \item \textbf{Text snapshot} maps offsets to zero-based UTF-16 line/character positions and back, including ordinary LF/CRLF and mixed input.
-  \item \textbf{Lexer} recognizes T-SQL words, identifiers, punctuation, comments, strings, variables, SQLCMD-sensitive regions, Unicode horizontal whitespace, and \code{GO} / \code{GO n} line semantics. Review hardening closes the non-breaking-space and construct-opener-at-EOF coverage gaps.
+  \item \textbf{Lexer} recognizes T-SQL words, identifiers, punctuation, comments, strings, variables, SQLCMD-sensitive regions, Unicode horizontal whitespace, and \code{GO} / \code{GO n} line semantics. Review repairs pin non-breaking-space classification and a construct opener at exact EOF.
   \item \textbf{Segmenter} partitions batches and statements while respecting module bodies and rule-sensitive constructs.
   \item \textbf{Sketch parser} extracts the structure features need: query scopes, sources, CTEs, select items, declarations, \code{EXEC}, DML targets, and table declarations. It remains total on incomplete editor text.
   \item \textbf{Overlay} models script-local state such as temporary tables, declared table variables, scripted tables, and batch-scoped variables.
@@ -336,7 +492,7 @@ The native engine analyzes one immutable text snapshot, then reuses structural w
   \node[model,minimum width=24mm,right=of segment] (sketch) {Sketch parser\\\scriptsize tolerant structure};
   \node[model,minimum width=23mm,right=of sketch] (overlay) {Overlay\\\scriptsize script-local facts};
 
-  \node[gate,below=of snapshot,minimum width=27mm] (cache) {Analysis cache\\\scriptsize version + text length};
+  \node[gate,below=of snapshot,minimum width=27mm] (cache) {Analysis cache\\\scriptsize current: version + length};
   \node[engine,right=of cache,minimum width=27mm] (expect) {Cursor expectation\\\scriptsize kind + confidence + quiet};
   \node[engine,right=of expect,minimum width=29mm] (bind) {Per-feature bind\\\scriptsize DB context + pinned view};
   \node[engine,right=of bind,minimum width=34mm] (features) {Feature computation\\\scriptsize completion / hover / diagnostics / ...};
@@ -354,17 +510,49 @@ The native engine analyzes one immutable text snapshot, then reuses structural w
   \draw[dataarr] (bind)--(features);
   \draw[async] (snapshot)--(cache);
   \draw[dataarr] (pin)--(bind);
+  \node[gate,below=8mm of cache,minimum width=37mm] (cacheRisk) {Repaired identity guard\\\scriptsize version + exact text};
+  \draw[failarr] (cache)--(cacheRisk);
 \end{tikzpicture}}
-\caption{As-built analysis pipeline. Syntax structure is cached per document analysis; metadata is pinned and binding is performed for each feature request so one response cannot mix generations.}
+\caption{As-built analysis pipeline. Structural analysis is reused, metadata is pinned per request, and binding never mixes generations. The red review boundary is the analysis memo key: target identity should include document or content identity, not only version and length.}
 \label{fig:pipeline}
 \end{figure}
+
+\subsection{One request, one pin, one answer}
+
+\begin{figure}[H]
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[node distance=7mm and 12mm]
+  \node[comp,minimum width=30mm] (host) {Future host adapter\\\scriptsize text + version + position};
+  \node[engine,minimum width=29mm,right=of host] (analysis) {Analyze or reuse\\\scriptsize lex + segment + sketch};
+  \node[host,minimum width=29mm,right=of analysis] (pin) {Pin metadata $g$\\\scriptsize decorate system catalog};
+  \node[engine,minimum width=30mm,right=of pin] (feature) {Feature computation\\\scriptsize bind + rank / diagnose};
+  \node[gate,minimum width=31mm,right=of feature] (answer) {Answer for $(v,g)$\\\scriptsize result or honest degradation};
+
+  \node[risk,below=11mm of feature,minimum width=34mm] (missing) {Section missing\\\scriptsize no blocking catalog call};
+  \node[host,left=of missing,minimum width=32mm] (kick) {Advisory hydration kick\\\scriptsize fire-and-forget};
+  \node[model,right=of missing,minimum width=32mm] (next) {Later generation $g+1$\\\scriptsize next request may improve};
+
+  \draw[arrow] (host)--(analysis);
+  \draw[arrow] (analysis)--(pin);
+  \draw[dataarr] (pin)--(feature);
+  \draw[arrow] (feature)--(answer);
+  \draw[failarr] (feature)--(missing);
+  \draw[async] (missing)--(kick);
+  \draw[async] (kick) to[out=-10,in=190] (next);
+  \draw[async] (next) to[out=90,in=-90] (answer);
+\end{tikzpicture}}
+\caption{Interactive request lifecycle. A response is stamped by document version and one metadata generation; missing data can improve a later request but cannot mutate the answer already being produced.}
+\label{fig:request-lifecycle}
+\end{figure}
+
 
 \subsection{Why a sketch instead of a full AST}
 
 Editor input is commonly unfinished. A full grammar can make a single missing token collapse useful context; an unbounded hand-written parser can accidentally become a second compiler. The sketch deliberately extracts only what current features consume and records uncertainty. The cursor-expectation layer improves completion category selection and suppresses suggestions in declarations, data-type positions, comments, strings, and other quiet contexts, but it is not the richer parser-v2/AST envisioned by later design notes.
 
 \begin{warningbox}[title={Semantic ceiling}]
-The tolerant pipeline is broad, not complete. Dynamic SQL, unusual procedural forms, deeply dialect-specific syntax, and ambiguous recovery can exceed the sketch. The correct failure mode is suppression, incomplete results, or fallback---never a confident catalog error manufactured from an untrusted parse.
+The tolerant pipeline is broad, not complete. Dynamic SQL, unusual procedural forms, deeply dialect-specific syntax, and ambiguous recovery can exceed the sketch. The correct failure mode is suppression, incomplete results, or fallback--never a confident catalog error manufactured from an untrusted parse.
 \end{warningbox}
 
 \section{Metadata contract and honest degradation}
@@ -373,13 +561,39 @@ The tolerant pipeline is broad, not complete. Dynamic SQL, unusual procedural fo
 
 \path{provider/types.ts} separates a mutable provider from the immutable view used by a request. The provider exposes current generation, environment, readiness, a pin operation, databases, an explicit hydration request, and a change event. The pin exposes synchronous resolution and projection over an opaque \code{LangObjectRef}; consumers cannot retain mutable catalog objects or invent cross-generation identity.
 
-Readiness is sectioned across objects, columns, parameters, foreign keys, and definitions. The global mode---full, lite, partial, or offline---does not erase section truth. Resolution is a tagged result: resolved, default-schema choice, ambiguous, not found, or unavailable. This prevents the dangerous equation ``not returned = does not exist.''
+Readiness is sectioned across objects, columns, parameters, foreign keys, and definitions. The global mode--full, lite, partial, or offline--does not erase section truth. Resolution is a tagged result: resolved, default-schema choice, ambiguous, not found, or unavailable. This prevents the dangerous equation ``not returned = does not exist.''
 
 \subsection{Adapter over the shared metadata service}
 
 \path{catalogProvider.ts} is the only production adapter from the merged metadata substrate to language types. It maps a compact immutable \code{CatalogSnapshot} into the pinned language surface, carries database/case/capability context, and returns honest unknown states when no snapshot exists.
 
 When a feature discovers that object names are ready but columns are not, the adapter may request hydration. The current implementation coalesces to one in-flight refresh, avoids starting while already loading/stale, makes at most one kick per generation, and enforces a 30-second floor. The present metadata service refreshes the full ladder; the language seam is already shaped so later section-level hydration does not change feature contracts.
+
+
+\begin{table}[H]
+\centering
+\small
+\caption{Metadata-substrate to language-seam translation.}
+\label{tab:metadata-translation}
+\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}p{0.20\textwidth}X@{}}
+\toprule
+\textbf{Catalog fact} & \textbf{Language fact} & \textbf{Meaning / information loss}\\
+\midrule
+\code{ready} & \code{ready} & Positive and negative claims for that section are permitted.\\
+\code{lite} & \code{partial} & Some positive facts exist, but completeness must not be inferred.\\
+\code{loading} & \code{loading} & Current pin is unchanged; feature may return incomplete and request hydration.\\
+\code{stale} & \code{stale} & Catalog service is refreshing over an existing snapshot; not proof that data is age-stale.\\
+\code{failed} & \code{failed} & Failure is explicit and must never be rendered as a trustworthy empty set.\\
+\code{absent} / no snapshot & \code{unknown} & The seam cannot claim existence or non-existence.\\
+Module definition API & \code{definitions=lazy} & One sanctioned async read, cached per metadata generation.\\
+Snapshot mode & full / lite / partial & Structural completeness only; strict freshness and disk/offline provenance come from host policy, not this field.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{warningbox}[title={The adapter is intentionally lossy}]
+The pure engine receives a smaller truth vocabulary than the metadata store. In particular, \code{env.caseSensitive} is a required boolean, so the production adapter currently falls back to \code{false} when H0 has not established the catalog rule. Also, an offline disk snapshot retains its structural snapshot mode; ordinary language readiness is not a strict freshness verdict. Diagnostics and scripting therefore need separate host-supplied freshness data when absence claims or generated DDL require stronger authority.
+\end{warningbox}
 
 \begin{figure}[H]
 \centering
@@ -425,15 +639,15 @@ Completion first classifies cursor expectation, then uses the legacy context cla
 
 Candidate selection is deterministic: category gates run before fuzzy matching; scores are stable; ordinal comparison breaks ties; output is capped at 600. Partial metadata does not produce an authoritative empty list. Member-access on an object with unloaded columns returns an incomplete reason and can kick background hydration.
 
-At the pinned head, the architecture and contexts follow that policy, including the review-repaired statement-location fallback, derived aliases, \code{UPDATE TOP}, \code{db..table}, temp overlays, case-sensitive dedupe, and bare-\code{alias.} edits. Their regression cases and dispositions are summarized in \cref{sec:tiera,tab:tierbc}; ``preview'' is not used to excuse false-positive behavior.
+The original differential review reproduced a statement-location fallback that bypassed comment suppression plus derived-alias, \code{UPDATE TOP}, \code{db..table}, temp-overlay, case-sensitive dedupe, and bare-\code{alias.} edit gaps. Review commit \code{b66db2d8f} repairs and regression-tests those cases. A later probe found that whitespace between a derived alias and its column list still bypasses the balance skip; that remaining variant is tracked explicitly in \cref{sec:tiera} and is not hidden behind the word ``preview.''
 
 \subsection{Diagnostics}
 
 Diagnostics intentionally separates two truth tiers:
 
 \begin{itemize}
-  \item \textbf{T1 lexical/structural diagnostics} come from the text, tokens, segments, and tolerant statement structure. They include lexical faults, malformed \code{GO}, bracket/parenthesis/statement structure, unrecognized statements, and recoverable \code{SELECT} syntax.
-  \item \textbf{T2 binder diagnostics} depend on catalog trust: invalid object 208, invalid column 207, and ambiguous column 209. A host freshness verdict of \code{notValidated}, partial readiness, dynamic/unsupported syntax, uncertain database context, or other recorded suppression reason prevents these warnings.
+  \item \textbf{T1 lexical/structural diagnostics} come from the text, tokens, segments, and tolerant statement structure. They include unterminated strings/comments and identifiers, malformed \code{GO}, bracket/parenthesis/statement recovery, and selected syntax-error 102 cases.
+  \item \textbf{T2 binder diagnostics} depend on catalog trust: invalid object 208, invalid column 207, ambiguous column 209, and routine lookup claims such as 2812 where the sketch supports them. A host freshness verdict of \code{notValidated}, partial readiness, dynamic/unsupported syntax, uncertain database context, or another recorded suppression reason prevents those warnings.
 \end{itemize}
 
 The diagnostic result records suppression counts/reasons so ``quiet because valid'' can be distinguished from ``quiet because the engine lacked authority.'' Whole-document work is resumable by statement/work unit for scheduler time slicing.
@@ -477,23 +691,23 @@ Folding/symbols & Snapshot, tokens, segments, sketch & Continue structurally; no
 
 \begin{figure}[H]
 \centering
-\resizebox{0.94\textwidth}{!}{%
-\begin{tikzpicture}[node distance=8mm and 10mm]
-  \node[state] (change) {edit or metadata\\change};
-  \node[state,right=of change] (debounce) {debounce\\300 ms default};
-  \node[state,right=of debounce] (factory) {create pass\\stamp $v:g$};
-  \node[state,right=of factory] (slice) {run work\\8 ms default};
-  \node[state,right=of slice] (check) {recheck\\current stamp};
-  \node[goodstate,right=of check] (publish) {publish\\diagnostics};
+\resizebox{0.97\textwidth}{!}{%
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \node[state,text width=24mm] (change) at (0.0,2.3) {Edit or metadata\\{\scriptsize change}};
+  \node[state,text width=24mm] (debounce) at (2.8,2.3) {Debounce\\{\scriptsize 300 ms default}};
+  \node[state,text width=24mm] (factory) at (5.6,2.3) {Create pass\\{\scriptsize stamp $v:g$}};
+  \node[state,text width=24mm] (slice) at (8.4,2.3) {Run work slice\\{\scriptsize 8 ms default}};
+  \node[state,text width=24mm] (check) at (11.2,2.3) {Recheck\\{\scriptsize current stamp}};
+  \node[goodstate,text width=24mm] (publish) at (14.0,2.3) {Publish\\{\scriptsize diagnostics}};
 
-  \node[risk,below=12mm of check] (stale) {stale document or\\metadata drift};
-  \node[state,left=of stale] (yield) {yield\\macrotask};
+  \node[state,text width=24mm] (yield) at (8.4,0.1) {Yield\\{\scriptsize macrotask}};
+  \node[risk,text width=30mm] (stale) at (11.5,0.1) {Abort stale pass\\{\scriptsize edit or metadata drift}};
 
   \draw[arrow] (change)--(debounce);
   \draw[arrow] (debounce)--(factory);
   \draw[arrow] (factory)--(slice);
   \draw[arrow] (slice)--(check);
-  \draw[arrow] (check)--node[labelbox,above]{done + current} (publish);
+  \draw[arrow] (check)--(publish);
   \draw[failarr] (check)--node[labelbox,right]{stamp changed} (stale);
   \draw[async] (check)--node[labelbox,left]{more work} (yield);
   \draw[async] (yield)--(slice);
@@ -503,35 +717,68 @@ Folding/symbols & Snapshot, tokens, segments, sketch & Continue structurally; no
 \label{fig:scheduler}
 \end{figure}
 
+
+\subsection{Two execution lanes}
+
+The implementation has two materially different scheduling models. Pull features such as completion and hover execute directly in the caller's turn and are fast only because their algorithms and data access are bounded. Whole-document diagnostics can instead use a resumable pass whose work is sliced and yielded. The distinction matters because an ordinary JavaScript timeout observes control only after the event loop yields.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.94\textwidth}{!}{%
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \node[engine,text width=34mm] (pull) at (0.0,2.4) {Pull feature request\\{\scriptsize completion, hover, signature}};
+  \node[currentnode,text width=40mm] (sync) at (5.2,2.4) {Synchronous CPU work\\{\scriptsize event loop remains occupied}};
+  \node[gate,text width=34mm] (pullResult) at (10.4,2.4) {Return or throw\\{\scriptsize caller regains control}};
+  \node[risk,text width=38mm] (timer) at (5.2,0.9) {Router timer\\{\scriptsize observable only after a yield}};
+
+  \node[engine,text width=34mm] (diag) at (0.0,-1.0) {Scheduled diagnostics\\{\scriptsize debounce and resumable pass}};
+  \node[host,text width=34mm] (slices) at (4.0,-1.0) {Run bounded slice\\{\scriptsize cooperative work unit}};
+  \node[host,text width=34mm] (yieldcheck) at (8.0,-1.0) {Yield and recheck\\{\scriptsize version plus metadata stamp}};
+  \node[goodstate,text width=34mm] (diagResult) at (12.0,-1.0) {Publish or abort\\{\scriptsize only current results survive}};
+
+  \draw[arrow] (pull)--(sync);
+  \draw[arrow] (sync)--(pullResult);
+  \draw[failarr] (timer)--(sync);
+  \draw[arrow] (diag)--(slices);
+  \draw[arrow] (slices)--(yieldcheck);
+  \draw[arrow] (yieldcheck)--(diagResult);
+  \draw[async] (yieldcheck) to[out=-115,in=-65] node[labelbox,below]{more work} (slices);
+\end{tikzpicture}}
+\caption{Execution split. Cooperative slicing bounds scheduled diagnostics; a \code{Promise.race} alone cannot interrupt synchronous extension-host work.}
+\label{fig:execution-lanes}
+\end{figure}
+
 \subsection{Feature router}
 
 \path{host/router.ts} centralizes rollout and fallback. A consumer supplies an engine preference, capability table, rollout threshold, lazy bridge factory, and optional diagnostics observer. Native work is eligible only when preference and maturity allow it. After two consecutive thrown/rejected failures for a feature, its circuit opens and later calls go directly to fallback until reset. Failures are isolated per feature, so diagnostics cannot disable completion.
 
-The router also wraps native work in a default five-second \code{Promise.race}. That is effective only when the native operation yields. Completion, hover, signature, pull-path diagnostics, folding, and symbols currently compute synchronously, so a timer cannot preempt a pathological call that blocks the extension-host event loop; only definition and other genuinely asynchronous paths can observe the timeout while in flight. Three core tests cover preference/maturity routing and throw-driven circuit/reset behavior, but no test proves timeout preemption. The scheduler's sliced diagnostics path remains the real cooperative bound for hosted whole-document diagnostics.
+The default capability table marks seven features preview, but preference still matters: under \code{sqlToolsService}, only folding and document symbols remain native because the planned bridge has no equivalent path. The bridge itself is not included in this extraction.
+
+The router wraps native work in a default five-second \code{Promise.race}. This is a useful containment wrapper for genuinely asynchronous operations, including definition's lazy module read, but it is not CPU preemption. Completion, hover, signature, pull diagnostics, folding, and symbols compute synchronously before their already-resolved promise can race the timer. The current tests cover preference/maturity and throw-driven circuit/reset behavior; they do not demonstrate timeout interruption. Production containment therefore requires bounded algorithms, cooperative work units, or a worker boundary for any future heavy path.
 
 \begin{figure}[H]
 \centering
-\resizebox{0.90\textwidth}{!}{%
-\begin{tikzpicture}[node distance=9mm and 11mm]
-  \node[comp,minimum width=29mm] (request) {Feature request};
-  \node[gate,minimum width=34mm,right=of request] (elig) {Eligible?\\\scriptsize preference + maturity + circuit};
-  \node[engine,minimum width=31mm,right=of elig] (native) {Native call\\\scriptsize timeout after yield};
-  \node[goodstate,minimum width=28mm,right=of native] (ok) {Native result};
+\resizebox{0.94\textwidth}{!}{%
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \node[comp,text width=28mm] (request) at (0.0,2.5) {Feature request};
+  \node[gate,text width=38mm] (decision) at (4.0,2.5) {Route decision\\{\scriptsize preference, maturity, circuit}};
+  \node[engine,text width=30mm] (native) at (8.0,2.5) {Native engine};
+  \node[goodstate,text width=30mm] (result) at (12.0,2.5) {Native result};
 
-  \node[ext,below=13mm of elig,minimum width=31mm] (bridge) {Lazy bridge fallback};
-  \node[risk,right=of bridge,minimum width=31mm] (fail) {Failure count\\\scriptsize open after threshold};
-  \node[host,right=of fail,minimum width=29mm] (span) {Route span\\\scriptsize safe scalar fields};
+  \node[currentnode,text width=35mm] (timer) at (0.0,0.1) {Promise-race timer\\{\scriptsize observational, not preemptive}};
+  \node[ext,text width=34mm] (bridge) at (4.0,0.1) {Future lazy bridge\\{\scriptsize per-feature fallback}};
+  \node[risk,text width=36mm] (failure) at (8.0,0.1) {Thrown or rejected failure\\{\scriptsize counted per feature}};
+  \node[gate,text width=34mm] (circuit) at (12.0,0.1) {Circuit open\\{\scriptsize fallback until reset}};
 
-  \draw[arrow] (request)--(elig);
-  \draw[arrow] (elig)--node[labelbox,above]{yes} (native);
-  \draw[arrow] (native)--node[labelbox,above]{success} (ok);
-  \draw[async] (elig)--node[labelbox,left]{no} (bridge);
-  \draw[failarr] (native)--node[labelbox,right]{throw / timeout} (fail);
-  \draw[async] (fail)--(bridge);
-  \draw[async] (native)--(span);
-  \draw[async] (bridge)--(span);
+  \draw[arrow] (request)--(decision);
+  \draw[arrow] (decision)--node[labelbox,above]{native eligible} (native);
+  \draw[arrow] (native)--node[labelbox,above]{success} (result);
+  \draw[async] (decision)--node[labelbox,left]{otherwise} (bridge);
+  \draw[failarr] (native.south)--(failure.north);
+  \draw[failarr] (failure)--(circuit);
+  \draw[async] (circuit.south) to[out=-125,in=-55] node[labelbox,below]{subsequent requests} (bridge.south);
 \end{tikzpicture}}
-\caption{Per-feature routing. The native library can be introduced incrementally while retaining a lazy fallback and containing repeated failures. The bridge and composition are not part of PR05.}
+\caption{Router containment. Maturity and per-feature circuits are implemented; the timeout is an asynchronous observation mechanism, not an interrupt for synchronous parser or binder work.}
 \label{fig:router}
 \end{figure}
 
@@ -554,6 +801,24 @@ Module scripting uses token-level head rewriting so create/alter/create-or-alter
 \subsection{Strict freshness flow}
 
 The concrete scripting host calls the metadata lease's strict policy before it pins. A host-side timeout is a backstop around the metadata policy timeout. Rejection, timeout, or an unavailable strict verdict refuses the operation; explicit offline-snapshot policy can instead allow cached output with provenance and an honest banner. This makes scripting stricter than interactive completion because generated DDL is more likely to be copied and executed.
+
+
+\begin{table}[H]
+\centering
+\small
+\caption{Definition and scripting authority modes.}
+\label{tab:scripting-authority}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Path} & \textbf{Authority check} & \textbf{Honest outcome}\\
+\midrule
+Local definition & Document analysis and overlay only & Return an in-document range; no metadata lease required.\\
+Catalog definition / peek & Pinned object plus lazy module-definition read & Virtual content when available; encrypted, permission, unsupported, or not-loaded reason otherwise.\\
+User-facing script generation & Host resolves strict freshness, then pins & F2/F1/F0 script with provenance, or explicit refusal when strict authority is unavailable.\\
+Explicit offline scripting & Host selects \code{offlineSnapshot} policy & Cached output is allowed only with source/freshness/capture provenance and an offline banner.\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \begin{figure}[H]
 \centering
@@ -595,12 +860,29 @@ Normal diagnostics use safe scalar measures such as duration, counts, route, rea
 Do not add raw document text, SQL batches, connection strings, result rows, or unclassified object names to a language span. New attributes must be registered and typed before emission. Performance evidence should use counts, durations, readiness and suppression state; diagnosis that truly needs content must remain an explicit elevated-capture operation.
 \end{designbox}
 
-\clearpage
+\begin{figure}[H]
+\centering
+\resizebox{0.91\textwidth}{!}{%
+\begin{tikzpicture}[node distance=9mm and 12mm]
+  \node[goodstate,minimum width=42mm] (normal) {Normal capture\\\scriptsize durations, counts, route, readiness, suppression};
+  \node[gate,minimum width=42mm,right=of normal] (classified) {Classified content fields\\\scriptsize prefix / name parts / top labels};
+  \node[risk,minimum width=42mm,right=of classified] (forbidden) {Forbidden by default\\\scriptsize full SQL, batches, rows, secrets, unclassified names};
+
+  \node[host,minimum width=50mm,below=12mm of classified] (policy) {Shared diagnostics policy\\\scriptsize digest/redact normally; reveal only under explicit elevated capture};
+
+  \draw[dataarr] (normal)--(policy);
+  \draw[async] (classified)--(policy);
+  \draw[failarr] (forbidden)--(policy);
+\end{tikzpicture}}
+\caption{Observability boundary. The implementation is privacy-classified rather than content-blind: selected identifier fields may enter spans, but the shared capture policy normally digests them and forbids unclassified SQL or secrets.}
+\label{fig:observability}
+\end{figure}
+
 \section{Test design and validation}
 
 \subsection{Focused semantic corpus}
 
-The 15 owned language and scripting unit files execute 707 tests at the pinned head: 707 passed, zero failed, zero skipped. The value is not just volume; the suites target incomplete syntax, partial truth, deterministic ordering, stale publication, refusal behavior, and every material review repair. The exact-head sign-off also ran 47 adjacent scripting-service and observability tests, for 754 focused passes in total.
+The 15 owned language and scripting unit files execute 707 tests at the pinned head: 707 passed, zero failed, zero skipped. The value is not just volume; the suites target incomplete syntax, partial truth, deterministic ordering, stale publication, refusal behavior, and every material repair through \code{b66db2d8f}. The exact-head sign-off also ran 47 adjacent scripting-service and observability tests, for 754 focused passes in total.
 
 \begin{longtable}{@{}p{0.21\textwidth}p{0.10\textwidth}p{0.62\textwidth}@{}}
 \caption{Focused language and scripting inventory.}\label{tab:tests}\\
@@ -632,14 +914,14 @@ Strict scripting host & 11 & Freshness policy, timeout/refusal, pin ordering, pr
 \bottomrule
 \end{longtable}
 
-\subsection{Broader local validation}
+\subsection{Exact-head local validation and observed CI}
 
 Validation was rerun after review commit \code{b66db2d8f} on the topic branch rooted at extraction base \code{95cf790e5}:
 
 \begin{table}[H]
 \centering
 \small
-\caption{Independent local validation at \code{b66db2d8f}.}
+\caption{Independent local validation at \code{b66db2d8f}; hosted conclusions refreshed on 31 August 2026.}
 \label{tab:validation}
 \begin{tabularx}{\textwidth}{@{}p{0.24\textwidth}p{0.20\textwidth}X@{}}
 \toprule
@@ -684,7 +966,7 @@ The same live-catalog comparison found that all 157 curated built-in function na
 
 \subsection{GitHub validation snapshot}
 
-At report freeze, GitHub reports the PR open, mergeable, non-draft, labeled \code{Automated Review}, and still requiring human review. At final head \code{b66db2d8f}, build-and-test, actions and JavaScript/TypeScript analysis, CodeQL, normalization, CLA, package creation, Azure \code{VSCode MSSQL - Pull Request} validation, and all six Linux/macOS/Windows x64/arm64 VSIX-launch jobs are green. Human approval is the only remaining reported PR gate.
+At report freeze, GitHub reports the PR open, mergeable, non-draft, labeled \code{Automated Review}, and still requiring human review. At head \code{b66db2d8f}, build-and-test, actions and JavaScript/TypeScript analysis, CodeQL, normalization, CLA, package creation, Azure \code{VSCode MSSQL - Pull Request} validation, and all six Linux/macOS/Windows x64/arm64 VSIX-launch jobs are green.
 
 The GitHub package comparison is stronger than the absolute local size for this scope question: target and head are both 85,347 KiB for MSSQL, with zero delta for every packaged extension. Codecov reports 94.34331\% patch coverage with 1,041 changed lines uncovered and project coverage rising from 78.22\% to 79.86\%. The largest uncovered concentration is the production metadata adapter; hover, diagnostics, definition, completion, sketch/context, cursor expectation, engine, and text snapshot also retain uncovered branches.
 
@@ -692,11 +974,53 @@ The GitHub package comparison is stronger than the absolute local size for this 
 High patch coverage and 754 exact-head focused passes support the implementation, but the important properties are semantic: one generation per answer, suppression when metadata authority is unavailable, no stale diagnostic publication, deterministic ranking, and strict scripting refusal. Coverage percentage alone cannot prove these; the differential probes were valuable precisely because they found ordinary constructs missing from the prior honesty corpus. Conversely, zero bundle-size delta proves inert packaging, not live feature quality.
 \end{evidencebox}
 
+\begin{table}[H]
+\centering
+\small
+\caption{Largest reported pre-fix patch-coverage concentrations.}
+\label{tab:coverage-hotspots}
+\begin{tabularx}{\textwidth}{@{}p{0.34\textwidth}p{0.14\textwidth}p{0.16\textwidth}X@{}}
+\toprule
+\textbf{File / area} & \textbf{Patch coverage} & \textbf{Missing lines} & \textbf{Why it matters}\\
+\midrule
+\path{provider/catalogProvider.ts} & 56.79\% & 178 & The only production bridge to the merged metadata substrate; exact-head validation now adds one real builder/snapshot integration path beyond this earlier coverage report.\\
+\path{features/hover.ts} & 89.09\% & 115 & Large name-chain and truth-tier surface with many context combinations.\\
+\path{features/diagnostics.ts} & 94.71\% & 109 & High percentage, but uncovered branches can still be exactly the rare legal syntax that produces false squiggles.\\
+\path{features/definition.ts} & 88.06\% & 97 & Crosses local-symbol resolution, scripting, async definition reads, and refusal states.\\
+\path{features/completion.ts} & 92.22\% & 90 & Result edits, overlay routing, case rules, and partial-readiness paths remain semantically sensitive.\\
+\path{core/text/textSnapshot.ts} & 79.03\% & 26 & Small file, but every range, anchor, and editor adaptation depends on coordinate correctness.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+
 \section{Known limitations and review closure}
 
-\subsection{Review snapshot: 27 dispositioned threads}
 
-The pre-fix PR had 26 current review threads at \code{eafbbdc046}: two from Copilot and 24 from a later source-attributed Fable review posted through the PR author's account. Every initial thread received an explicit reply ending \code{(Source: GPT-5.6 Sol)} and was resolved after review commit \code{b66db2d8f}. One immediate Copilot follow-up questioned the documented newline precondition of \code{withHeader}; a complete production call-site audit showed that every caller supplies a terminating CRLF, so it was dispositioned and resolved without defensive churn. After a six-minute quiet period, the live API returned zero unresolved threads at the unchanged head.
+\subsection{Finding distribution}
+
+\begin{figure}[H]
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[node distance=8mm and 9mm]
+  \node[gate,minimum width=39mm] (tierA) {8 repaired Tier-A defects\\\scriptsize direct fixes + regression coverage};
+  \node[gate,minimum width=35mm,right=of tierA] (parser) {Parser / overlay\\\scriptsize repaired and dispositioned};
+  \node[gate,minimum width=35mm,right=of parser] (completion) {Completion / provider\\\scriptsize repaired or measured deferral};
+
+  \node[gate,minimum width=35mm,below=11mm of parser] (host) {Host containment\\\scriptsize exact-text memo + cooperative timeout};
+  \node[gate,minimum width=35mm,left=of host] (script) {Scripting safety\\\scriptsize sanitization + anchor coverage};
+  \node[gate,minimum width=35mm,right=of host] (data) {Static / integration\\\scriptsize exact TVFs + real adapter};
+  \node[risk,minimum width=35mm,below=11mm of host] (copilot) {1 residual thread\\\scriptsize whitespace before alias column list};
+
+  \node[note,below=8mm of copilot,minimum width=73mm] (total) {27 threads resolved; one later ordinary-formatting variant remains open.};
+\end{tikzpicture}}
+\caption{Review disposition map at \code{b66db2d8f}. The remaining red item is a narrow but valid semantic-trust repair.}
+\label{fig:findings-map}
+\end{figure}
+
+\subsection{Review snapshot: original closeout plus one residual}
+
+The pre-fix PR had 26 current review threads at \code{eafbbdc046}: two from Copilot and 24 from a later source-attributed Fable review posted through the PR author's account. Every initial thread received an explicit disposition and was resolved after review commit \code{b66db2d8f}. One immediate Copilot follow-up about the documented newline precondition of \code{withHeader} was dispositioned after a complete production call-site audit, producing 27 resolved threads. A later Fable probe then found one valid residual variant: whitespace between a derived alias and its column list prevents the current raw-token-index guard from seeing the opening parenthesis. At report freeze that new thread is the sole unresolved thread.
 
 The two original Copilot threads were narrow and are fixed:
 
@@ -707,14 +1031,14 @@ The two original Copilot threads were narrow and are fixed:
 
 \subsection{Tier A: ordinary-SQL trust defects}\label{sec:tiera}
 
-The eight Tier-A findings were not architectural failures, but they were the exact user-trust failure class the diagnostic honesty design is intended to prevent. All eight are repaired at \code{b66db2d8f} with focused zero-unexpected-diagnostic or completion-suppression coverage.
+The eight original Tier-A findings were not architectural failures, but they were the exact user-trust failure class the diagnostic honesty design is intended to prevent. All eight have direct repairs at \code{b66db2d8f}; the fifth repair needs one additional significant-token walk to cover ordinary whitespace before the alias column list.
 
 \begin{enumerate}[label=\textbf{A\arabic*.},leftmargin=2.2em,itemsep=5pt]
   \item \textbf{Trailing comments and unterminated constructs} (\path{nativeEngine.ts}). Lexical suppression now runs before the undefined-statement fallback; comment, string, SQLCMD, and exact-EOF opener cases return no completion.
   \item \textbf{Alias assignment and positioned update} (\path{diagnostics.ts}). Select-list \code{alias = expr} heads and \code{CURRENT OF} cursor names are excluded from column diagnostics.
   \item \textbf{\code{WITHIN GROUP (ORDER BY ...)}} (diagnostics / keyword data). Contextual \code{WITHIN} plus ordered-set clause handling prevents the false missing-\code{BY} recovery.
   \item \textbf{\code{AT TIME ZONE}} (diagnostics / keyword data). Contextual \code{AT}/\code{ZONE} entries break the false expression-unit run without reserving legal identifiers.
-  \item \textbf{Derived/VALUES alias list \code{v(a,b)}} (\path{sketch/index.ts}). Alias column lists are balance-skipped so their commas cannot create phantom sources.
+  \item \textbf{Derived/VALUES alias lists} (\path{sketch/index.ts}). Unspaced \code{v(a,b)} lists are balance-skipped so commas cannot create phantom sources. \gap{} A space or newline before \code{(a,b)} still leaves the guard on trivia; advance to the next significant token and add spaced sketch/honesty cases.
   \item \textbf{Non-breaking space in pasted SQL} (\path{lexer.ts}). Unicode horizontal space separators, including U+00A0, are whitespace rather than identifier characters.
   \item \textbf{\code{UPDATE TOP (n) target}} (\path{sketch/index.ts}). Update sketching skips TOP count forms and optional PERCENT before reading the target.
   \item \textbf{Default-schema shorthand \code{db..table}} (\path{sketch/index.ts}). Empty multipart components are preserved, and binder arity uses raw parts to reach honest cross-database/linked-server handling.
@@ -734,7 +1058,7 @@ The other 16 Fable threads were triaged in five groups. Material correctness and
 \textbf{Group} & \textbf{Findings} & \textbf{Disposition}\\
 \midrule
 Parser / overlay honesty & \code{IS NOT DISTINCT FROM}; labels/synonyms; script-created modules and qualified objects; EOF coverage; GO corpus. & Repaired with grammar, overlay, lexical-coverage, and table-driven regression tests.\\
-Completion / provider & Temp DML targets; case-aware dedupe; bare-\code{alias.} edits; filtered prefix cap; unknown case rule; empty-prefix scan. & Correctness paths repaired. Prefix search grows past 1,200 filtered-out items. Empty-prefix caching deferred: measured p95 is 8.7 ms and cache invalidation complexity is not justified without a budget regression.\\
+Completion / provider & Temp DML targets; case-aware dedupe; bare-\code{alias.} edits; filtered prefix cap; unknown case rule; empty-prefix scan. & Correctness paths repaired. Prefix search grows past 1,200 filtered-out items. Empty-prefix caching is deferred: measured p95 is 8.7 ms and cache invalidation complexity is not justified without a budget regression.\\
 Host correctness & Same-version/same-length cache collision; synchronous router timeout semantics. & Analysis and diagnostic memos require exact text. Async timeout is tested and cooperative semantics documented; synchronous interactive work remains self-bounding and diagnostic publication remains sliced.\\
 Scripting safety & Comment placeholders/refusals can interpolate pathological identifiers or type text. & Reused \code{sanitizeCommentText} across DML and refusal paths; adversarial comment-terminator tests pass.\\
 Static data / integration evidence & Two \code{dm_exec_*} TVF result schemas; fixture-only production adapter coverage. & Corrected exact TVF shapes and added real builder/snapshot/provider-to-engine coverage.\\
@@ -742,7 +1066,7 @@ Static data / integration evidence & Two \code{dm_exec_*} TVF result schemas; fi
 \end{tabularx}
 \end{table}
 
-These findings are resolved or explicitly dispositioned in the PR. The expanded corpus now pins the reproduced cases; it still does not claim complete T-SQL grammar equivalence or replace preview-stage real-server validation.
+The original findings are resolved or explicitly dispositioned in the PR. The later spaced-alias-list reproduction remains a valid correctness repair. The fully green build/test matrix proves regression stability against the existing corpus; it does not negate a newly reproduced case outside that corpus.
 
 \subsection{Deliberate implementation limits}
 
@@ -758,13 +1082,13 @@ These findings are resolved or explicitly dispositioned in the PR. The expanded 
 
 \subsection{Branch-drift boundary}
 
-The topic includes \code{main} through extraction base \code{95cf790e5}. At report freeze the live PR API identifies a later base \code{53b707bbe}, and the locally fetched \code{origin/main} has advanced again to \code{e0f18fd8d}. GitHub currently calculates the PR as mergeable, but a later main refresh should repeat the full build/lint/focused/broad/package gates before the final merge decision.
+The topic includes extraction base \code{95cf790e5}; the live PR API identifies base \code{53b707bbe}; and current repository \code{main} is \code{c6d2baa442}. The exact topic is three commits ahead of and nine commits behind current \code{main}. The mainline-only commits touch controller, document-service, package, test, and extension infrastructure. The PR remains mergeable and all hosted checks are green; every subsequent consumer must nevertheless start from refreshed \code{main} and repeat build, focused/broad semantics, package, launch, and review checks.
 
 \section{Integration and graduation plan}
 
 \subsection{Next implementation step}
 
-The next PR should be a gated consumer, not another implicit activation edit scattered across the extension. Before that consumer is made reachable, the eight Tier-A cases in \cref{sec:tiera} must be fixed and pinned by the honesty/suppression corpus. The consumer PR should then:
+The next PR should be a gated consumer, not another implicit activation edit scattered across the extension. Before that consumer is made reachable, the remaining spaced alias-list variant in \cref{sec:tiera} should be repaired and pinned by the honesty/suppression corpus. The consumer PR should then:
 
 \begin{enumerate}
   \item add one composition root that adapts VS Code documents and result types to the consumer-neutral contracts;
@@ -773,7 +1097,7 @@ The next PR should be a gated consumer, not another implicit activation edit sca
   \item choose native versus existing behavior through the router, provide the real lazy bridge, and preserve per-feature fallback;
   \item wire the metadata provider from the accepted shared catalog service and dispose leases/change subscriptions correctly;
   \item carry perftest and scenario tests for activation-off invisibility, gated activation, latency, fallback, and stale-result suppression; and
-  \item avoid coupling AI completion to a global language-provider cutover---AI can be an early gated consumer of the same analysis/provider seam.
+  \item avoid coupling AI completion to a global language-provider cutover--AI can be an early gated consumer of the same analysis/provider seam.
 \end{enumerate}
 
 \subsection{Graduation gates}
@@ -789,6 +1113,27 @@ Before moving from private preview toward default-on, validation should add:
   \item an explicit privacy audit of elevated rich fields, journal/export behavior, and any AI consumer payload boundary.
 \end{enumerate}
 
+
+\begin{table}[H]
+\centering
+\small
+\caption{Minimum gates before the first user-reachable preview consumer.}
+\label{tab:activation-gates}
+\begin{tabularx}{\textwidth}{@{}p{0.31\textwidth}p{0.16\textwidth}X@{}}
+\toprule
+\textbf{Gate} & \textbf{Current state} & \textbf{Required closure}\\
+\midrule
+Ordinary-SQL trust corpus & Nearly closed & Original eight cases are repaired; add significant-token handling and spaced/newline alias-list regressions for the remaining variant.\\
+Production metadata adapter & Partial & One real \code{CatalogBuilder}/snapshot/provider/engine path now exists; extend it with generation drift, partial readiness, and live-server variants.\\
+Router and long-work containment & Partial & Explicit synchronous limitation, bounded algorithms, timeout test for yielding paths, and cooperative/worker plan for heavy work.\\
+Private-preview composition & Not present & One default-off composition root with hierarchical flags, complete manifest visibility gates, disposal, and disable/reload tests.\\
+Bridge/fallback & Interface only & Concrete lazy bridge, provider ownership, telemetry, and fallback behavior under throw/timeout/circuit.\\
+Latency and memory & Probe only & p50/p95/p99 by document/catalog tier on local and remote extension hosts.\\
+Privacy & Architecture present & Elevated-capture audit and product-level journal/export test once a consumer exists.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \begin{table}[H]
 \centering
 \small
@@ -801,8 +1146,8 @@ Before moving from private preview toward default-on, validation should add:
 Pure analysis contracts & Import shape, fixture engines, hosted unit tests & Consumer adapter tests in the first activation PR.\\
 Pinned-generation metadata & Provider types and fixture/null/system tests; reviewer real-store probe & CI end-to-end real-snapshot suite plus forced generation change.\\
 No hot-path network wait & Synchronous pin contract, lazy kick tests, and reviewer real-store timings & Instrumented product/perftest assertion under hydration.\\
-Completion determinism & Category/rank/ordinal tests; known suppression, dedupe, overlay, and edit-range findings & Close A1/A5--A8 and Tier-B completion cases; cross-platform replay.\\
-Diagnostic honesty & T1/T2 split, 62-case honesty suite, freshness/drift tests; eight new ordinary-SQL gaps & Close Tier A and add a real-server/native-vs-STS differential corpus.\\
+Completion determinism & Category/rank/ordinal tests; repaired suppression, dedupe, overlay, and edit-range cases & Close the spaced alias-list residual; add cross-platform replay.\\
+Diagnostic honesty & T1/T2 split, expanded honesty suite, freshness/drift tests, and original Tier-A repairs & Pin the residual formatting variant and add a real-server/native-vs-STS differential corpus.\\
 Stale-result suppression & Deterministic scheduler stamp tests & VS Code integration under edit/hydration storms.\\
 Strict scripting provenance & Freshness/refusal/offline and emitter tests & Live permissions/encryption/definition corpus.\\
 Failure containment & Three preference/maturity/throw-circuit/reset tests; sliced scheduler tests & Cooperative bound for synchronous work, timeout test, real bridge/fallback telemetry.\\
@@ -814,16 +1159,15 @@ Private-preview invisibility & No manifest/controller/bundle inputs; zero packag
 \section{Final assessment}
 
 \begin{takeawaybox}
-PR \#22860 is a strong independent extraction boundary. It turns the earlier language-service design into a concrete, testable library without prematurely changing the product. The most important choices are sound: tolerant analysis over incomplete editor text; generation-pinned metadata; explicit readiness and suppression; deterministic ordering; sliced, stale-safe diagnostics; provenance-bearing scripting; and per-feature fallback containment.
+PR \#22860 is a strong extraction boundary. It converts the earlier language-service plan into a concrete, testable library without prematurely changing product behavior. The core architecture is the right one: tolerant analysis over unfinished text; a claim hierarchy that preserves lower-level truth; one pinned metadata generation per answer; explicit readiness and suppression; deterministic candidate order; sliced, stale-safe diagnostic publication; provenance-bearing scripting; and per-feature rollout/fallback.
 
-The later review materially strengthened the correctness disposition. Eight reproduced ordinary-SQL trust defects now have direct repairs and regression cases; the broader cache-identity, completion-edit, provider, scripting-sanitization, static-data, and real-adapter gaps are closed. The router timeout is explicitly cooperative rather than falsely presented as preemptive for synchronous work, and the only deferred optimization---empty-prefix provider caching---has measured p95 evidence below the current budget. The branch also remains safe for existing users because it is neither bundled nor activated.
+The later review materially strengthened the correctness disposition. The eight original ordinary-SQL trust defects now have direct repairs and regression cases; the broader cache-identity, completion-edit, provider, scripting-sanitization, static-data, and real-adapter gaps are closed or explicitly dispositioned. The router timeout is accurately documented as cooperative rather than preemptive for synchronous work. One residual ordinary-formatting variant remains: whitespace before a derived alias column list can still create a phantom source and false 208 diagnostic. Green CI proves the encoded corpus is stable; zero package delta proves current users cannot reach the code. Neither makes that newly reproduced case disappear.
 \end{takeawaybox}
 
 \begin{statusbox}[title={Decision statement}]
-Recommended disposition at this snapshot: automated review closeout is complete for the inert source-only foundation at \code{b66db2d8f}. The exact-head local matrix is green, all 27 threads have explicit dispositions, and the delayed audit reports zero unresolved threads. Merge remains subject to the still-running hosted jobs and human review. A later consumer PR must independently satisfy the full private-preview umbrella/feature gates, invisible command/menu contribution, runtime fail-closed behavior, and integration-level scenario validation before exposing this engine through a provider, Query Studio surface, or AI completion path.
+Recommended disposition at this snapshot: \textbf{accept the architecture and retain the source-only boundary, but close the one valid residual review thread before final automated sign-off}. Exact-head local and hosted validation is otherwise green, all prior threads are dispositioned, and the PR is mergeable subject to human review. A later consumer PR must independently satisfy the full private-preview umbrella/feature gates, invisible command/menu contribution, runtime fail-closed behavior, and integration-level scenario validation before exposing the engine through Query Studio, a VS Code provider, command, or AI context path.
 \end{statusbox}
 
-\clearpage
 \section*{Evidence and source map}
 \addcontentsline{toc}{section}{Evidence and source map}
 
@@ -836,7 +1180,7 @@ This report is pinned to an active PR. Review threads, Actions conclusions, main
 \toprule
 \textbf{Evidence class} & \textbf{Primary sources used}\\
 \midrule
-PR state & \href{https://github.com/microsoft/vscode-mssql/pull/22860}{PR \#22860}, head \code{b66db2d8f}, extraction base \code{95cf790e5}, live API base \code{53b707bbe}, 27 dispositioned review threads / zero unresolved after the delayed audit, Copilot review, source-attributed Fable review and probe report, exact-head sign-off comment, hosted-check rollup, package-size bot, and Codecov report.\\
+PR state & \href{https://github.com/microsoft/vscode-mssql/pull/22860}{PR \#22860}, head \code{b66db2d8f}, extraction base \code{95cf790e5}, live API base \code{53b707bbe}, 27 resolved threads plus one later unresolved residual, Copilot review, source-attributed Fable review and probe report, exact-head sign-off comment, fully green Actions/Azure rollup, package-size bot, and Codecov report.\\
 Public API / host & \path{extensions/mssql/src/sqlLanguage/api.ts}; \path{host/nativeEngine.ts}; \path{host/router.ts}; \path{host/scheduler.ts}; \path{host/scriptingHost.ts}.\\
 Analysis core & \path{core/text/textSnapshot.ts}; \path{core/lexer.ts}; \path{core/segmenter.ts}; \path{core/sketch/*}; \path{core/parser/cursorExpectation.ts}; \path{core/binder.ts}; \path{core/overlay.ts}; database/name/fuzzy/quote helpers.\\
 Language features & \path{features/completion.ts}; \path{diagnostics.ts}; \path{hover.ts}; \path{signatureHelp.ts}; \path{definition.ts}; \path{folding.ts}; \path{documentSymbols.ts}; generated keyword/built-in/default/system data.\\
@@ -845,7 +1189,7 @@ SQL scripting & \path{extensions/mssql/src/sqlScripting/api.ts}; \path{scripting
 Observability & \path{extensions/mssql/src/perf/perfTelemetry.ts}; accepted diagnostics registry and privacy contracts already in \code{main}; journal tests.\\
 Tests & Fifteen \path{extensions/mssql/test/unit/sqlLanguage*.test.ts} and \path{sqlScripting*.test.ts} files; hosted JUnit XML; independent build/lint/broad-suite/package record summarized in \cref{tab:validation}.\\
 Design intent & \path{vscode-ext-refactor/language-service-docs/05-tsql-language-service-design.md}; \path{current_completions_parser_design.md}; \path{PROGRESS.md}; proposed diagnostics/completion designs. Code controls where historical/future design differs from the extraction.\\
-Private-preview policy & \path{C:/repos/work2/resume.md} and the accepted PR04 preview-gating implementation; no PR05 manifest or activation additions.\\
+Private-preview policy & Accepted PR04 preview-gating implementation plus the current PR manifest and activation diff; PR05 adds no consumer registration, setting, or command.\\
 \bottomrule
 \end{longtable}
 
