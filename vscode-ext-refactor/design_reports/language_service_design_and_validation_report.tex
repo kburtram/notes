@@ -170,7 +170,7 @@
 
 \vspace{0.12in}
 \begin{tcolorbox}[enhanced,colback=greenbg,colframe=greenish,boxrule=0.9pt,arc=2mm,left=4mm,right=4mm,top=2.5mm,bottom=2.5mm]
-\textbf{Assessment at the reviewed head.} PR \#22860 establishes a coherent source-only language and scripting library. Its contracts are VS Code-neutral; requests pin one immutable metadata view; completion and hover can request background hydration without awaiting it; diagnostics distinguish syntax truth from metadata-dependent claims; and routing contains native failures behind maturity gates, timeout, fallback, and circuit breaking. The branch adds no commands, settings, provider registration, controller, activation path, or extension bundle input. The focused 675-test corpus passes, full local build/lint and broad hosted suites pass, and all six platform launch checks are green at report freeze. Two small automated-review findings remain open and are documented rather than silently discounted.
+\textbf{Assessment at the reviewed head.} PR \#22860 establishes a coherent source-only language and scripting library. Its contracts are VS Code-neutral; requests pin one immutable metadata view; completion and hover can request background hydration without awaiting it; and diagnostics distinguish syntax truth from metadata-dependent claims. The branch adds no commands, settings, provider registration, controller, activation path, or extension bundle input. The focused 675-test corpus, full local build/lint, broad hosted suites, Azure validation, and all six platform launch checks pass. A later Fable review nevertheless reproduced eight ordinary-SQL false-positive/suppression defects plus fifteen Tier-B hardening issues and one static-catalog error; together with two Copilot threads, all 26 review threads remain unresolved. The architecture is strong, but semantic closeout is not complete and the library must not be exposed to users in this state.
 \end{tcolorbox}
 
 \vspace{0.18in}
@@ -318,7 +318,7 @@ The native engine analyzes one immutable text snapshot, then reuses structural w
 
 \begin{enumerate}
   \item \textbf{Text snapshot} maps offsets to zero-based UTF-16 line/character positions and back, including ordinary LF/CRLF and mixed input.
-  \item \textbf{Lexer} recognizes T-SQL words, identifiers, punctuation, comments, strings, variables, SQLCMD-sensitive regions, and \code{GO} / \code{GO n} line semantics.
+  \item \textbf{Lexer} recognizes T-SQL words, identifiers, punctuation, comments, strings, variables, SQLCMD-sensitive regions, and \code{GO} / \code{GO n} line semantics. The current review found two boundary gaps: Unicode non-breaking space classification and a construct opener at exact EOF.
   \item \textbf{Segmenter} partitions batches and statements while respecting module bodies and rule-sensitive constructs.
   \item \textbf{Sketch parser} extracts the structure features need: query scopes, sources, CTEs, select items, declarations, \code{EXEC}, DML targets, and table declarations. It remains total on incomplete editor text.
   \item \textbf{Overlay} models script-local state such as temporary tables, declared table variables, scripted tables, and batch-scoped variables.
@@ -425,6 +425,8 @@ Completion first classifies cursor expectation, then uses the legacy context cla
 
 Candidate selection is deterministic: category gates run before fuzzy matching; scores are stable; ordinal comparison breaks ties; output is capped at 600. Partial metadata does not produce an authoritative empty list. Member-access on an object with unloaded columns returns an incomplete reason and can kick background hydration.
 
+At the pinned head, the architecture and most contexts follow that policy, but the review reproduced a statement-location fallback that bypasses comment suppression and additional derived-alias, \code{UPDATE TOP}, \code{db..table}, temp-overlay, case-sensitive dedupe, and bare-\code{alias.} edit gaps. These are tracked explicitly in \cref{sec:tiera,tab:tierbc}; they are not limitations to hide behind the word ``preview.''
+
 \subsection{Diagnostics}
 
 Diagnostics intentionally separates two truth tiers:
@@ -435,6 +437,8 @@ Diagnostics intentionally separates two truth tiers:
 \end{itemize}
 
 The diagnostic result records suppression counts/reasons so ``quiet because valid'' can be distinguished from ``quiet because the engine lacked authority.'' Whole-document work is resumable by statement/work unit for scheduler time slicing.
+
+The 62-case honesty suite validates the constructs it contains, not all legal T-SQL. \Cref{sec:tiera} records newly reproduced false positives for alias assignment, cursor syntax, \code{WITHIN GROUP}, \code{AT TIME ZONE}, multi-column derived aliases, pasted NBSP, \code{UPDATE TOP}, and default-schema multipart names. These are corpus omissions and implementation defects, not evidence against the T1/T2 separation itself.
 
 \subsection{Hover and signature help}
 
@@ -501,7 +505,9 @@ Folding/symbols & Snapshot, tokens, segments, sketch & Continue structurally; no
 
 \subsection{Feature router}
 
-\path{host/router.ts} centralizes rollout and fallback. A consumer supplies an engine preference, capability table, rollout threshold, lazy bridge factory, and optional diagnostics observer. Native work is eligible only when preference and maturity allow it. A default 5-second timeout contains a hung native call; after two consecutive failures for a feature, its circuit opens and later calls go directly to fallback until reset. Failures are isolated per feature, so diagnostics cannot disable completion.
+\path{host/router.ts} centralizes rollout and fallback. A consumer supplies an engine preference, capability table, rollout threshold, lazy bridge factory, and optional diagnostics observer. Native work is eligible only when preference and maturity allow it. After two consecutive thrown/rejected failures for a feature, its circuit opens and later calls go directly to fallback until reset. Failures are isolated per feature, so diagnostics cannot disable completion.
+
+The router also wraps native work in a default five-second \code{Promise.race}. That is effective only when the native operation yields. Completion, hover, signature, pull-path diagnostics, folding, and symbols currently compute synchronously, so a timer cannot preempt a pathological call that blocks the extension-host event loop; only definition and other genuinely asynchronous paths can observe the timeout while in flight. Three core tests cover preference/maturity routing and throw-driven circuit/reset behavior, but no test proves timeout preemption. The scheduler's sliced diagnostics path remains the real cooperative bound for hosted whole-document diagnostics.
 
 \begin{figure}[H]
 \centering
@@ -509,7 +515,7 @@ Folding/symbols & Snapshot, tokens, segments, sketch & Continue structurally; no
 \begin{tikzpicture}[node distance=9mm and 11mm]
   \node[comp,minimum width=29mm] (request) {Feature request};
   \node[gate,minimum width=34mm,right=of request] (elig) {Eligible?\\\scriptsize preference + maturity + circuit};
-  \node[engine,minimum width=31mm,right=of elig] (native) {Native call\\\scriptsize timeout boundary};
+  \node[engine,minimum width=31mm,right=of elig] (native) {Native call\\\scriptsize timeout after yield};
   \node[goodstate,minimum width=28mm,right=of native] (ok) {Native result};
 
   \node[ext,below=13mm of elig,minimum width=31mm] (bridge) {Lazy bridge fallback};
@@ -589,6 +595,7 @@ Normal diagnostics use safe scalar measures such as duration, counts, route, rea
 Do not add raw document text, SQL batches, connection strings, result rows, or unclassified object names to a language span. New attributes must be registered and typed before emission. Performance evidence should use counts, durations, readiness and suppression state; diagnosis that truly needs content must remain an explicit elevated-capture operation.
 \end{designbox}
 
+\clearpage
 \section{Test design and validation}
 
 \subsection{Focused semantic corpus}
@@ -650,28 +657,92 @@ Production online package & Pass & Released STS \code{6.0.20260827.1}; local art
 \end{tabularx}
 \end{table}
 
+\subsection{Review-machine scale and differential probes}
+
+The Fable review added useful \reported{} evidence beyond the fixture suites. It compiled the exact head, ran the 675 language/scripting tests plus seven observability tests (682/682), hydrated the real PR04 \code{MetadataStore} with a 10,201-object B16 fixture, adapted it through \code{CatalogLanguageMetadataProvider}, and exercised \code{NativeSqlLanguageEngine}. It also ran malformed-input/depth probes and compared the curated system catalog with a live SQL Server 2025 instance. These results were independently posted by the reviewer; they were not rerun in this report-writing pass.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Fable review-machine measurements at \code{eafbbdc046}; observations, not product SLAs.}
+\label{tab:reviewperf}
+\begin{tabularx}{\textwidth}{@{}p{0.42\textwidth}p{0.18\textwidth}X@{}}
+\toprule
+\textbf{Probe} & \textbf{Observed} & \textbf{Interpretation}\\
+\midrule
+\code{FROM} completion, 10,201 objects & p50 4.0 ms; p95 8.7 ms & Current full-scan/sort cost is usable on the probe, but remains linear and uncached for empty-prefix catalog requests.\\
+Member access / alias columns / hover & p50 about 0.1 ms; p95 $\leq$ 1 ms & Pinned lookup and local binding paths are fast in the fixture.\\
+Completion at end of 2,000 statements & p50 0.8 ms; p95 35.6 ms & Tail latency shows why production size-tier budgets are still needed.\\
+Diagnostics, 2,000 statements & 68.5 ms cold; near 0 cached & Analysis reuse is effective when its cache key is sound.\\
+Document symbols / folding, 2,000 lines & 0.3 / 1.0 ms & Pure structural features are inexpensive on the probe.\\
+Malformed/depth sweep & No throws; 5,000 parens in 13 ms & Supports total/tolerant direction, while the review still found an opener-at-EOF token-coverage hole.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The same live-catalog comparison found that all 157 curated built-in function names were genuine, but the two \code{dm_exec_sql_text} / \code{dm_exec_query_plan} entries model input handle names as result columns. Their real useful outputs include \code{dbid}, \code{objectid}, \code{number}, \code{encrypted}, and \code{text} or \code{query_plan}. The review's real-store path worked, but CI still uses fixture providers or hand-built handles rather than an end-to-end \code{CatalogBuilder}/store snapshot suite.
+
 \subsection{GitHub validation snapshot}
 
-At report freeze, GitHub reports the PR open, mergeable, non-draft, labeled \code{Automated Review}, and still requiring human review. Build-and-test, actions and JavaScript/TypeScript analysis, CodeQL, normalization, CLA, package creation, and all six Linux/macOS/Windows x64/arm64 VSIX-launch jobs are green. The separate Azure \code{VSCode MSSQL - Pull Request} context remains pending.
+At report freeze, GitHub reports the PR open, mergeable, non-draft, labeled \code{Automated Review}, and still requiring human review. Build-and-test, actions and JavaScript/TypeScript analysis, CodeQL, normalization, CLA, package creation, the Azure \code{VSCode MSSQL - Pull Request} validation, and all six Linux/macOS/Windows x64/arm64 VSIX-launch jobs are green.
 
 The GitHub package comparison is stronger than the absolute local size for this scope question: target and head are both 85,347 KiB for MSSQL, with zero delta for every packaged extension. Codecov reports 94.34331\% patch coverage with 1,041 changed lines uncovered and project coverage rising from 78.22\% to 79.86\%. The largest uncovered concentration is the production metadata adapter; hover, diagnostics, definition, completion, sketch/context, cursor expectation, engine, and text snapshot also retain uncovered branches.
 
 \begin{evidencebox}
-High patch coverage and 675 focused passes support the implementation, but the important properties are semantic: no mixed-generation answer, no false ``not found'' from unavailable metadata, no stale diagnostic publication, deterministic ranking, and strict scripting refusal. Coverage percentage alone cannot prove these. Conversely, zero bundle-size delta proves inert packaging, not live feature quality.
+High patch coverage and 675 focused passes support the implementation, but the important properties are semantic: one generation per answer, suppression when metadata authority is unavailable, no stale diagnostic publication, deterministic ranking, and strict scripting refusal. Coverage percentage alone cannot prove these; the later differential probes found ordinary constructs missing from the honesty corpus. Conversely, zero bundle-size delta proves inert packaging, not live feature quality.
 \end{evidencebox}
 
 \section{Known limitations and live review state}
 
-\subsection{Automated-review findings still open}
+\subsection{Review snapshot: 26 unresolved threads}
 
-Copilot reviewed 46 of 59 files and left two unresolved threads at \code{eafbbdc046}:
+The live PR has 26 current, non-outdated, unresolved threads at \code{eafbbdc046}: two from Copilot and 24 from a later source-attributed Fable review posted through the PR author's account. The Fable review reports that every Tier-A reproduction was run against the compiled engine with a real catalog. This report treats those as strong review evidence, but does not relabel the reported probes as independently rerun validation.
+
+The two Copilot threads are narrow:
 
 \begin{enumerate}
-  \item \path{sqlScripting/scriptWriter.ts} counts \code{\n} while tracking anchors but does not treat a standalone carriage return as a newline. LF and CRLF output are handled, but CR-only or mixed CR-only content could produce incorrect anchor line/character values. This is a narrow compatibility edge, not evidence that ordinary generated CRLF scripts are mis-anchored.
-  \item \path{sqlScripting/scriptingService.ts} says synonym targets are ``not hydrated'' when the real limitation is that this engine has no scriptable synonym definition. The behavior is an honest refusal; the explanatory note is imprecise.
+  \item \path{sqlScripting/scriptWriter.ts} counts \code{\n} while tracking anchors but does not treat a standalone carriage return as a newline. LF and CRLF output are handled, but CR-only or mixed input can drift later anchors. Fable confirmed the reachable vector is narrow and recommended the one-line hardening.
+  \item \path{sqlScripting/scriptingService.ts} says synonym \emph{targets} are not hydrated. Copilot calls that inaccurate; Fable points to the accepted \code{synonyms=lite} model where target definitions are in fact deferred. The refusal behavior is safe; wording can be tightened to name the readiness fact.
 \end{enumerate}
 
-These findings should be dispositioned in the PR before merge. They do not change the architecture described here, but this report does not mark the review closed while the threads remain open.
+\subsection{Tier A: ordinary-SQL trust defects}\label{sec:tiera}
+
+The eight Tier-A findings are not architectural failures, but they are the exact user-trust failure class the diagnostic honesty design is intended to prevent. Each needs a focused fix and a zero-unexpected-diagnostic/completion-suppression corpus entry before the engine is composed into a preview consumer.
+
+\begin{enumerate}[label=\textbf{A\arabic*.},leftmargin=2.2em,itemsep=5pt]
+  \item \textbf{Trailing comments and unterminated constructs} (\path{nativeEngine.ts}). Undefined statement location falls back directly to \code{statementStart}, bypassing context suppression; a trailing comment can receive 558 items. \emph{Closure:} run suppression before fallback and add comment-boundary tests.
+  \item \textbf{Alias assignment and positioned update} (\path{diagnostics.ts}). Legal \code{SELECT alias = expr} and \code{WHERE CURRENT OF cursor} names are interpreted as columns, producing false 207 diagnostics. \emph{Closure:} recognize alias assignment and \code{OF}; add honesty cases.
+  \item \textbf{\code{WITHIN GROUP (ORDER BY ...)}} (diagnostics / keyword data). \code{GROUP} is treated as missing \code{BY}, producing false 102 and suppressing binder-tier analysis. \emph{Closure:} model contextual \code{WITHIN} and add aggregate cases.
+  \item \textbf{\code{AT TIME ZONE}} (diagnostics / keyword data). Missing contextual \code{AT}/\code{ZONE} classification creates false 102 unit-run diagnostics. \emph{Closure:} add contextual keywords or equivalent run breakers.
+  \item \textbf{Derived/VALUES alias list \code{v(a,b)}} (\path{sketch/index.ts}). The comma re-arms source parsing; \code{b} becomes a phantom table, causing false 208 and sometimes 207. \emph{Closure:} balance-skip alias column lists and test both derived forms.
+  \item \textbf{Non-breaking space in pasted SQL} (\path{lexer.ts}). U+00A0 is accepted as identifier-start, can swallow the next keyword, and produces a visually baffling false 208. \emph{Closure:} treat Unicode space separators consistently as whitespace.
+  \item \textbf{\code{UPDATE TOP (n) target}} (\path{sketch/index.ts}). \code{TOP} becomes the target, producing false 208 and losing \code{SET}-column completion. \emph{Closure:} apply the existing DML \code{TOP} skip to update/insert paths.
+  \item \textbf{Default-schema shorthand \code{db..table}} (\path{sketch/index.ts}). Name parsing truncates at the empty schema part; the database is reported as an invalid object and alias columns disappear. \emph{Closure:} preserve the empty middle part and route to honest multipart handling.
+\end{enumerate}
+
+\subsection{Tier B/C: correctness, safety, and evidence hardening}
+
+The other 16 Fable threads should not be lost merely because the code is source-only. They cluster into five actionable groups:
+
+\begin{table}[H]
+\centering
+\small
+\caption{Remaining source-attributed review findings.}
+\label{tab:tierbc}
+\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}p{0.48\textwidth}X@{}}
+\toprule
+\textbf{Group} & \textbf{Findings} & \textbf{Disposition}\\
+\midrule
+Parser / overlay honesty & \code{IS NOT DISTINCT FROM} clause split; GOTO labels and procedure synonyms in exec-less analysis; CREATE VIEW/module and qualified CREATE TABLE missing from overlay; opener-at-EOF token drop; GO-parity comment/corpus gap. & Fix false diagnostics and token-coverage holes before activation; define the execution-split parity owner.\\
+Completion / provider & Overlay bypass for temp-table INSERT/UPDATE; case-sensitive dedupe folding; doubled qualifier in bare \code{alias.} star expansion; full scan/sort and pre-filter search cap; unknown case rule defaulting open. & Correct result omissions/edits and fail closed; benchmark/cache only with generation-safe invalidation.\\
+Host correctness & Analysis cache keyed only by version and text length; synchronous features cannot be preempted by the router timer. & Include document/text identity in the cache key; document/cooperatively yield long work; extend timeout tests.\\
+Scripting safety & Comment placeholders and refusal text do not consistently sanitize \code{*/} or newlines from legal pathological identifiers/type names. & Reuse the existing comment sanitizer and add adversarial fixtures.\\
+Static data / integration evidence & Two \code{dm_exec_*} TVF result schemas are wrong; CI does not run features through a real \code{CatalogSnapshot}/store adapter. & Correct curated data; add one real-builder/store/provider end-to-end suite.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+These findings should be resolved or explicitly dispositioned in the PR. The fully green build/test matrix proves regression stability against the existing corpus; it does not negate newly reproduced cases outside that corpus.
 
 \subsection{Deliberate implementation limits}
 
@@ -682,7 +753,7 @@ These findings should be dispositioned in the PR before merge. They do not chang
   \item The metadata adapter's lazy kick currently refreshes the full metadata ladder; section-specific hydration remains a future optimization.
   \item The system fallback is names-only and deliberately cannot support type/detail/key/definition claims.
   \item No live editor consumer, settings hierarchy, provider registration, Query Studio integration, AI completion, SQL document service, sqlcmd preprocessing, execution batch splitter, or query execution helper ships here.
-  \item Unit fixtures cover a wide semantic corpus, but real-server collation, permissions, catalog scale, dynamic SQL, uncommon grammar, Azure/serverless behavior, and remote extension-host performance remain preview validation work.
+  \item Unit fixtures cover a wide semantic corpus and the review added one SQL Server 2025/static-data plus 10,201-object store probe, but broad real-server collation, permissions, dynamic SQL, uncommon grammar, Azure/serverless behavior, and remote extension-host performance remain preview validation work.
 \end{itemize}
 
 \subsection{Branch-drift boundary}
@@ -693,7 +764,7 @@ The topic includes \code{main} through extraction base \code{95cf790e5}. At repo
 
 \subsection{Next implementation step}
 
-The next PR should be a gated consumer, not another implicit activation edit scattered across the extension. It should:
+The next PR should be a gated consumer, not another implicit activation edit scattered across the extension. Before that consumer is made reachable, the eight Tier-A cases in \cref{sec:tiera} must be fixed and pinned by the honesty/suppression corpus. The consumer PR should then:
 
 \begin{enumerate}
   \item add one composition root that adapts VS Code documents and result types to the consumer-neutral contracts;
@@ -728,13 +799,13 @@ Before moving from private preview toward default-on, validation should add:
 \textbf{Mechanism} & \textbf{Current evidence} & \textbf{Next proof}\\
 \midrule
 Pure analysis contracts & Import shape, fixture engines, hosted unit tests & Consumer adapter tests in the first activation PR.\\
-Pinned-generation metadata & Provider types, catalog/fixture/null/system tests & Forced generation change during live feature requests.\\
-No hot-path network wait & Synchronous pin contract and lazy kick tests & Instrumented live provider/perftest assertion.\\
-Completion determinism & Category/rank/ordinal and fixture tests & Cross-platform replay corpus and large-catalog latency.\\
-Diagnostic honesty & T1/T2 split, 62-case honesty suite, freshness/drift tests & Real-server truth corpus and native-vs-STS differential run.\\
+Pinned-generation metadata & Provider types and fixture/null/system tests; reviewer real-store probe & CI end-to-end real-snapshot suite plus forced generation change.\\
+No hot-path network wait & Synchronous pin contract, lazy kick tests, and reviewer real-store timings & Instrumented product/perftest assertion under hydration.\\
+Completion determinism & Category/rank/ordinal tests; known suppression, dedupe, overlay, and edit-range findings & Close A1/A5--A8 and Tier-B completion cases; cross-platform replay.\\
+Diagnostic honesty & T1/T2 split, 62-case honesty suite, freshness/drift tests; eight new ordinary-SQL gaps & Close Tier A and add a real-server/native-vs-STS differential corpus.\\
 Stale-result suppression & Deterministic scheduler stamp tests & VS Code integration under edit/hydration storms.\\
 Strict scripting provenance & Freshness/refusal/offline and emitter tests & Live permissions/encryption/definition corpus.\\
-Failure containment & Router maturity/timeout/circuit unit behavior & Actual bridge and consumer-level fallback telemetry.\\
+Failure containment & Three preference/maturity/throw-circuit/reset tests; sliced scheduler tests & Cooperative bound for synchronous work, timeout test, real bridge/fallback telemetry.\\
 Private-preview invisibility & No manifest/controller/bundle inputs; zero package delta & Manifest/runtime gate tests when activation is introduced.\\
 \bottomrule
 \end{tabularx}
@@ -743,13 +814,13 @@ Private-preview invisibility & No manifest/controller/bundle inputs; zero packag
 \section{Final assessment}
 
 \begin{takeawaybox}
-PR \#22860 is a strong independent extraction boundary. It turns the earlier language-service design into a concrete, testable library without prematurely changing the product. The most important choices are sound: tolerant analysis over incomplete editor text; generation-pinned metadata; explicit readiness and suppression; deterministic completion; sliced, stale-safe diagnostics; provenance-bearing scripting; and per-feature fallback containment.
+PR \#22860 is a strong independent extraction boundary. It turns the earlier language-service design into a concrete, testable library without prematurely changing the product. The most important choices are sound: tolerant analysis over incomplete editor text; generation-pinned metadata; explicit readiness and suppression; deterministic ordering; sliced, stale-safe diagnostics; provenance-bearing scripting; and per-feature fallback containment.
 
-The branch is ready for focused human design review and final automated-thread disposition, not for default-on product exposure. Its remaining uncertainty is mostly the expected kind for a source-only foundation: live integration, large and unusual real catalogs, full grammar breadth, performance at product scale, and UX-gated activation. Those should be measured by the owning consumer PRs rather than blurred into this extraction.
+The later review materially changes the correctness disposition, however. Eight reproduced ordinary-SQL cases currently escape suppression or generate false 102/207/208 diagnostics, and the broader findings expose cache-identity, synchronous-timeout, completion-edit, provider, scripting-sanitization, and real-adapter-test gaps. Green CI shows that the existing corpus is stable; it does not close those cases. The branch remains safe for existing users only because it is not bundled or activated.
 \end{takeawaybox}
 
 \begin{statusbox}[title={Decision statement}]
-Recommended disposition at this snapshot: preserve the architectural boundary; resolve or explicitly decline the two small open review threads; refresh from current \code{main} if required; rerun the stated gates; then proceed to human merge review. Do not expose a command, provider, setting-driven cutover, Query Studio surface, or AI completion path until a later PR supplies the full private-preview gate and integration tests.
+Recommended disposition at this snapshot: preserve the architectural boundary, but do not call review closeout complete while 26 current threads remain open. Fix the eight Tier-A trust defects and their regression corpus before any preview consumer; triage Tier B/C with explicit PR dispositions; refresh from current \code{main}; and rerun the stated gates. Whether the inert source-only foundation merges before every Tier-B item is a maintainer choice, but it must not be exposed through a command, provider, Query Studio surface, or AI completion path until the Tier-A set, cache-identity risk, and full private-preview integration gates are closed.
 \end{statusbox}
 
 \clearpage
@@ -765,7 +836,7 @@ This report is pinned to an active PR. Review threads, Actions conclusions, main
 \toprule
 \textbf{Evidence class} & \textbf{Primary sources used}\\
 \midrule
-PR state & \href{https://github.com/microsoft/vscode-mssql/pull/22860}{PR \#22860}, head \code{eafbbdc046}, extraction base \code{95cf790e5}, live API base \code{53b707bbe}, review threads, Actions check rollup, package-size bot, and Codecov report.\\
+PR state & \href{https://github.com/microsoft/vscode-mssql/pull/22860}{PR \#22860}, head \code{eafbbdc046}, extraction base \code{95cf790e5}, live API base \code{53b707bbe}, 26 unresolved review threads, Copilot review, source-attributed Fable review and probe report, fully green Actions/Azure rollup, package-size bot, and Codecov report.\\
 Public API / host & \path{extensions/mssql/src/sqlLanguage/api.ts}; \path{host/nativeEngine.ts}; \path{host/router.ts}; \path{host/scheduler.ts}; \path{host/scriptingHost.ts}.\\
 Analysis core & \path{core/text/textSnapshot.ts}; \path{core/lexer.ts}; \path{core/segmenter.ts}; \path{core/sketch/*}; \path{core/parser/cursorExpectation.ts}; \path{core/binder.ts}; \path{core/overlay.ts}; database/name/fuzzy/quote helpers.\\
 Language features & \path{features/completion.ts}; \path{diagnostics.ts}; \path{hover.ts}; \path{signatureHelp.ts}; \path{definition.ts}; \path{folding.ts}; \path{documentSymbols.ts}; generated keyword/built-in/default/system data.\\
